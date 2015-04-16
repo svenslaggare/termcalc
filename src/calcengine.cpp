@@ -7,7 +7,7 @@
 //Environment
 Environment::Environment() {
 	mValues = {
-		{ "pi", M_PI }
+		{ "pi", 3.141592653589793238463 }
 	};
 }
 
@@ -162,12 +162,12 @@ std::vector<Token> CalcEngine::tokenize(std::string str) {
 					} else {
 						throw std::runtime_error("The token already contains a decimal point.");
 					}
-				} else {	
+				} else {
 					if (base == 2) {
 						if (!(current == '0' || current == '1')) {
 							break;
 						}
-					} else if (base == 10) {			
+					} else if (base == 10) {
 						if (!isdigit(current)) {
 							break;
 						}
@@ -280,7 +280,7 @@ std::vector<Token> CalcEngine::toPostfix(std::vector<Token> tokens) {
 				}
 
 				auto op1 = getOperator(currentToken.charValue(), currentToken.isUnary());
-				
+
 				while (true) {
 					//Check for termination
 					if (!operatorStack.empty()) {
@@ -325,7 +325,7 @@ std::vector<Token> CalcEngine::toPostfix(std::vector<Token> tokens) {
 
 					auto op = operatorStack.top();
 					operatorStack.pop();
-					
+
 					if (op.type() == TokenType::OPERATOR) {
 						outputQueue.push_back(op);
 					} else if (op.type() == TokenType::LEFT_PARENTHESIS) {
