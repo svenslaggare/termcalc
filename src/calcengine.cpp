@@ -330,6 +330,10 @@ std::vector<Token> CalcEngine::toPostfix(std::vector<Token> tokens) {
 						outputQueue.push_back(op);
 					} else if (op.type() == TokenType::LEFT_PARENTHESIS) {
 						break;
+					} else if (op.type() == TokenType::IDENTIFIER) {
+						if (op.isFunction()) {
+							outputQueue.push_back(op);
+						}
 					}
 				}
 			}
