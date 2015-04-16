@@ -1,5 +1,5 @@
 # termcalc
-A terminal based calculator.
+A terminal based calculator written in C++.
 
 ##Build##
 To build:

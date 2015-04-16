@@ -56,6 +56,11 @@ public:
         TS_ASSERT_DELTA(engine.eval("e^2", env), 7.38905609893, 0.1);
     }
 
+    void testEvalFunctions() {
+        CalcEngine engine;
+        TS_ASSERT_DELTA(engine.eval("sin(0.5)"), 0.479426, 0.1);       
+    }
+
     void testInvalidEval() {
         CalcEngine engine;
         TS_ASSERT_THROWS(engine.eval("3 ++ 2"), std::runtime_error);
