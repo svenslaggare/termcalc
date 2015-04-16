@@ -13,3 +13,4 @@ make test
 
 ##Platforms##
 * Linux
+* Windows (not tested with MSVC++)
