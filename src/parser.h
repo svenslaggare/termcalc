@@ -44,7 +44,7 @@ private:
 	std::unique_ptr<Expression> parseParenthesisExpression();
 
 	//Parses the right hand side of an binary op expression
-	std::unique_ptr<Expression> parseBinaryOpRHS(int exprPrecedence, std::unique_ptr<Expression> lhs);
+	std::unique_ptr<Expression> parseBinaryOpRHS(int precedence, std::unique_ptr<Expression> lhs);
 
 	//Parses a unary expression
 	std::unique_ptr<Expression> parseUnaryExpression();

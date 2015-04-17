@@ -15,7 +15,7 @@ public:
 	//Returns the variables
 	const std::unordered_map<std::string, double>& variables();
 
-	//Sets the variable as the given value
+	//Sets the variable to the given value
 	void set(std::string variable, double value);
 
 	//Gets the given variable
@@ -27,8 +27,6 @@ public:
 
 //Represents the calculation engine
 class CalcEngine {
-private:
-
 public:	
 	//Creates a new calc engine
 	CalcEngine();

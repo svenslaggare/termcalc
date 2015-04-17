@@ -64,6 +64,8 @@ int Parser::getTokenPrecedence() {
 
 	if (mBinaryOperators.count(mCurrentToken.charValue()) > 0) {
 		return mBinaryOperators.at(mCurrentToken.charValue()).precedence();
+	} else {
+		parseError("'" + std::string { mCurrentToken.charValue() } + "' is not a defined binary operator.");
 	}
 
 	return -1;
@@ -157,21 +159,17 @@ std::unique_ptr<Expression> Parser::parsePrimaryExpression() {
 	}	
 }
 
-std::unique_ptr<Expression> Parser::parseBinaryOpRHS(int exprPrecedence, std::unique_ptr<Expression> lhs) {
+std::unique_ptr<Expression> Parser::parseBinaryOpRHS(int precedence, std::unique_ptr<Expression> lhs) {
 	while (true) {
 		//If this is a bin op, find its precedence
 		int tokPrec = getTokenPrecedence();
 
-		//If this is a bin op  that binds as least as tightly as the current bin op, consume it, otherwise we are done.
-		if (tokPrec < exprPrecedence) {
+		//If this is a binary operator that binds as least as tightly as the current operator, consume it, otherwise we are done.
+		if (tokPrec < precedence) {
 			return lhs;
 		}
 
 		char opChar = mCurrentToken.charValue();
-		if (mBinaryOperators.count(opChar) == 0) {
-			parseError("'" + std::string { opChar } + "' is not a defined binary operator.");
-		}
-
 		Operator op = mBinaryOperators.at(opChar); 
 
 		nextToken(); //Eat the operator
@@ -183,7 +181,7 @@ std::unique_ptr<Expression> Parser::parseBinaryOpRHS(int exprPrecedence, std::un
 			return rhs;
 		}
 
-		//If binary operator binds less tightly with RHS than the operator after RHS, let the pending operator take RHS as its LHS
+		//If the binary operator binds less tightly with RHS than the operator after RHS, let the pending operator take RHS as its LHS
 		int nextPrec = getTokenPrecedence();
 		if (tokPrec < nextPrec) {
 			rhs = parseBinaryOpRHS(tokPrec + 1, std::move(rhs));
@@ -193,7 +191,7 @@ std::unique_ptr<Expression> Parser::parseBinaryOpRHS(int exprPrecedence, std::un
 			}
 		}
 
-		//Merge LHS/RHS
+		//Merge LHS and RHS
 		lhs = std::move(std::unique_ptr<BinaryOperatorExpression>(
 			new BinaryOperatorExpression(op, std::move(lhs), std::move(rhs))));
 	}
