@@ -174,9 +174,9 @@ Token nextToken(std::vector<Token>& tokens, std::size_t& index) {
 	return tokens[index];
 }
 
-double CalcEngine::eval(std::string expression) {
+double CalcEngine::eval(std::string expressionString) {
 	Environment env;
-	return eval(expression, env);
+	return eval(expressionString, env);
 }
 
 double CalcEngine::eval(std::string expressionString, Environment& env) {

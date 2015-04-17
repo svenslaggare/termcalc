@@ -37,6 +37,6 @@ public:
 	std::vector<Token> tokenize(std::string str);
 
 	//Evaluates the given expression
-	double eval(std::string expression);
-	double eval(std::string expression, Environment& env);
+	double eval(std::string expressionString);
+	double eval(std::string expressionString, Environment& env);
 };
