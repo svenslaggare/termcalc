@@ -9,6 +9,8 @@ enum class TokenType {
 	IDENTIFIER,
 	LEFT_PARENTHESIS,
 	RIGHT_PARENTHESIS,
+	COMMA,
+	END_OF_EXPRESSION
 };
 
 //Represents a token
@@ -18,9 +20,10 @@ private:
 	double mDoubleValue;
 	char mCharValue;
 	std::string mIdentifier;
-	bool mIsUnary = false;
-	bool mIsFunction = false;
 public:
+	//Creates an empty token
+	Token();
+
 	//Creates a new token
 	Token(TokenType type);
 
@@ -44,18 +47,6 @@ public:
 
 	//Returns the identifier
 	std::string identifier() const;
-
-	//Indicates if an unary operator
-	bool isUnary() const;
-
-	//Marks the operator as unary
-	void makeUnary();
-
-	//Indicates if a function
-	bool isFunction() const;
-
-	//Marks the identifier a function
-	void makeFunction();
 
 	bool operator==(const Token& rhs) const;
 };

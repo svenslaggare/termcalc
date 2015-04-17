@@ -1,6 +1,11 @@
 #include "token.h"
 #include <cmath>
 
+Token::Token()
+	: mType(TokenType::NUMBER), mDoubleValue(0), mCharValue(0) {
+
+}
+
 Token::Token(TokenType type)
 	: mType(type), mDoubleValue(0), mCharValue(0) {
 
@@ -35,22 +40,6 @@ char Token::charValue() const {
 
 std::string Token::identifier() const {
 	return mIdentifier;
-}
-
-bool Token::isUnary() const {
-	return mIsUnary;
-}
-
-void Token::makeUnary() {
-	mIsUnary = true;
-}
-
-bool Token::isFunction() const {
-	return mIsFunction;
-}
-
-void Token::makeFunction() {
-	mIsFunction = true;
 }
 
 bool Token::operator==(const Token& rhs) const {
@@ -89,6 +78,11 @@ std::ostream& operator<<(std::ostream& ostream, const Token& token) {
 			break;
 		case TokenType::RIGHT_PARENTHESIS:
 			ostream << ")";
+			break;
+		case TokenType::COMMA:
+			ostream << ",";
+			break;
+		default:
 			break;
 	}
 
