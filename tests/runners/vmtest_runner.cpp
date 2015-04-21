@@ -26,11 +26,11 @@ bool suite_TermCalcTestSuite_init = false;
 static TermCalcTestSuite suite_TermCalcTestSuite;
 
 static CxxTest::List Tests_TermCalcTestSuite = { 0, 0 };
-CxxTest::StaticSuiteDescription suiteDescription_TermCalcTestSuite( "tests/test.h", 8, "TermCalcTestSuite", suite_TermCalcTestSuite, Tests_TermCalcTestSuite );
+CxxTest::StaticSuiteDescription suiteDescription_TermCalcTestSuite( "tests/test.h", 9, "TermCalcTestSuite", suite_TermCalcTestSuite, Tests_TermCalcTestSuite );
 
 static class TestDescription_suite_TermCalcTestSuite_testTokenizer : public CxxTest::RealTestDescription {
 public:
- TestDescription_suite_TermCalcTestSuite_testTokenizer() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 16, "testTokenizer" ) {}
+ TestDescription_suite_TermCalcTestSuite_testTokenizer() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 17, "testTokenizer" ) {}
  void runTest() { suite_TermCalcTestSuite.testTokenizer(); }
 } testDescription_suite_TermCalcTestSuite_testTokenizer;
 
@@ -42,31 +42,31 @@ public:
 
 static class TestDescription_suite_TermCalcTestSuite_testEval : public CxxTest::RealTestDescription {
 public:
- TestDescription_suite_TermCalcTestSuite_testEval() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 41, "testEval" ) {}
+ TestDescription_suite_TermCalcTestSuite_testEval() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 40, "testEval" ) {}
  void runTest() { suite_TermCalcTestSuite.testEval(); }
 } testDescription_suite_TermCalcTestSuite_testEval;
 
 static class TestDescription_suite_TermCalcTestSuite_testEvalVariables : public CxxTest::RealTestDescription {
 public:
- TestDescription_suite_TermCalcTestSuite_testEvalVariables() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 50, "testEvalVariables" ) {}
+ TestDescription_suite_TermCalcTestSuite_testEvalVariables() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 49, "testEvalVariables" ) {}
  void runTest() { suite_TermCalcTestSuite.testEvalVariables(); }
 } testDescription_suite_TermCalcTestSuite_testEvalVariables;
 
 static class TestDescription_suite_TermCalcTestSuite_testEvalFunctions : public CxxTest::RealTestDescription {
 public:
- TestDescription_suite_TermCalcTestSuite_testEvalFunctions() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 59, "testEvalFunctions" ) {}
+ TestDescription_suite_TermCalcTestSuite_testEvalFunctions() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 58, "testEvalFunctions" ) {}
  void runTest() { suite_TermCalcTestSuite.testEvalFunctions(); }
 } testDescription_suite_TermCalcTestSuite_testEvalFunctions;
 
 static class TestDescription_suite_TermCalcTestSuite_testInvalidEval : public CxxTest::RealTestDescription {
 public:
- TestDescription_suite_TermCalcTestSuite_testInvalidEval() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 64, "testInvalidEval" ) {}
+ TestDescription_suite_TermCalcTestSuite_testInvalidEval() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 63, "testInvalidEval" ) {}
  void runTest() { suite_TermCalcTestSuite.testInvalidEval(); }
 } testDescription_suite_TermCalcTestSuite_testInvalidEval;
 
 static class TestDescription_suite_TermCalcTestSuite_testAssignment : public CxxTest::RealTestDescription {
 public:
- TestDescription_suite_TermCalcTestSuite_testAssignment() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 70, "testAssignment" ) {}
+ TestDescription_suite_TermCalcTestSuite_testAssignment() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 69, "testAssignment" ) {}
  void runTest() { suite_TermCalcTestSuite.testAssignment(); }
 } testDescription_suite_TermCalcTestSuite_testAssignment;
 

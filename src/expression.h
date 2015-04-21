@@ -1,5 +1,6 @@
 #pragma once
 #include "operator.h"
+#include "function.h"
 #include <stack>
 #include <vector>
 #include <memory>
@@ -47,10 +48,10 @@ class FunctionCallExpression : public Expression {
 private:
 	std::string mName;
 	std::vector<std::unique_ptr<Expression>> mArguments;
-	ApplyUnaryOperator mFunction;
+	const Function& mFunction;
 public:
 	//Creates a new function call expression
-	FunctionCallExpression(std::string name, std::vector<std::unique_ptr<Expression>> arguments, ApplyUnaryOperator function);
+	FunctionCallExpression(std::string name, std::vector<std::unique_ptr<Expression>> arguments, const Function& function);
 
 	virtual void evaluate(Environment& env, EvalStack& evalStack) const override;
 };

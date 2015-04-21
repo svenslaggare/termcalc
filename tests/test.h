@@ -2,6 +2,7 @@
 #include <vector>
 #include <cxxtest/TestSuite.h>
 #include "../src/calcengine.h"
+#include "../src/parser.h"
 
 using Tokens = std::vector<Token>;
 
@@ -14,13 +15,12 @@ private:
     }
 public:
     void testTokenizer() {
-        CalcEngine engine;
         TS_ASSERT_EQUALS(
-            engine.tokenize("2.0+5"),
+            Tokenizer::tokenize("2.0+5"),
             Tokens({ Token(2.0), Token(TokenType::OPERATOR, '+'), Token(5.0) }));
 
         TS_ASSERT_EQUALS(
-            engine.tokenize("(2.0+5) * 7.0"),
+            Tokenizer::tokenize("(2.0+5) * 7.0"),
             Tokens({ Token(TokenType::LEFT_PARENTHESIS), 
                      Token(2.0), Token(TokenType::OPERATOR, '+'), Token(5.0),
                      Token(TokenType::RIGHT_PARENTHESIS),
@@ -28,13 +28,12 @@ public:
     }
 
     void testDifferentBase() {
-        CalcEngine engine;
         TS_ASSERT_EQUALS(
-            engine.tokenize("0x1337"),
+            Tokenizer::tokenize("0x1337"),
             Tokens({ Token(4919) }));
 
         TS_ASSERT_EQUALS(
-            engine.tokenize("0b1010100"),
+            Tokenizer::tokenize("0b1010100"),
             Tokens({ Token(84) }));
     }
 
@@ -49,16 +48,16 @@ public:
 
     void testEvalVariables() {
         CalcEngine engine;
-        TS_ASSERT_DELTA(engine.eval("2 * pi"), 6.28, 0.1);
+        TS_ASSERT_DELTA(engine.eval("2 * pi"), 6.28, 0.01);
 
         Environment env;
         env.set("e", 2.718281828);
-        TS_ASSERT_DELTA(engine.eval("e^2", env), 7.38905609893, 0.1);
+        TS_ASSERT_DELTA(engine.eval("e^2", env), 7.38905609893, 0.01);
     }
 
     void testEvalFunctions() {
         CalcEngine engine;
-        TS_ASSERT_DELTA(engine.eval("sin(0.5)"), 0.479426, 0.1);       
+        TS_ASSERT_DELTA(engine.eval("sin(0.5)"), 0.479426, 0.01);       
     }
 
     void testInvalidEval() {

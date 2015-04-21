@@ -1,7 +1,5 @@
 #pragma once
-#include "token.h"
 #include <string>
-#include <vector>
 #include <unordered_map>
 
 //Represents an environment
@@ -30,9 +28,6 @@ class CalcEngine {
 public:	
 	//Creates a new calc engine
 	CalcEngine();
-
-	//Tokenizes the given string
-	std::vector<Token> tokenize(std::string str);
 
 	//Evaluates the given expression
 	double eval(std::string expressionString);

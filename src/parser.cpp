@@ -2,6 +2,135 @@
 #include "expression.h"
 #include <cmath>
 
+std::vector<Token> Tokenizer::tokenize(std::string str) {
+	std::vector<Token> tokens;
+	for (std::size_t i = 0; i < str.size(); i++) {
+		char current = str[i];
+
+		//Skip whitespaces
+		if (isspace(current)) {
+			continue;
+		}
+
+		//Parenthesis
+		if (current == '(') {
+			tokens.push_back({ TokenType::LEFT_PARENTHESIS });
+			continue;
+		}
+
+		if (current == ')') {
+			tokens.push_back({ TokenType::RIGHT_PARENTHESIS });
+			continue;
+		}
+
+		//Comma
+		if (current == ',') {
+			tokens.push_back({ TokenType::COMMA });
+			continue;
+		}
+
+		//Number
+		if (isdigit(current)) {
+			std::string num { current };
+			bool hasDecimalPoint = false;
+			int base = 10;
+
+			//Check if different base
+			if (current == '0' && (i + 1) < str.size()) {
+				char baseChar = str[i + 1];
+
+				if (baseChar == 'b') {
+					base = 2;
+					num = "";
+					i++;
+				} else if (baseChar == 'x') {
+					base = 16;
+					num = "";
+					i++;
+				}
+			}
+
+			while (true) {
+				std::size_t next = i + 1;
+
+				if (next >= str.size()) {
+					break;
+				}
+
+				current = std::tolower(str[next]);
+
+				if (current == '.') {
+					if (!hasDecimalPoint) {
+						if (base == 10) {
+							hasDecimalPoint = true;
+						} else {
+							throw std::runtime_error("Decimal points are only allowed in base 10.");
+						}
+					} else {
+						throw std::runtime_error("The token already contains a decimal point.");
+					}
+				} else {
+					if (base == 2) {
+						if (!(current == '0' || current == '1')) {
+							break;
+						}
+					} else if (base == 10) {
+						if (!isdigit(current)) {
+							break;
+						}
+					} else if (base == 16) {
+						if (!(isdigit(current)
+							  || current == 'a' || current == 'b' || current == 'c'
+							  || current == 'd' || current == 'e' || current == 'f')) {
+							break;
+						}
+					}
+				}
+
+				num += current;
+				i = next;
+			}
+
+			if (base == 10) {
+				tokens.push_back(Token(std::stod(num)));
+			} else {
+				tokens.push_back(Token(std::stoi(num, nullptr, base)));
+			}
+			continue;
+		}
+
+		//Identifier
+		if (isalpha(current)) {
+			std::string identifier { current };
+
+			while (true) {
+				std::size_t next = i + 1;
+
+				if (next >= str.size()) {
+					break;
+				}
+
+				current = str[next];
+
+				if (!(isdigit(current) || isalpha(current))) {
+					break;
+				}
+
+				identifier += current;
+				i = next;
+			}
+
+			tokens.push_back(Token(identifier));
+			continue;
+		}
+
+		//Operator
+		tokens.push_back({ TokenType::OPERATOR, current });
+	}
+
+	return tokens;
+}
+
 Parser::Parser(std::vector<Token> tokens)
 	: mTokens(tokens), mTokenIndex(-1) {
 
@@ -20,15 +149,16 @@ Parser::Parser(std::vector<Token> tokens)
 	};
 
 	mFunctions = {
-		{ "sin", [](double x) { return sin(x); } },
-		{ "cos", [](double x) { return cos(x); } },
-		{ "tan", [](double x) { return tan(x); } },
-		{ "sqrt", [](double x) { return sqrt(x); } },
-		{ "asin", [](double x) { return asin(x); } },
-		{ "acos", [](double x) { return acos(x); } },
-		{ "atan", [](double x) { return atan(x); } },
-		{ "ln", [](double x) { return log(x); } },
-		{ "log", [](double x) { return log10(x); } },
+		{ "sin", Function("sin", 1, [](FnArgs x) { return sin(x.at(0)); }) },
+		{ "cos", Function("cos", 1, [](FnArgs x) { return cos(x.at(0)); }) },
+		{ "tan", Function("tan", 1, [](FnArgs x) { return tan(x.at(0)); }) },
+		{ "sqrt", Function("sqrt", 1, [](FnArgs x) { return sqrt(x.at(0)); }) },
+		{ "asin", Function("asin", 1, [](FnArgs x) { return asin(x.at(0)); }) },
+		{ "acos", Function("acos", 1, [](FnArgs x) { return acos(x.at(0)); }) },
+		{ "atan", Function("sin", 1, [](FnArgs x) { return atan(x.at(0)); }) },
+		{ "ln", Function("ln", 1, [](FnArgs x) { return log(x.at(0)); }) },
+		{ "log", Function("log", 1, [](FnArgs x) { return log10(x.at(0)); }) },
+		{ "logb", Function("logb", 2, [](FnArgs x) { return  log(x.at(0)) / log(x.at(1)); }) },
 	};
 }
 
@@ -120,12 +250,14 @@ std::unique_ptr<Expression> Parser::parseIdentifierExpression() {
 		parseError("'" + identifier + "' is not a defined function.");
 	}
 
-	if (arguments.size() != 1) {
-		parseError("Expected 1 arguments but got " + std::to_string(arguments.size()));
+	auto& func = mFunctions.at(identifier);
+
+	if (arguments.size() != func.numArgs()) {
+		parseError("Expected " + std::to_string(func.numArgs()) + " arguments but got " + std::to_string(arguments.size()));
 	}
 
 	return std::unique_ptr<FunctionCallExpression>(
-		new FunctionCallExpression(identifier, std::move(arguments), mFunctions.at(identifier)));
+		new FunctionCallExpression(identifier, std::move(arguments), func));
 }
 
 std::unique_ptr<Expression> Parser::parseParenthesisExpression() {

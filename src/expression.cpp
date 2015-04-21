@@ -31,7 +31,7 @@ void VariableExpression::evaluate(Environment& env, EvalStack& evalStack) const 
 }
 
 //Function call
-FunctionCallExpression::FunctionCallExpression(std::string name, std::vector<std::unique_ptr<Expression>> arguments, ApplyUnaryOperator function)
+FunctionCallExpression::FunctionCallExpression(std::string name, std::vector<std::unique_ptr<Expression>> arguments, const Function& function)
 	: mName(name), mArguments(std::move(arguments)), mFunction(function) {
 
 }
@@ -41,9 +41,14 @@ void FunctionCallExpression::evaluate(Environment& env, EvalStack& evalStack) co
 		arg->evaluate(env, evalStack);
 	}
 
-	auto arg = evalStack.top();
-	evalStack.pop();
-	evalStack.push(mFunction(arg));
+	FnArgs args;
+	for (std::size_t i = 0; i < mFunction.numArgs(); i++) {
+		auto arg = evalStack.top();
+		evalStack.pop();
+		args.push_back(arg);
+	}
+
+	evalStack.push(mFunction.apply(args));
 }
 
 //Binary operator expression

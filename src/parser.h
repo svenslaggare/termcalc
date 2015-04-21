@@ -1,6 +1,7 @@
 #pragma once
 #include "token.h"
 #include "operator.h"
+#include "function.h"
 #include <vector>
 #include <memory>
 #include <unordered_map>
@@ -8,12 +9,18 @@
 class Token;
 class Expression;
 
+//Represents a tokenizer
+namespace Tokenizer {
+	//Tokenizes the given string
+	std::vector<Token> tokenize(std::string str);
+};
+
 //Represents a parser
 class Parser {
 private:
 	std::unordered_map<char, Operator> mBinaryOperators;
 	std::unordered_map<char, Operator> mUnaryOperators;
-	std::unordered_map<std::string, ApplyUnaryOperator> mFunctions;
+	std::unordered_map<std::string, Function> mFunctions;
 
 	std::vector<Token> mTokens;
 	Token mCurrentToken;

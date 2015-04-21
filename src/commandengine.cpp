@@ -1,5 +1,6 @@
 #include "commandengine.h"
 #include <cmath>
+#include <iostream>
 
 CommandEngine::CommandEngine() {
 	mCommands = {
