@@ -36,7 +36,7 @@ void VariableExpression::evaluate(Environment& env, EvalStack& evalStack) const 
 	if (env.getVariable(mName, value)) {
 		evalStack.push(value);
 	} else {
-		throw std::runtime_error("'" + mName + "' is not a defined variable.");
+		throw std::runtime_error("'" + mName + "' is not a defined variable. Type ':help' for a list of commands.");
 	}
 }
 
