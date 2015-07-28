@@ -2,12 +2,22 @@
 #include "calcengine.h"
 #include <cmath>
 
-//Number expression
-NumberExpression::NumberExpression(double value): mValue(value) {
+
+//Double expression
+DoubleExpression::DoubleExpression(double value): mValue(value) {
 
 }
 
-void NumberExpression::evaluate(Environment& env, EvalStack& evalStack) const {
+void DoubleExpression::evaluate(Environment& env, EvalStack& evalStack) const {
+	evalStack.push(mValue);
+}
+
+//Long expression
+LongExpression::LongExpression(long value): mValue(value) {
+
+}
+
+void LongExpression::evaluate(Environment& env, EvalStack& evalStack) const {
 	evalStack.push(mValue);
 }
 
@@ -22,7 +32,7 @@ std::string VariableExpression::name() const {
 }
 
 void VariableExpression::evaluate(Environment& env, EvalStack& evalStack) const {
-	double value;
+	ResultValue value;
 	if (env.getVariable(mName, value)) {
 		evalStack.push(value);
 	} else {
@@ -45,7 +55,7 @@ void FunctionCallExpression::evaluate(Environment& env, EvalStack& evalStack) co
 	for (std::size_t i = 0; i < mFunction.numArgs(); i++) {
 		auto arg = evalStack.top();
 		evalStack.pop();
-		args.push_back(arg);
+		args.push_back(arg.doubleValue());
 	}
 
 	evalStack.push(mFunction.apply(args));
@@ -64,7 +74,7 @@ void BinaryOperatorExpression::evaluate(Environment& env, EvalStack& evalStack) 
 		if (var != nullptr) {
 			mRHS->evaluate(env, evalStack);
 
-			auto value = evalStack.top();
+			auto value = evalStack.top().doubleValue();
 			evalStack.pop();
 
 			env.set(var->name(), value);
@@ -83,7 +93,56 @@ void BinaryOperatorExpression::evaluate(Environment& env, EvalStack& evalStack) 
 		auto op1 = evalStack.top();
 		evalStack.pop();
 
-		evalStack.push(mOp.apply(op1, op2));
+		bool floatMode = true;
+
+		if (op1.type() == op2.type()) {
+			floatMode = op1.type() == ResultValueType::FLOAT;
+		}
+
+		switch (mOp.op()) {
+		case '+':
+			if (floatMode) {
+				evalStack.push(op1.doubleValue() + op2.doubleValue());
+			} else {
+				evalStack.push(op1.longValue() + op2.longValue());
+			}
+			break;
+		case '-':
+			if (floatMode) {
+				evalStack.push(op1.doubleValue() - op2.doubleValue());
+			} else {
+				evalStack.push(op1.longValue() - op2.longValue());
+			}
+			break;
+		case '*':
+			if (floatMode) {
+				evalStack.push(op1.doubleValue() * op2.doubleValue());
+			} else {
+				evalStack.push(op1.longValue() * op2.longValue());
+			}
+			break;
+		case '/':
+			if (floatMode) {
+				evalStack.push(op1.doubleValue() / op2.doubleValue());
+			} else {
+				evalStack.push(op1.longValue() / op2.longValue());
+			}
+			break;
+		case '%':
+			if (floatMode) {
+				evalStack.push((double)((long)op1.doubleValue() % (long)op2.doubleValue()));
+			} else {
+				evalStack.push(op1.longValue() % op2.longValue());
+			}
+			break;
+		case '^':
+			if (floatMode) {
+				evalStack.push(pow(op1.doubleValue(), op2.doubleValue()));
+			} else {
+				evalStack.push((long)pow(op1.longValue(), op2.longValue()));
+			}
+			break;
+		}
 	}
 }
 
@@ -99,5 +158,13 @@ void UnaryOperatorExpression::evaluate(Environment& env, EvalStack& evalStack) c
 	auto operand = evalStack.top();
 	evalStack.pop();
 
-	evalStack.push(mOp.apply(operand));
+	switch (mOp.op()) {
+	case '-':
+		if (operand.type() == ResultValueType::FLOAT) {
+			evalStack.push(-operand.doubleValue());
+		} else {
+			evalStack.push(-operand.longValue());
+		}
+		break;
+	}
 }

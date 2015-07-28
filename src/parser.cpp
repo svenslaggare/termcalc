@@ -94,7 +94,7 @@ std::vector<Token> Tokenizer::tokenize(std::string str) {
 			if (base == 10) {
 				tokens.push_back(Token(std::stod(num)));
 			} else {
-				tokens.push_back(Token(std::stoi(num, nullptr, base)));
+				tokens.push_back(Token(std::stol(num, nullptr, base)));
 			}
 			continue;
 		}
@@ -131,21 +131,21 @@ std::vector<Token> Tokenizer::tokenize(std::string str) {
 	return tokens;
 }
 
-Parser::Parser(std::vector<Token> tokens)
-	: mTokens(tokens), mTokenIndex(-1) {
+Parser::Parser(std::vector<Token> tokens, ResultValueType evalMode)
+	: mTokens(tokens), mTokenIndex(-1), mEvalMode(evalMode) {
 
 	mBinaryOperators = {
-		{ '^', Operator('^', 4, OperatorAssociativity::RIGHT, [](double x, double y) { return pow(x, y); }) },
-		{ '*', Operator('*', 3, OperatorAssociativity::LEFT, [](double x, double y) { return x * y; }) },
-		{ '/', Operator('/', 3, OperatorAssociativity::LEFT, [](double x, double y) { return x / y; }) },
-		{ '%', Operator('%', 3, OperatorAssociativity::LEFT, [](double x, double y) { return (int)x % (int)y; }) },
-		{ '+', Operator('+', 2, OperatorAssociativity::LEFT, [](double x, double y) { return x + y; }) },
-		{ '-', Operator('-', 2, OperatorAssociativity::LEFT, [](double x, double y) { return x - y; }) },
+		{ '^', Operator('^', 4, OperatorAssociativity::RIGHT) },
+		{ '*', Operator('*', 3, OperatorAssociativity::LEFT) },
+		{ '/', Operator('/', 3, OperatorAssociativity::LEFT) },
+		{ '%', Operator('%', 3, OperatorAssociativity::LEFT) },
+		{ '+', Operator('+', 2, OperatorAssociativity::LEFT) },
+		{ '-', Operator('-', 2, OperatorAssociativity::LEFT) },
 		{ '=', Operator('=', 1, OperatorAssociativity::RIGHT) }
 	};
 
 	mUnaryOperators = {
-		{ '-', Operator('-', 5, OperatorAssociativity::LEFT, [](double x) { return -x; }) },
+		{ '-', Operator('-', 5, OperatorAssociativity::LEFT, true) },
 	};
 
 	mFunctions = {
@@ -201,10 +201,16 @@ int Parser::getTokenPrecedence() {
 	return -1;
 }
 
-std::unique_ptr<Expression> Parser::parseNumberExpression() {
-	double value = mCurrentToken.doubleValue();
-	nextToken(); //Consume the number
-	return std::unique_ptr<NumberExpression>(new NumberExpression(value));
+std::unique_ptr<Expression> Parser::parseDoubleExpression() {
+	if (mEvalMode == ResultValueType::FLOAT) {
+		double value = mCurrentToken.doubleValue();
+		nextToken(); //Consume the number
+		return std::unique_ptr<DoubleExpression>(new DoubleExpression(value));
+	} else {
+		long value = mCurrentToken.longValue();
+		nextToken(); //Consume the number
+		return std::unique_ptr<LongExpression>(new LongExpression(value));
+	}
 }
 
 std::unique_ptr<Expression> Parser::parseIdentifierExpression() {
@@ -281,7 +287,7 @@ std::unique_ptr<Expression> Parser::parseParenthesisExpression() {
 std::unique_ptr<Expression> Parser::parsePrimaryExpression() {
 	switch (mCurrentToken.type()) {
 	case TokenType::NUMBER:
-		return parseNumberExpression();
+		return parseDoubleExpression();
 	case TokenType::IDENTIFIER:
 		return parseIdentifierExpression();
 	case TokenType::LEFT_PARENTHESIS:

@@ -7,22 +7,27 @@ Token::Token()
 }
 
 Token::Token(TokenType type)
-	: mType(type), mDoubleValue(0), mCharValue(0) {
+	: mType(type), mDoubleValue(0.0), mLongValue(0), mCharValue(0) {
 
 }
 
 Token::Token(double value)
-	: mType(TokenType::NUMBER), mDoubleValue(value), mCharValue(0) {
+	: mType(TokenType::NUMBER), mDoubleValue(value), mLongValue(value), mCharValue(0) {
+
+}
+
+Token::Token(long value)
+	: mType(TokenType::NUMBER), mDoubleValue(value), mLongValue(value), mCharValue(0) {
 
 }
 
 Token::Token(TokenType type, char value)
-	: mType(type), mDoubleValue(0), mCharValue(value) {
+	: mType(type), mDoubleValue(0), mLongValue(0), mCharValue(value) {
 
 }
 
 Token::Token(std::string identifier)
-	: mType(TokenType::IDENTIFIER), mDoubleValue(0), mCharValue(0), mIdentifier(identifier) {
+	: mType(TokenType::IDENTIFIER), mDoubleValue(0), mLongValue(0), mCharValue(0), mIdentifier(identifier) {
 
 }
 
@@ -32,6 +37,10 @@ TokenType Token::type() const {
 
 double Token::doubleValue() const {
 	return mDoubleValue;
+}
+
+long Token::longValue() const {
+	return mLongValue;
 }
 
 char Token::charValue() const {

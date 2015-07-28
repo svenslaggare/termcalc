@@ -10,19 +10,19 @@
 //Environment
 Environment::Environment() {
 	mValues = {
-		{ "pi", 3.141592653589793238463 }
+		{ "pi", ResultValue(3.141592653589793238463) }
 	};
 }
 
-const std::unordered_map<std::string, double>& Environment::variables() {
+const std::unordered_map<std::string, ResultValue>& Environment::variables() {
 	return mValues;
 }
 
-void Environment::set(std::string variable, double value) {
+void Environment::set(std::string variable, ResultValue value) {
 	mValues[variable] = value;
 }
 
-bool Environment::getVariable(std::string variable, double& value) const {
+bool Environment::getVariable(std::string variable, ResultValue& value) const {
 	if (mValues.count(variable) > 0) {
 		value = mValues.at(variable);
 		return true;
@@ -31,29 +31,34 @@ bool Environment::getVariable(std::string variable, double& value) const {
 	}
 }
 
-double Environment::valueOf(std::string variable) const {
+ResultValue Environment::valueOf(std::string variable) const {
 	return mValues.at(variable);
 }
 
 //Calc engine
-CalcEngine::CalcEngine() {
+CalcEngine::CalcEngine()
+	: mEvalMode(ResultValueType::FLOAT) {
 
 }
 
-double CalcEngine::eval(std::string expressionString) {
+void CalcEngine::setEvalMode(ResultValueType evalMode) {
+	mEvalMode = evalMode;
+}
+
+ResultValue CalcEngine::eval(std::string expressionString) {
 	Environment env;
 	return eval(expressionString, env);
 }
 
-double CalcEngine::eval(std::string expressionString, Environment& env) {
+ResultValue CalcEngine::eval(std::string expressionString, Environment& env) {
 	//Tokenize
 	auto tokens = Tokenizer::tokenize(expressionString);
 	tokens.push_back(Token(TokenType::END_OF_EXPRESSION));
 
 	//Parse
-	Parser parser(tokens);
+	Parser parser(tokens, mEvalMode);
 	auto expression = parser.parse();
-	std::stack<double> evalStack;
+	EvalStack evalStack;
 
 	//Evaluate
 	expression->evaluate(env, evalStack);

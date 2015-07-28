@@ -30,34 +30,34 @@ public:
     void testDifferentBase() {
         TS_ASSERT_EQUALS(
             Tokenizer::tokenize("0x1337"),
-            Tokens({ Token(4919) }));
+            Tokens({ Token(4919L) }));
 
         TS_ASSERT_EQUALS(
             Tokenizer::tokenize("0b1010100"),
-            Tokens({ Token(84) }));
+            Tokens({ Token(84L) }));
     }
 
     void testEval() {
         CalcEngine engine;
-        TS_ASSERT_EQUALS(engine.eval("3+2"), 5);
-        TS_ASSERT_EQUALS(engine.eval("(2 + 5) * 3"), 21);
-        TS_ASSERT_EQUALS(engine.eval("5 - 3"), 2);
-        TS_ASSERT_EQUALS(engine.eval("2^3"), 8);
-        TS_ASSERT_EQUALS(engine.eval("-3"), -3);
+        TS_ASSERT_EQUALS(engine.eval("3+2"), ResultValue(5.0));
+        TS_ASSERT_EQUALS(engine.eval("(2 + 5) * 3"), ResultValue(21.0));
+        TS_ASSERT_EQUALS(engine.eval("5 - 3"), ResultValue(2.0));
+        TS_ASSERT_EQUALS(engine.eval("2^3"), ResultValue(8.0));
+        TS_ASSERT_EQUALS(engine.eval("-3"), ResultValue(-3.0));
     }
 
     void testEvalVariables() {
         CalcEngine engine;
-        TS_ASSERT_DELTA(engine.eval("2 * pi"), 6.28, 0.01);
+        TS_ASSERT_DELTA(engine.eval("2 * pi"), ResultValue(6.28), 0.01);
 
         Environment env;
         env.set("e", 2.718281828);
-        TS_ASSERT_DELTA(engine.eval("e^2", env), 7.38905609893, 0.01);
+        TS_ASSERT_DELTA(engine.eval("e^2", env), ResultValue(7.38905609893), 0.01);
     }
 
     void testEvalFunctions() {
         CalcEngine engine;
-        TS_ASSERT_DELTA(engine.eval("sin(0.5)"), 0.479426, 0.01);       
+        TS_ASSERT_DELTA(engine.eval("sin(0.5)"), ResultValue(0.479426), 0.01);       
     }
 
     void testInvalidEval() {
@@ -69,7 +69,7 @@ public:
     void testAssignment() {
         CalcEngine engine;
         Environment env;
-        TS_ASSERT_EQUALS(engine.eval("x = 2 * 5", env), 10);
-        TS_ASSERT_EQUALS(env.valueOf("x"), 10);
+        TS_ASSERT_EQUALS(engine.eval("x = 2 * 5", env), ResultValue(10.0));
+        TS_ASSERT_EQUALS(env.valueOf("x"), ResultValue(10.0));
     }
 };

@@ -32,8 +32,8 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(HEADERS)
 
 test: $(TESTS_DIR)/test.h $(OBJDIR) $(TEST_OBJECTS)
 	mkdir -p $(TEST_RUNNERS_DIR)
-	cxxtestgen --error-printer -o $(TEST_RUNNERS_DIR)/vmtest_runner.cpp $(TESTS_DIR)/test.h
-	$(CC) $(LDFLAGS) -o $(TEST_EXECUTABLE) -I $(CXXTEST) $(TEST_OBJECTS) $(TEST_RUNNERS_DIR)/vmtest_runner.cpp
+	cxxtestgen --error-printer -o $(TEST_RUNNERS_DIR)/test-runner.cpp $(TESTS_DIR)/test.h
+	$(CC) $(LDFLAGS) -o $(TEST_EXECUTABLE) -I $(CXXTEST) $(TEST_OBJECTS) $(TEST_RUNNERS_DIR)/test-runner.cpp
 	./$(TEST_EXECUTABLE)
 
 run: $(EXECUTABLE)

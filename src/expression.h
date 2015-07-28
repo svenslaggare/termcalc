@@ -1,12 +1,13 @@
 #pragma once
 #include "operator.h"
 #include "function.h"
+#include "resultvalue.h"
 #include <stack>
 #include <vector>
 #include <memory>
 #include <string>
 
-using EvalStack = std::stack<double>;
+using EvalStack = std::stack<ResultValue>;
 class Environment;
 
 //Represents an expression
@@ -18,13 +19,24 @@ public:
 	virtual void evaluate(Environment& env, EvalStack& evalStack) const = 0;
 };
 
-//Represents a number expression
-class NumberExpression : public Expression {
+//Represents a double expression
+class DoubleExpression : public Expression {
 private:
 	double mValue;
 public:
-	//Creates a new number expresssion
-	NumberExpression(double value);
+	//Creates a new double expresssion
+	DoubleExpression(double value);
+
+	virtual void evaluate(Environment& env, EvalStack& evalStack) const override;
+};
+
+//Represents a long expression
+class LongExpression : public Expression {
+private:
+	long mValue;
+public:
+	//Creates a new long expresssion
+	LongExpression(long value);
 
 	virtual void evaluate(Environment& env, EvalStack& evalStack) const override;
 };
