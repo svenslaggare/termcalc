@@ -12,7 +12,7 @@ CommandEngine::CommandEngine() {
 			std::cout << cmdStart << ":dec           Sets to display the result in base 10. (default)" << std::endl;
 			std::cout << cmdStart << ":hex           Sets to display the result in base 16." << std::endl;
 			std::cout << cmdStart << ":vars          Prints the defined variables." << std::endl;
-			std::cout << cmdStart << ":mode          Sets the evaluation mode: float (default) or integer." << std::endl;
+			std::cout << cmdStart << ":mode          Sets the evaluation mode: float (default) or int." << std::endl;
 			return false;
 		} },
 		{ "exit", [](Args args) {

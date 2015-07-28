@@ -13,6 +13,6 @@ std::size_t Function::numArgs() const {
 	return mNumArgs;
 }
 
-double Function::apply(FnArgs args) const {
+ResultValue Function::apply(FnArgs args) const {
 	return mFunc(args);
 }

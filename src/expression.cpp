@@ -55,7 +55,7 @@ void FunctionCallExpression::evaluate(Environment& env, EvalStack& evalStack) co
 	for (std::size_t i = 0; i < mFunction.numArgs(); i++) {
 		auto arg = evalStack.top();
 		evalStack.pop();
-		args.push_back(arg.doubleValue());
+		args.push_back(arg);
 	}
 
 	evalStack.push(mFunction.apply(args));

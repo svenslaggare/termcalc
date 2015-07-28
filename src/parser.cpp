@@ -149,16 +149,16 @@ Parser::Parser(std::vector<Token> tokens, ResultValueType evalMode)
 	};
 
 	mFunctions = {
-		{ "sin", Function("sin", 1, [](FnArgs x) { return sin(x.at(0)); }) },
-		{ "cos", Function("cos", 1, [](FnArgs x) { return cos(x.at(0)); }) },
-		{ "tan", Function("tan", 1, [](FnArgs x) { return tan(x.at(0)); }) },
-		{ "sqrt", Function("sqrt", 1, [](FnArgs x) { return sqrt(x.at(0)); }) },
-		{ "asin", Function("asin", 1, [](FnArgs x) { return asin(x.at(0)); }) },
-		{ "acos", Function("acos", 1, [](FnArgs x) { return acos(x.at(0)); }) },
-		{ "atan", Function("sin", 1, [](FnArgs x) { return atan(x.at(0)); }) },
-		{ "ln", Function("ln", 1, [](FnArgs x) { return log(x.at(0)); }) },
-		{ "log", Function("log", 1, [](FnArgs x) { return log10(x.at(0)); }) },
-		{ "logb", Function("logb", 2, [](FnArgs x) { return  log(x.at(0)) / log(x.at(1)); }) },
+		{ "sin", Function("sin", 1, [this](FnArgs x) { return ResultValue(mEvalMode, sin(x.at(0).doubleValue())); }) },
+		{ "cos", Function("cos", 1, [this](FnArgs x) { return ResultValue(mEvalMode, cos(x.at(0).doubleValue())); }) },
+		{ "tan", Function("tan", 1, [this](FnArgs x) { return ResultValue(mEvalMode, tan(x.at(0).doubleValue())); }) },
+		{ "sqrt", Function("sqrt", 1, [this](FnArgs x) { return ResultValue(mEvalMode, sqrt(x.at(0).doubleValue())); }) },
+		{ "asin", Function("asin", 1, [this](FnArgs x) { return ResultValue(mEvalMode, asin(x.at(0).doubleValue())); }) },
+		{ "acos", Function("acos", 1, [this](FnArgs x) { return ResultValue(mEvalMode, acos(x.at(0).doubleValue())); }) },
+		{ "atan", Function("sin", 1, [this](FnArgs x) { return ResultValue(mEvalMode, atan(x.at(0).doubleValue())); }) },
+		{ "ln", Function("ln", 1, [this](FnArgs x) { return ResultValue(mEvalMode, log(x.at(0).doubleValue())); }) },
+		{ "log", Function("log", 1, [this](FnArgs x) { return ResultValue(mEvalMode, log10(x.at(0).doubleValue())); }) },
+		{ "logb", Function("logb", 2, [this](FnArgs x) { return  ResultValue(mEvalMode, log(x.at(0).doubleValue()) / log(x.at(1).doubleValue())); }) },
 	};
 }
 

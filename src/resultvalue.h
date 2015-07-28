@@ -19,6 +19,9 @@ public:
 	//Creates a new double value
 	ResultValue(double value);
 
+	//Creates a new value of the given type.
+	ResultValue(ResultValueType type, double value);
+
 	//Crate a new result value
 	ResultValue();
 

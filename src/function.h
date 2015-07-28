@@ -1,10 +1,11 @@
 #pragma once
+#include "resultvalue.h"
 #include <string>
 #include <functional>
 #include <vector>
 
-using FnArgs = std::vector<double>;
-using ApplyFunction = std::function<double(FnArgs)>;
+using FnArgs = std::vector<ResultValue>;
+using ApplyFunction = std::function<ResultValue(FnArgs)>;
 
 //Represents a function
 class Function {
@@ -23,5 +24,5 @@ public:
 	std::size_t numArgs() const;
 
 	//Applies the function to the given arguments
-	double apply(FnArgs args) const;
+	ResultValue apply(FnArgs args) const;
 };

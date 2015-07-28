@@ -10,6 +10,11 @@ ResultValue::ResultValue(double value)
 
 }
 
+ResultValue::ResultValue(ResultValueType type, double value)
+	:  mType(type), mLongValue(value), mDoubleValue(value) {
+
+}
+
 ResultValue::ResultValue()
 	:  mType(ResultValueType::FLOAT), mLongValue(0), mDoubleValue(0.0) {
 
