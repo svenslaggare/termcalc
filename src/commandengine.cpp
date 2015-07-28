@@ -91,8 +91,10 @@ bool CommandEngine::execute(std::string line) {
 			parts.erase(parts.begin());
 			return mCommands[cmd](parts);
 		} else {
-			std::cout << "There exists no command called '" + cmd + "'.";
+			std::cout << "There exists no command called '" + cmd + "'." << std::endl;
 		}
+
+		return false;
 	}
 
 	if (line == "") {
