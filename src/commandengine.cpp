@@ -55,6 +55,7 @@ CommandEngine::CommandEngine() {
 	//Aliases
 	mCommands["q"] = mCommands["exit"];
 	mCommands["quit"] = mCommands["exit"];
+	mCommands["h"] = mCommands["help"];
 }
 
 std::string toBase(int base, long value) {
@@ -91,7 +92,7 @@ bool CommandEngine::execute(std::string line) {
 			parts.erase(parts.begin());
 			return mCommands[cmd](parts);
 		} else {
-			std::cout << "There exists no command called '" + cmd + "'." << std::endl;
+			std::cout << "There exists no command called '" + cmd + "'. Type ':help' for a list of commands." << std::endl;
 		}
 
 		return false;
