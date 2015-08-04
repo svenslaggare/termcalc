@@ -1,6 +1,7 @@
 #include "commandengine.h"
 #include <cmath>
 #include <iostream>
+#include <sstream> 
 
 CommandEngine::CommandEngine() {
 	mCommands = {
@@ -12,6 +13,7 @@ CommandEngine::CommandEngine() {
 			std::cout << cmdStart << ":dec           Sets to display the result in base 10. (default)" << std::endl;
 			std::cout << cmdStart << ":hex           Sets to display the result in base 16." << std::endl;
 			std::cout << cmdStart << ":vars          Prints the defined variables." << std::endl;
+			std::cout << cmdStart << ":funcs         Prints the defined functions." << std::endl;
 			std::cout << cmdStart << ":mode          Sets the evaluation mode: float (default) or int." << std::endl;
 			return false;
 		} },
@@ -34,6 +36,35 @@ CommandEngine::CommandEngine() {
 			for (auto var : mEnv.variables()) {
 				std::cout << var.first << ": " << var.second << std::endl;
 			}
+			return false;
+		} },
+		{ "funcs", [&](Args args) {
+			//Compute the length of the longest function signature
+			int maxFuncLength = 0;
+			std::vector<std::string> funcStrs;
+
+			for (auto current : mEngine.functions()) {
+				std::stringstream strstream;
+				auto func = current.second;
+				strstream << func;
+				funcStrs.push_back(strstream.str());
+
+				strstream.seekg(0, std::ios::end);
+				maxFuncLength = std::max(maxFuncLength, (int)strstream.tellg());
+			}	
+
+			maxFuncLength += 3;
+
+			std::size_t i = 0;
+			for (auto current : mEngine.functions()) {
+				auto func = current.second;
+				auto funcStr = funcStrs[i];
+				std::string spaceStr(maxFuncLength - funcStr.length(), ' ');
+
+				std::cout << funcStr << spaceStr << func.infoText() << std::endl;
+				i++;
+			}
+
 			return false;
 		} },
 		{ "mode", [&](Args args) {

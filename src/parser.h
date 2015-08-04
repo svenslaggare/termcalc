@@ -1,14 +1,12 @@
 #pragma once
 #include "token.h"
-#include "operator.h"
-#include "function.h"
 #include "resultvalue.h"
 #include <vector>
 #include <memory>
-#include <unordered_map>
 
 class Token;
 class Expression;
+class CalcEngine;
 
 //Represents a tokenizer
 namespace Tokenizer {
@@ -19,15 +17,11 @@ namespace Tokenizer {
 //Represents a parser
 class Parser {
 private:
-	std::unordered_map<char, Operator> mBinaryOperators;
-	std::unordered_map<char, Operator> mUnaryOperators;
-	std::unordered_map<std::string, Function> mFunctions;
+	const CalcEngine& mCalcEngine;
 
 	std::vector<Token> mTokens;
 	Token mCurrentToken;
 	int mTokenIndex;
-
-	ResultValueType mEvalMode;
 
 	//Signals that a parse error has occured
 	void parseError(std::string message);
@@ -63,7 +57,7 @@ private:
 	std::unique_ptr<Expression> parseExpression();
 public:
 	//Creates a new parser
-	Parser(std::vector<Token> tokens, ResultValueType evalMode = ResultValueType::FLOAT);
+	Parser(std::vector<Token> tokens, const CalcEngine& calcEngine);
 
 	//Parses the tokens
 	std::unique_ptr<Expression> parse();

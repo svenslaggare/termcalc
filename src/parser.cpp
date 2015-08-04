@@ -1,5 +1,6 @@
 #include "parser.h"
 #include "expression.h"
+#include "calcengine.h"
 #include <cmath>
 
 std::vector<Token> Tokenizer::tokenize(std::string str) {
@@ -131,35 +132,9 @@ std::vector<Token> Tokenizer::tokenize(std::string str) {
 	return tokens;
 }
 
-Parser::Parser(std::vector<Token> tokens, ResultValueType evalMode)
-	: mTokens(tokens), mTokenIndex(-1), mEvalMode(evalMode) {
+Parser::Parser(std::vector<Token> tokens, const CalcEngine& calcEngine)
+	:  mCalcEngine(calcEngine), mTokens(tokens), mTokenIndex(-1) {
 
-	mBinaryOperators = {
-		{ '^', Operator('^', 4, OperatorAssociativity::RIGHT) },
-		{ '*', Operator('*', 3, OperatorAssociativity::LEFT) },
-		{ '/', Operator('/', 3, OperatorAssociativity::LEFT) },
-		{ '%', Operator('%', 3, OperatorAssociativity::LEFT) },
-		{ '+', Operator('+', 2, OperatorAssociativity::LEFT) },
-		{ '-', Operator('-', 2, OperatorAssociativity::LEFT) },
-		{ '=', Operator('=', 1, OperatorAssociativity::RIGHT) }
-	};
-
-	mUnaryOperators = {
-		{ '-', Operator('-', 5, OperatorAssociativity::LEFT, true) },
-	};
-
-	mFunctions = {
-		{ "sin", Function("sin", 1, [this](FnArgs x) { return ResultValue(mEvalMode, sin(x.at(0).doubleValue())); }) },
-		{ "cos", Function("cos", 1, [this](FnArgs x) { return ResultValue(mEvalMode, cos(x.at(0).doubleValue())); }) },
-		{ "tan", Function("tan", 1, [this](FnArgs x) { return ResultValue(mEvalMode, tan(x.at(0).doubleValue())); }) },
-		{ "sqrt", Function("sqrt", 1, [this](FnArgs x) { return ResultValue(mEvalMode, sqrt(x.at(0).doubleValue())); }) },
-		{ "asin", Function("asin", 1, [this](FnArgs x) { return ResultValue(mEvalMode, asin(x.at(0).doubleValue())); }) },
-		{ "acos", Function("acos", 1, [this](FnArgs x) { return ResultValue(mEvalMode, acos(x.at(0).doubleValue())); }) },
-		{ "atan", Function("sin", 1, [this](FnArgs x) { return ResultValue(mEvalMode, atan(x.at(0).doubleValue())); }) },
-		{ "ln", Function("ln", 1, [this](FnArgs x) { return ResultValue(mEvalMode, log(x.at(0).doubleValue())); }) },
-		{ "log", Function("log", 1, [this](FnArgs x) { return ResultValue(mEvalMode, log10(x.at(0).doubleValue())); }) },
-		{ "logb", Function("logb", 2, [this](FnArgs x) { return  ResultValue(mEvalMode, log(x.at(0).doubleValue()) / log(x.at(1).doubleValue())); }) },
-	};
 }
 
 void Parser::parseError(std::string message) {
@@ -192,8 +167,8 @@ int Parser::getTokenPrecedence() {
 		return -1;
 	}
 
-	if (mBinaryOperators.count(mCurrentToken.charValue()) > 0) {
-		return mBinaryOperators.at(mCurrentToken.charValue()).precedence();
+	if (mCalcEngine.binaryOperators().count(mCurrentToken.charValue()) > 0) {
+		return mCalcEngine.binaryOperators().at(mCurrentToken.charValue()).precedence();
 	} else {
 		parseError("'" + std::string { mCurrentToken.charValue() } + "' is not a defined binary operator.");
 	}
@@ -202,7 +177,7 @@ int Parser::getTokenPrecedence() {
 }
 
 std::unique_ptr<Expression> Parser::parseDoubleExpression() {
-	if (mEvalMode == ResultValueType::FLOAT) {
+	if (mCalcEngine.evalMode() == ResultValueType::FLOAT) {
 		double value = mCurrentToken.doubleValue();
 		nextToken(); //Consume the number
 		return std::unique_ptr<DoubleExpression>(new DoubleExpression(value));
@@ -252,11 +227,11 @@ std::unique_ptr<Expression> Parser::parseIdentifierExpression() {
 	//Eat the ')'
 	nextToken();
 
-	if (mFunctions.count(identifier) == 0) {
+	if (mCalcEngine.functions().count(identifier) == 0) {
 		parseError("'" + identifier + "' is not a defined function.");
 	}
 
-	auto& func = mFunctions.at(identifier);
+	auto& func = mCalcEngine.functions().at(identifier);
 
 	if (arguments.size() != func.numArgs()) {
 		parseError("Expected " + std::to_string(func.numArgs()) + " arguments but got " + std::to_string(arguments.size()));
@@ -308,7 +283,7 @@ std::unique_ptr<Expression> Parser::parseBinaryOpRHS(int precedence, std::unique
 		}
 
 		char opChar = mCurrentToken.charValue();
-		Operator op = mBinaryOperators.at(opChar); 
+		Operator op = mCalcEngine.binaryOperators().at(opChar); 
 
 		nextToken(); //Eat the operator
 
@@ -348,12 +323,12 @@ std::unique_ptr<Expression> Parser::parseUnaryExpression() {
 	auto operand = parseUnaryExpression();
 
 	if (operand != nullptr) {
-		if (mUnaryOperators.count(opChar) == 0) {
+		if (mCalcEngine.unaryOperators().count(opChar) == 0) {
 			parseError("'" + std::string { opChar } + "' is not a defined unary operator.");
 		}
 
 		return std::unique_ptr<UnaryOperatorExpression>(
-			new UnaryOperatorExpression(mUnaryOperators.at(opChar), std::move(operand)));
+			new UnaryOperatorExpression(mCalcEngine.unaryOperators().at(opChar), std::move(operand)));
 	} 
 
 	return operand;

@@ -1,5 +1,7 @@
 #pragma once
 #include "resultvalue.h"
+#include "operator.h"
+#include "function.h"
 #include <string>
 #include <unordered_map>
 
@@ -32,9 +34,25 @@ public:
 class CalcEngine {
 private:
 	ResultValueType mEvalMode;	
+
+	std::unordered_map<char, Operator> mBinaryOperators;
+	std::unordered_map<char, Operator> mUnaryOperators;
+	std::unordered_map<std::string, Function> mFunctions;
 public:	
 	//Creates a new calc engine
 	CalcEngine();
+
+	//Returns the binary operators
+	const std::unordered_map<char, Operator>& binaryOperators() const;
+
+	//Returns the unary operators
+	const std::unordered_map<char, Operator>& unaryOperators() const;
+
+	//Returns the functions
+	const std::unordered_map<std::string, Function>& functions() const;
+
+	//Returns the eval mode
+	ResultValueType evalMode() const;
 
 	//Sets the eval mode
 	void setEvalMode(ResultValueType evalMode);

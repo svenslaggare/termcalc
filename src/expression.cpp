@@ -55,7 +55,7 @@ void FunctionCallExpression::evaluate(Environment& env, EvalStack& evalStack) co
 	for (std::size_t i = 0; i < mFunction.numArgs(); i++) {
 		auto arg = evalStack.top();
 		evalStack.pop();
-		args.push_back(arg);
+		args.insert(args.begin(), arg);
 	}
 
 	evalStack.push(mFunction.apply(args));
@@ -142,6 +142,20 @@ void BinaryOperatorExpression::evaluate(Environment& env, EvalStack& evalStack) 
 				evalStack.push((long)pow(op1.longValue(), op2.longValue()));
 			}
 			break;
+		case '|':
+			if (floatMode) {
+				evalStack.push((double)((long)op1.doubleValue() | (long)op2.doubleValue()));
+			} else {
+				evalStack.push(op1.longValue() | op2.longValue());
+			}
+			break;
+		case '&':
+			if (floatMode) {
+				evalStack.push((double)((long)op1.doubleValue() & (long)op2.doubleValue()));
+			} else {
+				evalStack.push(op1.longValue() & op2.longValue());
+			}
+			break;	
 		}
 	}
 }
@@ -164,6 +178,13 @@ void UnaryOperatorExpression::evaluate(Environment& env, EvalStack& evalStack) c
 			evalStack.push(-operand.doubleValue());
 		} else {
 			evalStack.push(-operand.longValue());
+		}
+		break;
+	case '~':
+		if (operand.type() == ResultValueType::FLOAT) {
+			evalStack.push((double)(~(long)operand.doubleValue()));
+		} else {
+			evalStack.push(~operand.longValue());
 		}
 		break;
 	}
