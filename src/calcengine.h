@@ -7,6 +7,7 @@
 class Environment {
 private:
 	std::unordered_map<std::string, ResultValue> mValues;
+	ResultValueType mEvalMode;
 public:
 	//Creates a new environment
 	Environment();
@@ -18,10 +19,13 @@ public:
 	void set(std::string variable, ResultValue value);
 
 	//Gets the given variable
-	bool getVariable(std::string variable, ResultValue& value) const;
+	bool getVariable(std::string variable, ResultValue& value, bool applyConversion = false) const;
 
 	//Returns the value of the given variable
 	ResultValue valueOf(std::string variable) const;
+
+	//Sets the eval mode
+	void setEvalMode(ResultValueType evalMode);
 };
 
 //Represents the calculation engine

@@ -33,7 +33,7 @@ std::string VariableExpression::name() const {
 
 void VariableExpression::evaluate(Environment& env, EvalStack& evalStack) const {
 	ResultValue value;
-	if (env.getVariable(mName, value)) {
+	if (env.getVariable(mName, value, true)) {
 		evalStack.push(value);
 	} else {
 		throw std::runtime_error("'" + mName + "' is not a defined variable. Type ':help' for a list of commands.");

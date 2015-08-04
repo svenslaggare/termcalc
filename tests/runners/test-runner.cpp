@@ -70,5 +70,17 @@ public:
  void runTest() { suite_TermCalcTestSuite.testAssignment(); }
 } testDescription_suite_TermCalcTestSuite_testAssignment;
 
+static class TestDescription_suite_TermCalcTestSuite_testEvalIntMode : public CxxTest::RealTestDescription {
+public:
+ TestDescription_suite_TermCalcTestSuite_testEvalIntMode() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 76, "testEvalIntMode" ) {}
+ void runTest() { suite_TermCalcTestSuite.testEvalIntMode(); }
+} testDescription_suite_TermCalcTestSuite_testEvalIntMode;
+
+static class TestDescription_suite_TermCalcTestSuite_testConvertToInt : public CxxTest::RealTestDescription {
+public:
+ TestDescription_suite_TermCalcTestSuite_testConvertToInt() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 88, "testConvertToInt" ) {}
+ void runTest() { suite_TermCalcTestSuite.testConvertToInt(); }
+} testDescription_suite_TermCalcTestSuite_testConvertToInt;
+
 #include <cxxtest/Root.cpp>
 const char* CxxTest::RealWorldDescription::_worldName = "cxxtest";

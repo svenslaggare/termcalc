@@ -20,6 +20,10 @@ ResultValue::ResultValue()
 
 }
 
+ResultValue::ResultValue(ResultValueType type, long longValue, double doubleValue)
+	:  mType(type), mLongValue(longValue), mDoubleValue(doubleValue) {
+
+}
 
 ResultValueType ResultValue::type() const {
 	return mType;
@@ -33,6 +37,10 @@ long ResultValue::longValue() const {
 
 double ResultValue::doubleValue() const {
 	return mDoubleValue;
+}
+
+ResultValue ResultValue::convertTo(ResultValueType type) const {
+	return ResultValue(type, mLongValue, mDoubleValue);
 }
 
 bool ResultValue::operator==(const ResultValue& rhs) const {

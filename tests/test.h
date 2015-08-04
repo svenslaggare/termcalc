@@ -72,4 +72,23 @@ public:
         TS_ASSERT_EQUALS(engine.eval("x = 2 * 5", env), ResultValue(10.0));
         TS_ASSERT_EQUALS(env.valueOf("x"), ResultValue(10.0));
     }
+
+    void testEvalIntMode() {
+        CalcEngine engine;
+        engine.setEvalMode(ResultValueType::INTEGER);
+
+        TS_ASSERT_EQUALS(engine.eval("3+2"), ResultValue(5L));
+        TS_ASSERT_EQUALS(engine.eval("(2 + 5) * 3"), ResultValue(21L));
+        TS_ASSERT_EQUALS(engine.eval("5 - 3"), ResultValue(2L));
+        TS_ASSERT_EQUALS(engine.eval("2^3"), ResultValue(8L));
+        TS_ASSERT_EQUALS(engine.eval("-3"), ResultValue(-3L));
+        TS_ASSERT_EQUALS(engine.eval("2^30"), ResultValue(1L << 30L));
+    }
+
+    void testConvertToInt() {
+        CalcEngine engine;
+        engine.setEvalMode(ResultValueType::INTEGER);
+
+        TS_ASSERT_EQUALS(engine.eval("pi+2"), ResultValue(5L));
+    }
 };

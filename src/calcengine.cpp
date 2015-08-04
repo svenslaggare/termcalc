@@ -22,9 +22,14 @@ void Environment::set(std::string variable, ResultValue value) {
 	mValues[variable] = value;
 }
 
-bool Environment::getVariable(std::string variable, ResultValue& value) const {
+bool Environment::getVariable(std::string variable, ResultValue& value, bool applyConversion) const {
 	if (mValues.count(variable) > 0) {
-		value = mValues.at(variable);
+		if (applyConversion) {
+			value = mValues.at(variable).convertTo(mEvalMode);
+		} else {
+			value = mValues.at(variable);
+		}
+
 		return true;
 	} else {
 		return false;
@@ -33,6 +38,10 @@ bool Environment::getVariable(std::string variable, ResultValue& value) const {
 
 ResultValue Environment::valueOf(std::string variable) const {
 	return mValues.at(variable);
+}
+
+void Environment::setEvalMode(ResultValueType evalMode) {
+	mEvalMode = evalMode;
 }
 
 //Calc engine
@@ -47,10 +56,13 @@ void CalcEngine::setEvalMode(ResultValueType evalMode) {
 
 ResultValue CalcEngine::eval(std::string expressionString) {
 	Environment env;
+	env.setEvalMode(mEvalMode);
 	return eval(expressionString, env);
 }
 
 ResultValue CalcEngine::eval(std::string expressionString, Environment& env) {
+	env.setEvalMode(mEvalMode);
+
 	//Tokenize
 	auto tokens = Tokenizer::tokenize(expressionString);
 	tokens.push_back(Token(TokenType::END_OF_EXPRESSION));

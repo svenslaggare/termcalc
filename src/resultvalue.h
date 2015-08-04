@@ -12,6 +12,8 @@ private:
 	ResultValueType mType;
 	long mLongValue;
 	double mDoubleValue;
+
+	ResultValue(ResultValueType type, long longValue, double doubleValue);
 public:	
 	//Creates a new long value
 	ResultValue(long value);
@@ -33,6 +35,9 @@ public:
 
 	//Returns the double value
 	double doubleValue() const;
+
+	//Converts the current value to the given type
+	ResultValue convertTo(ResultValueType type) const;
 
 	//Compare operators
 	bool operator==(const ResultValue& rhs) const;
