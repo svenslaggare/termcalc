@@ -1,5 +1,5 @@
 CC=clang++
-CFLAGS=-c -std=c++11 -Wall
+CFLAGS=-c -std=c++11 -Wall -O2
 LDFLAGS=-std=c++11 -Wall
 
 SRCDIR=src
