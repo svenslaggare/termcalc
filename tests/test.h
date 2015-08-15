@@ -25,6 +25,10 @@ public:
                      Token(2.0), Token(TokenType::OPERATOR, '+'), Token(5.0),
                      Token(TokenType::RIGHT_PARENTHESIS),
                      Token(TokenType::OPERATOR, '*'), Token( 7.0) }));
+
+        TS_ASSERT_EQUALS(
+            Tokenizer::tokenize("1 << 10"),
+            Tokens({ Token(1L), Token(TokenType::TWO_CHAR_OPERATOR, '<', '<'), Token(10L) }));
     }
 
     void testDifferentBase() {
@@ -83,6 +87,9 @@ public:
         TS_ASSERT_EQUALS(engine.eval("2^3"), ResultValue(8L));
         TS_ASSERT_EQUALS(engine.eval("-3"), ResultValue(-3L));
         TS_ASSERT_EQUALS(engine.eval("2^30"), ResultValue(1L << 30L));
+
+        TS_ASSERT_EQUALS(engine.eval("1 << 30"), ResultValue(1L << 30L));
+        TS_ASSERT_EQUALS(engine.eval("24 >> 2"), ResultValue(24L >> 2L));
     }
 
     void testConvertToInt() {

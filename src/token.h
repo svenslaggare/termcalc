@@ -6,6 +6,7 @@
 enum class TokenType {
 	NUMBER,
 	OPERATOR,
+	TWO_CHAR_OPERATOR,
 	IDENTIFIER,
 	LEFT_PARENTHESIS,
 	RIGHT_PARENTHESIS,
@@ -20,6 +21,7 @@ private:
 	double mDoubleValue;
 	long mLongValue;
 	char mCharValue;
+	char mCharValue2;
 	std::string mIdentifier;
 public:
 	//Creates an empty token
@@ -37,6 +39,9 @@ public:
 	//Creates a new token with a char value
 	Token(TokenType type, char value);
 
+	//Creates a new token with two char values
+	Token(TokenType type, char value1, char value2);
+
 	//Creates a new identifier token
 	Token(std::string identifier);
 
@@ -51,6 +56,9 @@ public:
 
 	//Returns the char value
 	char charValue() const;
+
+	//Returns the second char value
+	char charValue2() const;
 
 	//Returns the identifier
 	std::string identifier() const;

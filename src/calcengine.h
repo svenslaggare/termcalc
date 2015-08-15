@@ -32,10 +32,12 @@ public:
 
 //Represents the calculation engine
 class CalcEngine {
+public:
+	using BinaryOperators = std::unordered_map<OperatorChar, Operator, OperatorChar::Hash_t, OperatorChar::Equal_t>;
 private:
 	ResultValueType mEvalMode;	
 
-	std::unordered_map<char, Operator> mBinaryOperators;
+	BinaryOperators mBinaryOperators;
 	std::unordered_map<char, Operator> mUnaryOperators;
 	std::unordered_map<std::string, Function> mFunctions;
 public:	
@@ -43,7 +45,7 @@ public:
 	CalcEngine();
 
 	//Returns the binary operators
-	const std::unordered_map<char, Operator>& binaryOperators() const;
+	const BinaryOperators& binaryOperators() const;
 
 	//Returns the unary operators
 	const std::unordered_map<char, Operator>& unaryOperators() const;

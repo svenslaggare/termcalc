@@ -21,6 +21,11 @@ TEST_EXECUTABLE=test
 
 all: $(OBJDIR) $(SOURCES) $(EXECUTABLE)
 
+release-flags: 
+	$(eval CFLAGS += -O2)
+
+release: release-flags clean all
+
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
@@ -42,5 +47,5 @@ run: $(EXECUTABLE)
 clean:
 	rm -rf $(OBJDIR)
 	rm -rf $(TEST_RUNNERS_DIR)
-	rm $(EXECUTABLE)
-	rm $(TEST_EXECUTABLE)
+	rm -f $(EXECUTABLE)
+	rm -f $(TEST_EXECUTABLE)

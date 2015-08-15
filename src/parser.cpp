@@ -2,6 +2,80 @@
 #include "expression.h"
 #include "calcengine.h"
 #include <cmath>
+#include <unordered_set>
+
+namespace {
+	std::unordered_set<char> twoCharOps = { '<', '>' };
+
+	//Parses a number
+	void parseNumber(std::vector<Token>& tokens, std::string& str, char& current, std::size_t& i) {
+		std::string num { current };
+		bool hasDecimalPoint = false;
+		int base = 10;
+
+		//Check if different base
+		if (current == '0' && (i + 1) < str.size()) {
+			char baseChar = str[i + 1];
+
+			if (baseChar == 'b') {
+				base = 2;
+				num = "";
+				i++;
+			} else if (baseChar == 'x') {
+				base = 16;
+				num = "";
+				i++;
+			}
+		}
+
+		while (true) {
+			std::size_t next = i + 1;
+
+			if (next >= str.size()) {
+				break;
+			}
+
+			current = std::tolower(str[next]);
+
+			if (current == '.') {
+				if (!hasDecimalPoint) {
+					if (base == 10) {
+						hasDecimalPoint = true;
+					} else {
+						throw std::runtime_error("Decimal points are only allowed in base 10.");
+					}
+				} else {
+					throw std::runtime_error("The token already contains a decimal point.");
+				}
+			} else {
+				if (base == 2) {
+					if (!(current == '0' || current == '1')) {
+						break;
+					}
+				} else if (base == 10) {
+					if (!isdigit(current)) {
+						break;
+					}
+				} else if (base == 16) {
+					if (!(isdigit(current)
+						  || current == 'a' || current == 'b' || current == 'c'
+						  || current == 'd' || current == 'e' || current == 'f')) {
+						break;
+					}
+				}
+			}
+
+			num += current;
+			i = next;
+		}
+
+		if (base == 10) {
+			tokens.emplace_back(std::stod(num));
+		} else {
+			tokens.emplace_back(std::stol(num, nullptr, base));
+		}
+	}
+}
 
 std::vector<Token> Tokenizer::tokenize(std::string str) {
 	std::vector<Token> tokens;
@@ -32,71 +106,7 @@ std::vector<Token> Tokenizer::tokenize(std::string str) {
 
 		//Number
 		if (isdigit(current)) {
-			std::string num { current };
-			bool hasDecimalPoint = false;
-			int base = 10;
-
-			//Check if different base
-			if (current == '0' && (i + 1) < str.size()) {
-				char baseChar = str[i + 1];
-
-				if (baseChar == 'b') {
-					base = 2;
-					num = "";
-					i++;
-				} else if (baseChar == 'x') {
-					base = 16;
-					num = "";
-					i++;
-				}
-			}
-
-			while (true) {
-				std::size_t next = i + 1;
-
-				if (next >= str.size()) {
-					break;
-				}
-
-				current = std::tolower(str[next]);
-
-				if (current == '.') {
-					if (!hasDecimalPoint) {
-						if (base == 10) {
-							hasDecimalPoint = true;
-						} else {
-							throw std::runtime_error("Decimal points are only allowed in base 10.");
-						}
-					} else {
-						throw std::runtime_error("The token already contains a decimal point.");
-					}
-				} else {
-					if (base == 2) {
-						if (!(current == '0' || current == '1')) {
-							break;
-						}
-					} else if (base == 10) {
-						if (!isdigit(current)) {
-							break;
-						}
-					} else if (base == 16) {
-						if (!(isdigit(current)
-							  || current == 'a' || current == 'b' || current == 'c'
-							  || current == 'd' || current == 'e' || current == 'f')) {
-							break;
-						}
-					}
-				}
-
-				num += current;
-				i = next;
-			}
-
-			if (base == 10) {
-				tokens.push_back(Token(std::stod(num)));
-			} else {
-				tokens.push_back(Token(std::stol(num, nullptr, base)));
-			}
+			parseNumber(tokens, str, current, i);
 			continue;
 		}
 
@@ -126,7 +136,12 @@ std::vector<Token> Tokenizer::tokenize(std::string str) {
 		}
 
 		//Operator
-		tokens.push_back({ TokenType::OPERATOR, current });
+		if (tokens.size() > 0 && tokens.back().type() == TokenType::OPERATOR && twoCharOps.count(tokens.back().charValue()) > 0) {
+			//If the previous token is an operator and the current one is, upgrade to a two-op char 
+			tokens.back() = { TokenType::TWO_CHAR_OPERATOR, tokens.back().charValue(), current };
+		} else {
+			tokens.push_back({ TokenType::OPERATOR, current });
+		}
 	}
 
 	return tokens;
@@ -162,15 +177,26 @@ Token& Parser::peekToken(int delta) {
 	return mTokens[nextTokenIndex];
 }
 
+namespace {
+	OperatorChar tokenAsOperator(const Token& token) {
+		if (token.type() == TokenType::TWO_CHAR_OPERATOR) {
+			return OperatorChar(token.charValue(), token.charValue2());
+		} else {
+			return OperatorChar(token.charValue());
+		}
+	}
+}
+
 int Parser::getTokenPrecedence() {
-	if (mCurrentToken.type() != TokenType::OPERATOR) {
+	if (mCurrentToken.type() != TokenType::OPERATOR && mCurrentToken.type() != TokenType::TWO_CHAR_OPERATOR) {
 		return -1;
 	}
 
-	if (mCalcEngine.binaryOperators().count(mCurrentToken.charValue()) > 0) {
-		return mCalcEngine.binaryOperators().at(mCurrentToken.charValue()).precedence();
+	auto op = tokenAsOperator(mCurrentToken);
+	if (mCalcEngine.binaryOperators().count(op) > 0) {
+		return mCalcEngine.binaryOperators().at(op).precedence();
 	} else {
-		parseError("'" + std::string { mCurrentToken.charValue() } + "' is not a defined binary operator.");
+		parseError("'" + op.asString() + "' is not a defined binary operator.");
 	}
 
 	return -1;
@@ -282,9 +308,7 @@ std::unique_ptr<Expression> Parser::parseBinaryOpRHS(int precedence, std::unique
 			return lhs;
 		}
 
-		char opChar = mCurrentToken.charValue();
-		Operator op = mCalcEngine.binaryOperators().at(opChar); 
-
+		auto op = mCalcEngine.binaryOperators().at(tokenAsOperator(mCurrentToken)); 
 		nextToken(); //Eat the operator
 
 		//Parse the unary expression after the binary operator

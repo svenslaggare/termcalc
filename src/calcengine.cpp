@@ -47,17 +47,19 @@ void Environment::setEvalMode(ResultValueType evalMode) {
 //Calc engine
 CalcEngine::CalcEngine()
 	: mEvalMode(ResultValueType::FLOAT) {
-	mBinaryOperators = {
+	mBinaryOperators = { {
 		{ '^', Operator('^', 6, OperatorAssociativity::RIGHT) },
 		{ '*', Operator('*', 5, OperatorAssociativity::LEFT) },
 		{ '/', Operator('/', 5, OperatorAssociativity::LEFT) },
 		{ '%', Operator('%', 5, OperatorAssociativity::LEFT) },
 		{ '+', Operator('+', 4, OperatorAssociativity::LEFT) },
 		{ '-', Operator('-', 4, OperatorAssociativity::LEFT) },
+		{ OperatorChar('<', '<'), Operator(OperatorChar('<', '<'), 3, OperatorAssociativity::LEFT) },
+		{ OperatorChar('>', '>'), Operator(OperatorChar('>', '>'), 3, OperatorAssociativity::LEFT) },
 		{ '|', Operator('|', 2, OperatorAssociativity::LEFT) },
 		{ '&', Operator('&', 2, OperatorAssociativity::LEFT) },
 		{ '=', Operator('=', 1, OperatorAssociativity::RIGHT) }
-	};
+	}, 15, OperatorChar::HASH, OperatorChar::EQUAL };
 
 	mUnaryOperators = {
 		{ '-', Operator('-', 7, OperatorAssociativity::LEFT, true) },
@@ -98,12 +100,6 @@ CalcEngine::CalcEngine()
 		{ "xor", Function("xor", 2, [this](FnArgs x) {
 			return ResultValue(mEvalMode, x.at(0).longValue() ^ x.at(1).longValue());
 		}, "Bitwise XOR between x and y.") },
-		{ "sr", Function("sr", 2, [this](FnArgs x) {
-			return ResultValue(mEvalMode, x.at(0).longValue() >> x.at(1).longValue());
-		}, "Shifts x, y bits to the right.") },
-		{ "sl", Function("sl", 2, [this](FnArgs x) {
-			return ResultValue(mEvalMode, x.at(0).longValue() << x.at(1).longValue());
-		}, "Shifts x, y bits to the left.") },
 		{ "mod", Function("mod", 2, [this](FnArgs x) {
 			long result = x.at(0).longValue() % x.at(1).longValue();
 
@@ -116,7 +112,7 @@ CalcEngine::CalcEngine()
 	};
 }
 
-const std::unordered_map<char, Operator>& CalcEngine::binaryOperators() const {
+const CalcEngine::BinaryOperators& CalcEngine::binaryOperators() const {
 	return mBinaryOperators;
 }
 

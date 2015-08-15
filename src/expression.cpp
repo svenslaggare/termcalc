@@ -2,7 +2,6 @@
 #include "calcengine.h"
 #include <cmath>
 
-
 //Double expression
 DoubleExpression::DoubleExpression(double value): mValue(value) {
 
@@ -99,63 +98,81 @@ void BinaryOperatorExpression::evaluate(Environment& env, EvalStack& evalStack) 
 			floatMode = op1.type() == ResultValueType::FLOAT;
 		}
 
-		switch (mOp.op()) {
-		case '+':
-			if (floatMode) {
-				evalStack.push(op1.doubleValue() + op2.doubleValue());
-			} else {
-				evalStack.push(op1.longValue() + op2.longValue());
+		if (!mOp.op().isTwoChars()) {
+			switch (mOp.op().op1()) {
+			case '+':
+				if (floatMode) {
+					evalStack.push(op1.doubleValue() + op2.doubleValue());
+				} else {
+					evalStack.push(op1.longValue() + op2.longValue());
+				}
+				break;
+			case '-':
+				if (floatMode) {
+					evalStack.push(op1.doubleValue() - op2.doubleValue());
+				} else {
+					evalStack.push(op1.longValue() - op2.longValue());
+				}
+				break;
+			case '*':
+				if (floatMode) {
+					evalStack.push(op1.doubleValue() * op2.doubleValue());
+				} else {
+					evalStack.push(op1.longValue() * op2.longValue());
+				}
+				break;
+			case '/':
+				if (floatMode) {
+					evalStack.push(op1.doubleValue() / op2.doubleValue());
+				} else {
+					evalStack.push(op1.longValue() / op2.longValue());
+				}
+				break;
+			case '%':
+				if (floatMode) {
+					evalStack.push((double)((long)op1.doubleValue() % (long)op2.doubleValue()));
+				} else {
+					evalStack.push(op1.longValue() % op2.longValue());
+				}
+				break;
+			case '^':
+				if (floatMode) {
+					evalStack.push(pow(op1.doubleValue(), op2.doubleValue()));
+				} else {
+					evalStack.push((long)pow(op1.longValue(), op2.longValue()));
+				}
+				break;
+			case '|':
+				if (floatMode) {
+					evalStack.push((double)((long)op1.doubleValue() | (long)op2.doubleValue()));
+				} else {
+					evalStack.push(op1.longValue() | op2.longValue());
+				}
+				break;
+			case '&':
+				if (floatMode) {
+					evalStack.push((double)((long)op1.doubleValue() & (long)op2.doubleValue()));
+				} else {
+					evalStack.push(op1.longValue() & op2.longValue());
+				}
+				break;	
 			}
-			break;
-		case '-':
-			if (floatMode) {
-				evalStack.push(op1.doubleValue() - op2.doubleValue());
-			} else {
-				evalStack.push(op1.longValue() - op2.longValue());
+		} else {
+			auto op = mOp.op();
+
+			if (op == OperatorChar('<', '<')) {
+				if (floatMode) {
+					evalStack.push((double)((long)op1.doubleValue() << (long)op2.doubleValue()));
+				} else {
+					evalStack.push(op1.longValue() << op2.longValue());
+				}
+			} else if (op == OperatorChar('>', '>')) {
+				if (floatMode) {
+					evalStack.push((double)((long)op1.doubleValue() >> (long)op2.doubleValue()));
+				} else {
+					evalStack.push(op1.longValue() >> op2.longValue());
+				}
 			}
-			break;
-		case '*':
-			if (floatMode) {
-				evalStack.push(op1.doubleValue() * op2.doubleValue());
-			} else {
-				evalStack.push(op1.longValue() * op2.longValue());
-			}
-			break;
-		case '/':
-			if (floatMode) {
-				evalStack.push(op1.doubleValue() / op2.doubleValue());
-			} else {
-				evalStack.push(op1.longValue() / op2.longValue());
-			}
-			break;
-		case '%':
-			if (floatMode) {
-				evalStack.push((double)((long)op1.doubleValue() % (long)op2.doubleValue()));
-			} else {
-				evalStack.push(op1.longValue() % op2.longValue());
-			}
-			break;
-		case '^':
-			if (floatMode) {
-				evalStack.push(pow(op1.doubleValue(), op2.doubleValue()));
-			} else {
-				evalStack.push((long)pow(op1.longValue(), op2.longValue()));
-			}
-			break;
-		case '|':
-			if (floatMode) {
-				evalStack.push((double)((long)op1.doubleValue() | (long)op2.doubleValue()));
-			} else {
-				evalStack.push(op1.longValue() | op2.longValue());
-			}
-			break;
-		case '&':
-			if (floatMode) {
-				evalStack.push((double)((long)op1.doubleValue() & (long)op2.doubleValue()));
-			} else {
-				evalStack.push(op1.longValue() & op2.longValue());
-			}
-			break;	
 		}
 	}
 }
@@ -172,7 +189,7 @@ void UnaryOperatorExpression::evaluate(Environment& env, EvalStack& evalStack) c
 	auto operand = evalStack.top();
 	evalStack.pop();
 
-	switch (mOp.op()) {
+	switch (mOp.op().op1()) {
 	case '-':
 		if (operand.type() == ResultValueType::FLOAT) {
 			evalStack.push(-operand.doubleValue());
