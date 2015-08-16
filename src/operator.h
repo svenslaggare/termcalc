@@ -29,7 +29,7 @@ public:
 	char op2() const;	
 
 	//Returns a string representation of the operator
-	std::string asString() const;
+	std::string toString() const;
 
 	bool operator==(const OperatorChar& rhs) const;
 	bool operator!=(const OperatorChar& rhs) const;

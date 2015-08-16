@@ -84,3 +84,15 @@ std::ostream& operator<<(std::ostream& os, ResultValue value) {
 
 	return os;
 }
+
+std::ostream& operator<<(std::ostream& os, ResultValueType value) {
+	switch (value) {
+	case ResultValueType::INTEGER:
+		os << "INTEGER";
+		break;
+	case ResultValueType::FLOAT:
+		os << "FLOAT";
+		break;
+	}
+	return os;
+}

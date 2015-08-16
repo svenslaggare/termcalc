@@ -1,13 +1,21 @@
 #include "expression.h"
 #include "calcengine.h"
+#include "environment.h"
+#include "function.h"
 #include <cmath>
+#include <unordered_set>
+#include <sstream>
 
 //Double expression
 DoubleExpression::DoubleExpression(double value): mValue(value) {
 
 }
 
-void DoubleExpression::evaluate(Environment& env, EvalStack& evalStack) const {
+std::string DoubleExpression::toString() {
+	return std::to_string(mValue);
+}
+
+void DoubleExpression::evaluate(Environment& env, EvalStack& evalStack) {
 	evalStack.push(mValue);
 }
 
@@ -16,7 +24,11 @@ LongExpression::LongExpression(long value): mValue(value) {
 
 }
 
-void LongExpression::evaluate(Environment& env, EvalStack& evalStack) const {
+std::string LongExpression::toString() {
+	return std::to_string(mValue);
+}
+
+void LongExpression::evaluate(Environment& env, EvalStack& evalStack) {
 	evalStack.push(mValue);
 }
 
@@ -30,7 +42,11 @@ std::string VariableExpression::name() const {
 	return mName;
 }
 
-void VariableExpression::evaluate(Environment& env, EvalStack& evalStack) const {
+std::string VariableExpression::toString() {
+	return mName;
+}
+
+void VariableExpression::evaluate(Environment& env, EvalStack& evalStack) {
 	ResultValue value;
 	if (env.getVariable(mName, value, true)) {
 		evalStack.push(value);
@@ -40,24 +56,73 @@ void VariableExpression::evaluate(Environment& env, EvalStack& evalStack) const 
 }
 
 //Function call
-FunctionCallExpression::FunctionCallExpression(std::string name, std::vector<std::unique_ptr<Expression>> arguments, const Function& function)
-	: mName(name), mArguments(std::move(arguments)), mFunction(function) {
+FunctionCallExpression::FunctionCallExpression(std::string name, std::vector<std::unique_ptr<Expression>> arguments)
+	: mName(name), mArguments(std::move(arguments)) {
 
 }
 
-void FunctionCallExpression::evaluate(Environment& env, EvalStack& evalStack) const {
+std::string FunctionCallExpression::name() const {
+	return mName;
+}
+
+std::size_t FunctionCallExpression::numArguments() const {
+	return mArguments.size();
+}
+
+Expression* FunctionCallExpression::getArgument(std::size_t index) const {
+	if (index < mArguments.size()) {
+		return mArguments[index].get();
+	} else {
+		return nullptr;
+	}
+}
+
+std::string FunctionCallExpression::toString() {
+	std::ostringstream stream;
+
+	stream << mName << "(";
+
+	bool isFirst = true;
+
+	for (auto& arg : mArguments) {
+		if (!isFirst) {
+			stream << ", ";
+		}
+
+		stream << arg->toString();
+
+		isFirst = false;
+	}
+
+	stream << ")";
+
+	return stream.str();
+}
+
+void FunctionCallExpression::evaluate(Environment& env, EvalStack& evalStack) {
+	//Find the function
+	if (env.functions().count(mName) == 0) {
+		throw std::runtime_error("'" + mName + "' is not a defined function.");
+	}
+
+	auto& func = env.functions().at(mName);
+
+	if (mArguments.size() != func.numArgs()) {
+		throw std::runtime_error("Expected " + std::to_string(func.numArgs()) + " arguments but got " + std::to_string(mArguments.size()));
+	}
+
 	for (auto& arg : mArguments) {
 		arg->evaluate(env, evalStack);
 	}
 
 	FnArgs args;
-	for (std::size_t i = 0; i < mFunction.numArgs(); i++) {
+	for (std::size_t i = 0; i < func.numArgs(); i++) {
 		auto arg = evalStack.top();
 		evalStack.pop();
 		args.insert(args.begin(), arg);
 	}
 
-	evalStack.push(mFunction.apply(args));
+	evalStack.push(func.apply(env, args));
 }
 
 //Binary operator expression
@@ -66,11 +131,13 @@ BinaryOperatorExpression::BinaryOperatorExpression(Operator op, std::unique_ptr<
 
 }
 
-void BinaryOperatorExpression::evaluate(Environment& env, EvalStack& evalStack) const {
-	if (mOp.op() == '=') {
-		auto var = dynamic_cast<VariableExpression*>(mLHS.get());
+std::string BinaryOperatorExpression::toString() {
+	return mLHS->toString() + mOp.op().toString() + mRHS->toString();
+}
 
-		if (var != nullptr) {
+void BinaryOperatorExpression::evaluate(Environment& env, EvalStack& evalStack) {
+	if (mOp.op() == '=') {
+		if (auto var = dynamic_cast<VariableExpression*>(mLHS.get())) {
 			mRHS->evaluate(env, evalStack);
 
 			auto value = evalStack.top().doubleValue();
@@ -79,8 +146,28 @@ void BinaryOperatorExpression::evaluate(Environment& env, EvalStack& evalStack) 
 			env.set(var->name(), value);
 
 			evalStack.push(value);
+		} else if (auto func = dynamic_cast<FunctionCallExpression*>(mLHS.get())) {
+			//Check that the parameters are variables
+			std::unordered_set<std::string> usedParameterNames;
+			std::vector<std::string> parameters;
+
+			for (std::size_t i = 0; i < func->numArguments(); i++) {
+				if (auto param = dynamic_cast<VariableExpression*>(func->getArgument(i))) {
+					if (usedParameterNames.count(param->name()) == 0) {
+						usedParameterNames.insert(param->name());
+						parameters.push_back(param->name());
+					} else {
+						throw std::runtime_error("The parameter '" + param->name() + "' is already used.");
+					}
+				} else {
+					throw std::runtime_error("Parameter number " + std::to_string(i) + " is not a variable.");
+				}
+			}
+
+			env.define(Function(func->name(), parameters.size(), std::make_shared<FunctionBody>(parameters, std::move(mRHS))));
+			evalStack.push(ResultValue(0L));
 		} else {
-			throw std::runtime_error("The left hand side must be a variable.");
+			throw std::runtime_error("The left hand side must be a variable or a function definition.");
 		}
 	} else {
 		mLHS->evaluate(env, evalStack);
@@ -92,11 +179,7 @@ void BinaryOperatorExpression::evaluate(Environment& env, EvalStack& evalStack) 
 		auto op1 = evalStack.top();
 		evalStack.pop();
 
-		bool floatMode = true;
-
-		if (op1.type() == op2.type()) {
-			floatMode = op1.type() == ResultValueType::FLOAT;
-		}
+		bool floatMode = env.evalMode() == ResultValueType::FLOAT;
 
 		if (!mOp.op().isTwoChars()) {
 			switch (mOp.op().op1()) {
@@ -183,7 +266,11 @@ UnaryOperatorExpression::UnaryOperatorExpression(Operator op, std::unique_ptr<Ex
 
 }
 
-void UnaryOperatorExpression::evaluate(Environment& env, EvalStack& evalStack) const {
+std::string UnaryOperatorExpression::toString() {
+	return mOp.op().toString() + mOperand->toString();
+}
+
+void UnaryOperatorExpression::evaluate(Environment& env, EvalStack& evalStack) {
 	mOperand->evaluate(env, evalStack);
 
 	auto operand = evalStack.top();

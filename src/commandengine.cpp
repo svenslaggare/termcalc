@@ -4,17 +4,18 @@
 #include <sstream> 
 
 CommandEngine::CommandEngine() {
+	std::string leadingWhitespace = "   ";
+
 	mCommands = {
-		{ "help", [](Args args) {
-			std::string cmdStart = "   ";
+		{ "help", [=](Args args) {
 			std::cout << "Commands:" << std::endl;
-			std::cout << cmdStart << ":exit|:q|:quit Exits the program." << std::endl;
-			std::cout << cmdStart << ":bin           Sets to display the result in base 2." << std::endl;
-			std::cout << cmdStart << ":dec           Sets to display the result in base 10. (default)" << std::endl;
-			std::cout << cmdStart << ":hex           Sets to display the result in base 16." << std::endl;
-			std::cout << cmdStart << ":vars          Prints the defined variables." << std::endl;
-			std::cout << cmdStart << ":funcs         Prints the defined functions." << std::endl;
-			std::cout << cmdStart << ":mode          Sets the evaluation mode: float (default) or int." << std::endl;
+			std::cout << leadingWhitespace << ":exit|:q|:quit Exits the program." << std::endl;
+			std::cout << leadingWhitespace << ":bin           Sets to display the result in base 2." << std::endl;
+			std::cout << leadingWhitespace << ":dec           Sets to display the result in base 10. (default)" << std::endl;
+			std::cout << leadingWhitespace << ":hex           Sets to display the result in base 16." << std::endl;
+			std::cout << leadingWhitespace << ":vars          Prints the defined variables." << std::endl;
+			std::cout << leadingWhitespace << ":funcs         Prints the defined functions." << std::endl;
+			std::cout << leadingWhitespace << ":mode          Sets the evaluation mode: float (default) or int." << std::endl;
 			return false;
 		} },
 		{ "exit", [](Args args) {
@@ -38,12 +39,12 @@ CommandEngine::CommandEngine() {
 			}
 			return false;
 		} },
-		{ "funcs", [&](Args args) {
+		{ "funcs", [this, leadingWhitespace](Args args) {
 			//Compute the length of the longest function signature
 			int maxFuncLength = 0;
 			std::vector<std::string> funcStrs;
 
-			for (auto current : mEngine.functions()) {
+			for (auto current : mEnv.functions()) {
 				std::stringstream strstream;
 				auto func = current.second;
 				strstream << func;
@@ -56,13 +57,39 @@ CommandEngine::CommandEngine() {
 			maxFuncLength += 3;
 
 			std::size_t i = 0;
-			for (auto current : mEngine.functions()) {
-				auto func = current.second;
-				auto funcStr = funcStrs[i];
-				std::string spaceStr(maxFuncLength - funcStr.length(), ' ');
+			bool anyUserDefined = false;
+			std::cout << "Builtin:" << std::endl;
 
-				std::cout << funcStr << spaceStr << func.infoText() << std::endl;
+			for (auto current : mEnv.functions()) {
+				auto func = current.second;
+
+				if (!func.isUserDefined()) {
+					auto funcStr = funcStrs[i];
+					std::string spaceStr(maxFuncLength - funcStr.length(), ' ');
+					std::cout << leadingWhitespace << funcStr << spaceStr << func.infoText() << std::endl;
+				} else {
+					anyUserDefined = true;
+				}
+
 				i++;
+			}
+
+			//Check if any user defined functions
+			if (anyUserDefined) {
+				std::cout << "User defined:" << std::endl;
+
+				i = 0;
+				for (auto current : mEnv.functions()) {
+					auto func = current.second;
+
+					if (func.isUserDefined()) {
+						auto funcStr = funcStrs[i];
+						std::string spaceStr(maxFuncLength - funcStr.length(), ' ');
+						std::cout << leadingWhitespace << funcStr << " = " << func.body()->toString() << std::endl;
+					}
+
+					i++;
+				}
 			}
 
 			return false;

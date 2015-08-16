@@ -23,7 +23,7 @@ char OperatorChar::op2() const {
 	return mOp2;
 }
 
-std::string OperatorChar::asString() const {
+std::string OperatorChar::toString() const {
 	if (mIsTwoChars) {
 		return std::string({ mOp1, mOp2 });
 	} else {

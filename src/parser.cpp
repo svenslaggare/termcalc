@@ -196,7 +196,7 @@ int Parser::getTokenPrecedence() {
 	if (mCalcEngine.binaryOperators().count(op) > 0) {
 		return mCalcEngine.binaryOperators().at(op).precedence();
 	} else {
-		parseError("'" + op.asString() + "' is not a defined binary operator.");
+		parseError("'" + op.toString() + "' is not a defined binary operator.");
 	}
 
 	return -1;
@@ -253,18 +253,8 @@ std::unique_ptr<Expression> Parser::parseIdentifierExpression() {
 	//Eat the ')'
 	nextToken();
 
-	if (mCalcEngine.functions().count(identifier) == 0) {
-		parseError("'" + identifier + "' is not a defined function.");
-	}
-
-	auto& func = mCalcEngine.functions().at(identifier);
-
-	if (arguments.size() != func.numArgs()) {
-		parseError("Expected " + std::to_string(func.numArgs()) + " arguments but got " + std::to_string(arguments.size()));
-	}
-
 	return std::unique_ptr<FunctionCallExpression>(
-		new FunctionCallExpression(identifier, std::move(arguments), func));
+		new FunctionCallExpression(identifier, std::move(arguments)));
 }
 
 std::unique_ptr<Expression> Parser::parseParenthesisExpression() {

@@ -41,7 +41,7 @@ test: $(TESTS_DIR)/test.h $(OBJDIR) $(TEST_OBJECTS)
 	$(CC) $(LDFLAGS) -o $(TEST_EXECUTABLE) -I $(CXXTEST) $(TEST_OBJECTS) $(TEST_RUNNERS_DIR)/test-runner.cpp
 	./$(TEST_EXECUTABLE)
 
-run: $(EXECUTABLE)
+run: $(OBJDIR) $(SOURCES) $(EXECUTABLE)
 	rlwrap ./$(EXECUTABLE)
 
 clean:

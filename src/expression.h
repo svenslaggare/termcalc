@@ -13,10 +13,14 @@ class Environment;
 //Represents an expression
 class Expression {
 public:
+	Expression() {}
 	virtual ~Expression() {}
 
+	//Returns the current expression as a string
+	virtual std::string toString() = 0;
+
 	//Evaluates the current expresssion
-	virtual void evaluate(Environment& env, EvalStack& evalStack) const = 0;
+	virtual void evaluate(Environment& env, EvalStack& evalStack) = 0;
 };
 
 //Represents a double expression
@@ -27,7 +31,8 @@ public:
 	//Creates a new double expresssion
 	DoubleExpression(double value);
 
-	virtual void evaluate(Environment& env, EvalStack& evalStack) const override;
+	virtual std::string toString() override;
+	virtual void evaluate(Environment& env, EvalStack& evalStack) override;
 };
 
 //Represents a long expression
@@ -38,7 +43,8 @@ public:
 	//Creates a new long expresssion
 	LongExpression(long value);
 
-	virtual void evaluate(Environment& env, EvalStack& evalStack) const override;
+	virtual std::string toString() override;
+	virtual void evaluate(Environment& env, EvalStack& evalStack) override;
 };
 
 //Represents a variable expression
@@ -52,7 +58,8 @@ public:
 	//Returns the name of the variable
 	std::string name() const;
 
-	virtual void evaluate(Environment& env, EvalStack& evalStack) const override;
+	virtual std::string toString() override;
+	virtual void evaluate(Environment& env, EvalStack& evalStack) override;
 };
 
 //Represents a function call expression
@@ -60,12 +67,21 @@ class FunctionCallExpression : public Expression {
 private:
 	std::string mName;
 	std::vector<std::unique_ptr<Expression>> mArguments;
-	const Function& mFunction;
 public:
 	//Creates a new function call expression
-	FunctionCallExpression(std::string name, std::vector<std::unique_ptr<Expression>> arguments, const Function& function);
+	FunctionCallExpression(std::string name, std::vector<std::unique_ptr<Expression>> arguments);
 
-	virtual void evaluate(Environment& env, EvalStack& evalStack) const override;
+	//Returns the name of the function to call
+	std::string name() const;
+
+	//Returns the number of arguments
+	std::size_t numArguments() const;
+
+	//Returns the given argument
+	Expression* getArgument(std::size_t index) const;
+
+	virtual std::string toString() override;
+	virtual void evaluate(Environment& env, EvalStack& evalStack) override;
 };
 
 //Represents a binary operator expression
@@ -78,7 +94,8 @@ public:
 	//Creates a new binary operator expression
 	BinaryOperatorExpression(Operator op, std::unique_ptr<Expression> lhs, std::unique_ptr<Expression> rhs);
 
-	virtual void evaluate(Environment& env, EvalStack& evalStack) const override;
+	virtual std::string toString() override;
+	virtual void evaluate(Environment& env, EvalStack& evalStack) override;
 };
 
 //Represents a unary operator expression
@@ -90,5 +107,6 @@ public:
 	//Creates a new binary operator expression
 	UnaryOperatorExpression(Operator op, std::unique_ptr<Expression> operand);
 
-	virtual void evaluate(Environment& env, EvalStack& evalStack) const override;
+	virtual std::string toString() override;
+	virtual void evaluate(Environment& env, EvalStack& evalStack) override;
 };
