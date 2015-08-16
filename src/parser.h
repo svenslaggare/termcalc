@@ -36,7 +36,7 @@ private:
 	int getTokenPrecedence();
 
 	//Parses a number expression
-	std::unique_ptr<Expression> parseDoubleExpression();
+	std::unique_ptr<Expression> parseNumberExpression();
 
 	//Parses an identifier expression
 	std::unique_ptr<Expression> parseIdentifierExpression();
