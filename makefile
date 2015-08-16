@@ -16,7 +16,13 @@ MAIN_OBJ=$(OBJDIR)/$(EXECUTABLE).o
 TEST_OBJECTS=$(filter-out $(MAIN_OBJ), $(OBJECTS))
 
 TESTS_DIR=tests
+
+ifeq ($(OS),Windows_NT)
+TEST_RUNNERS_DIR=$(TESTS_DIR)\\runners
+else
 TEST_RUNNERS_DIR=$(TESTS_DIR)/runners
+endif
+
 TEST_EXECUTABLE=test
 
 all: $(OBJDIR) $(SOURCES) $(EXECUTABLE)
@@ -26,8 +32,13 @@ release-flags:
 
 release: release-flags clean all
 
+ifeq ($(OS),Windows_NT)
+$(OBJDIR):
+	mkdir $(OBJDIR)
+else
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
+endif
 
 $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
@@ -44,8 +55,16 @@ test: $(TESTS_DIR)/test.h $(OBJDIR) $(TEST_OBJECTS)
 run: $(OBJDIR) $(SOURCES) $(EXECUTABLE)
 	rlwrap ./$(EXECUTABLE)
 
+ifeq ($(OS),Windows_NT)
+clean:
+	del /S /Q $(OBJDIR)
+	del /S /Q $(TEST_RUNNERS_DIR)
+	del $(EXECUTABLE)
+	del $(TEST_EXECUTABLE)
+else
 clean:
 	rm -rf $(OBJDIR)
 	rm -rf $(TEST_RUNNERS_DIR)
 	rm -f $(EXECUTABLE)
 	rm -f $(TEST_EXECUTABLE)
+endif	
