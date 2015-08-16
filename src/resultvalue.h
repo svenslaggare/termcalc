@@ -48,3 +48,4 @@ public:
 };
 
 std::ostream& operator<<(std::ostream& os, ResultValue value);
+std::ostream& operator<<(std::ostream& os, ResultValueType value);

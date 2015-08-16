@@ -1,5 +1,6 @@
 #pragma once
 #include "calcengine.h"
+#include "environment.h"
 #include <unordered_map>
 #include <functional>
 #include <vector>
