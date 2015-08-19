@@ -10,13 +10,13 @@ enum class ResultValueType {
 class ResultValue {
 private:
 	ResultValueType mType;
-	long mLongValue;
-	double mDoubleValue;
+	std::int64_t mIntValue;
+	double mFloatValue;
 
-	ResultValue(ResultValueType type, long longValue, double doubleValue);
+	ResultValue(ResultValueType type, std::int64_t intValue, double floatValue);
 public:	
-	//Creates a new long value
-	ResultValue(long value);
+	//Creates a new int64 value
+	ResultValue(std::int64_t value);
 
 	//Creates a new double value
 	ResultValue(double value);
@@ -30,11 +30,11 @@ public:
 	//Returns the type of the value
 	ResultValueType type() const;
 
-	//Returns the long value
-	long longValue() const;
+	//Returns the int value
+	std::int64_t intValue() const;
 
-	//Returns the double value
-	double doubleValue() const;
+	//Returns the float value
+	double floatValue() const;
 
 	//Converts the current value to the given type
 	ResultValue convertTo(ResultValueType type) const;

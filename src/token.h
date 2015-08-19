@@ -19,7 +19,7 @@ class Token {
 private:
 	TokenType mType;
 	double mDoubleValue;
-	long mLongValue;
+	std::int64_t mInt64Value;
 	char mCharValue;
 	char mCharValue2;
 	std::string mIdentifier;
@@ -33,8 +33,8 @@ public:
 	//Creates a new double token
 	Token(double value);
 
-	//Creates a new long token
-	Token(long value);
+	//Creates a new int64 token
+	Token(std::int64_t value);
 
 	//Creates a new token with a char value
 	Token(TokenType type, char value);
@@ -51,8 +51,8 @@ public:
 	//Returns the double value
 	double doubleValue() const;
 
-	//Returns the long value
-	long longValue() const;
+	//Returns the int64 value
+	std::int64_t int64Value() const;
 
 	//Returns the char value
 	char charValue() const;

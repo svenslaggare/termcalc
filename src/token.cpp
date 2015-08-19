@@ -7,32 +7,32 @@ Token::Token()
 }
 
 Token::Token(TokenType type)
-	: mType(type), mDoubleValue(0.0), mLongValue(0), mCharValue(0), mCharValue2(0) {
+	: mType(type), mDoubleValue(0.0), mInt64Value(0), mCharValue(0), mCharValue2(0) {
 
 }
 
 Token::Token(double value)
-	: mType(TokenType::NUMBER), mDoubleValue(value), mLongValue(value), mCharValue(0), mCharValue2(0) {
+	: mType(TokenType::NUMBER), mDoubleValue(value), mInt64Value(value), mCharValue(0), mCharValue2(0) {
 
 }
 
-Token::Token(long value)
-	: mType(TokenType::NUMBER), mDoubleValue(value), mLongValue(value), mCharValue(0), mCharValue2(0) {
+Token::Token(std::int64_t value)
+	: mType(TokenType::NUMBER), mDoubleValue(value), mInt64Value(value), mCharValue(0), mCharValue2(0) {
 
 }
 
 Token::Token(TokenType type, char value)
-	: mType(type), mDoubleValue(0), mLongValue(0), mCharValue(value), mCharValue2(0) {
+	: mType(type), mDoubleValue(0), mInt64Value(0), mCharValue(value), mCharValue2(0) {
 
 }
 
 Token::Token(TokenType type, char value1, char value2)
-	: mType(type), mDoubleValue(0), mLongValue(0), mCharValue(value1), mCharValue2(value1) {
+	: mType(type), mDoubleValue(0), mInt64Value(0), mCharValue(value1), mCharValue2(value1) {
 
 }
 
 Token::Token(std::string identifier)
-	: mType(TokenType::IDENTIFIER), mDoubleValue(0), mLongValue(0), mCharValue(0), mCharValue2(0), mIdentifier(identifier) {
+	: mType(TokenType::IDENTIFIER), mDoubleValue(0), mInt64Value(0), mCharValue(0), mCharValue2(0), mIdentifier(identifier) {
 
 }
 
@@ -44,8 +44,8 @@ double Token::doubleValue() const {
 	return mDoubleValue;
 }
 
-long Token::longValue() const {
-	return mLongValue;
+std::int64_t Token::int64Value() const {
+	return mInt64Value;
 }
 
 char Token::charValue() const {
@@ -77,7 +77,7 @@ bool Token::operator==(const Token& rhs) const {
 		return false;
 	}
 
-	if (mLongValue != rhs.mLongValue) {
+	if (mInt64Value != rhs.mInt64Value) {
 		return false;
 	}
 

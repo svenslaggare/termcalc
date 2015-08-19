@@ -19,7 +19,7 @@ public:
 	//Returns the current expression as a string
 	virtual std::string toString() = 0;
 
-	//Evaluates the current expresssion
+	//Evaluates the current expression
 	virtual void evaluate(Environment& env, EvalStack& evalStack) = 0;
 };
 
@@ -28,20 +28,20 @@ class DoubleExpression : public Expression {
 private:
 	double mValue;
 public:
-	//Creates a new double expresssion
+	//Creates a new double expression
 	DoubleExpression(double value);
 
 	virtual std::string toString() override;
 	virtual void evaluate(Environment& env, EvalStack& evalStack) override;
 };
 
-//Represents a long expression
-class LongExpression : public Expression {
+//Represents an int64 expression
+class Int64Expression : public Expression {
 private:
-	long mValue;
+	std::int64_t mValue;
 public:
-	//Creates a new long expresssion
-	LongExpression(long value);
+	//Creates a new int64 expression
+	Int64Expression(std::int64_t value);
 
 	virtual std::string toString() override;
 	virtual void evaluate(Environment& env, EvalStack& evalStack) override;

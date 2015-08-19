@@ -116,7 +116,7 @@ CommandEngine::CommandEngine() {
 	mCommands["h"] = mCommands["help"];
 }
 
-std::string toBase(int base, long value) {
+std::string toBase(int base, std::int64_t value) {
 	std::string res;
 	while (value > 0) {
 		res += std::to_string(value % base);
@@ -166,16 +166,16 @@ bool CommandEngine::execute(std::string line) {
 		if (res.type() == ResultValueType::FLOAT) {
 			//Display only different base if result is an integer
 			double resInt;
-			if (std::modf(res.doubleValue(), &resInt) == 0.0) {
+			if (std::modf(res.floatValue(), &resInt) == 0.0) {
 				switch (mPrintNumBase) {
 				case NumberBase::BINARY:
-					std::cout << "0b" << toBase(2, (long)res.doubleValue()) << std::endl;
+					std::cout << "0b" << toBase(2, (std::int64_t)res.floatValue()) << std::endl;
 					break;
 				case NumberBase::DECIMAL:
 					std::cout << std::dec << res << std::endl;
 					break;
 				case NumberBase::HEXADECIMAL:
-					std::cout << std::hex << "0x" << (long)res.doubleValue() << std::endl;
+					std::cout << std::hex << "0x" << (std::int64_t)res.floatValue() << std::endl;
 					break;	
 				}
 			} else {
@@ -184,13 +184,13 @@ bool CommandEngine::execute(std::string line) {
 		} else {
 			switch (mPrintNumBase) {
 			case NumberBase::BINARY:
-				std::cout << "0b" << toBase(2, res.longValue()) << std::endl;
+				std::cout << "0b" << toBase(2, res.intValue()) << std::endl;
 				break;
 			case NumberBase::DECIMAL:
 				std::cout << std::dec << res << std::endl;
 				break;
 			case NumberBase::HEXADECIMAL:
-				std::cout << std::hex << "0x" << res.longValue() << std::endl;
+				std::cout << std::hex << "0x" << res.intValue() << std::endl;
 				break;	
 			}
 		}

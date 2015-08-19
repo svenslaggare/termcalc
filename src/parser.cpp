@@ -208,9 +208,9 @@ std::unique_ptr<Expression> Parser::parseDoubleExpression() {
 		nextToken(); //Consume the number
 		return std::unique_ptr<DoubleExpression>(new DoubleExpression(value));
 	} else {
-		long value = mCurrentToken.longValue();
+		std::int64_t value = mCurrentToken.int64Value();
 		nextToken(); //Consume the number
-		return std::unique_ptr<LongExpression>(new LongExpression(value));
+		return std::unique_ptr<Int64Expression>(new Int64Expression(value));
 	}
 }
 

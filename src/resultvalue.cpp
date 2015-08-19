@@ -1,27 +1,27 @@
 #include "resultvalue.h"
 
-ResultValue::ResultValue(long value)
-	: mType(ResultValueType::INTEGER), mLongValue(value), mDoubleValue(value) {
+ResultValue::ResultValue(std::int64_t value)
+	: mType(ResultValueType::INTEGER), mIntValue(value), mFloatValue(value) {
 
 }
 
 ResultValue::ResultValue(double value)
-	:  mType(ResultValueType::FLOAT), mLongValue(value), mDoubleValue(value) {
+	:  mType(ResultValueType::FLOAT), mIntValue(value), mFloatValue(value) {
 
 }
 
 ResultValue::ResultValue(ResultValueType type, double value)
-	:  mType(type), mLongValue(value), mDoubleValue(value) {
+	:  mType(type), mIntValue(value), mFloatValue(value) {
 
 }
 
 ResultValue::ResultValue()
-	:  mType(ResultValueType::FLOAT), mLongValue(0), mDoubleValue(0.0) {
+	:  mType(ResultValueType::FLOAT), mIntValue(0), mFloatValue(0.0) {
 
 }
 
-ResultValue::ResultValue(ResultValueType type, long longValue, double doubleValue)
-	:  mType(type), mLongValue(longValue), mDoubleValue(doubleValue) {
+ResultValue::ResultValue(ResultValueType type, std::int64_t intValue, double floatValue)
+	:  mType(type), mIntValue(intValue), mFloatValue(floatValue) {
 
 }
 
@@ -29,26 +29,24 @@ ResultValueType ResultValue::type() const {
 	return mType;
 }
 
-
-long ResultValue::longValue() const {
-	return mLongValue;
+std::int64_t ResultValue::intValue() const {
+	return mIntValue;
 }
 
-
-double ResultValue::doubleValue() const {
-	return mDoubleValue;
+double ResultValue::floatValue() const {
+	return mFloatValue;
 }
 
 ResultValue ResultValue::convertTo(ResultValueType type) const {
-	return ResultValue(type, mLongValue, mDoubleValue);
+	return ResultValue(type, mIntValue, mFloatValue);
 }
 
 bool ResultValue::operator==(const ResultValue& rhs) const {
 	if (mType == rhs.mType) {
 		if (mType == ResultValueType::FLOAT) {
-			return mDoubleValue == rhs.mDoubleValue;
+			return mFloatValue == rhs.mFloatValue;
 		} else {
-			return mLongValue == rhs.mLongValue;
+			return mIntValue == rhs.mIntValue;
 		}
 	} else {
 		return false;
@@ -62,9 +60,9 @@ bool ResultValue::operator!=(const ResultValue& rhs) const {
 bool ResultValue::operator<=(const ResultValue& rhs) const {
 	if (mType == rhs.mType) {
 		if (mType == ResultValueType::FLOAT) {
-			return mDoubleValue <= rhs.mDoubleValue;
+			return mFloatValue <= rhs.mFloatValue;
 		} else {
-			return mLongValue <= rhs.mLongValue;
+			return mIntValue <= rhs.mIntValue;
 		}
 	} else {
 		return false;
@@ -72,14 +70,14 @@ bool ResultValue::operator<=(const ResultValue& rhs) const {
 }
 
 double ResultValue::operator+(double value) const {
-	return mDoubleValue + value;
+	return mFloatValue + value;
 }
 
 std::ostream& operator<<(std::ostream& os, ResultValue value) {
 	if (value.type() == ResultValueType::FLOAT) {
-		os << value.doubleValue();
+		os << value.floatValue();
 	} else {
-		os << value.longValue();
+		os << value.intValue();
 	}
 
 	return os;
