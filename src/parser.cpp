@@ -72,7 +72,11 @@ namespace {
 		if (base == 10) {
 			tokens.emplace_back(std::stod(num));
 		} else {
+			#if defined(__MINGW32__)
+			tokens.emplace_back(std::stoll(num, nullptr, base));
+			#else
 			tokens.emplace_back(std::stol(num, nullptr, base));
+			#endif
 		}
 	}
 }
