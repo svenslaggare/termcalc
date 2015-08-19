@@ -202,7 +202,7 @@ int Parser::getTokenPrecedence() {
 	return -1;
 }
 
-std::unique_ptr<Expression> Parser::parseDoubleExpression() {
+std::unique_ptr<Expression> Parser::parseNumberExpression() {
 	if (mCalcEngine.evalMode() == ResultValueType::FLOAT) {
 		double value = mCurrentToken.doubleValue();
 		nextToken(); //Consume the number
@@ -231,11 +231,6 @@ std::unique_ptr<Expression> Parser::parseIdentifierExpression() {
 	if (mCurrentToken.type() != TokenType::RIGHT_PARENTHESIS) {
 		while (true) {
 			auto arg = parseExpression();
-
-			if (arg == nullptr) {
-				return arg;
-			}
-
 			arguments.push_back(std::move(arg));
 
 			if (mCurrentToken.type() == TokenType::RIGHT_PARENTHESIS) {
@@ -262,10 +257,6 @@ std::unique_ptr<Expression> Parser::parseParenthesisExpression() {
 
 	auto expr = parseExpression();
 
-	if (expr == nullptr) {
-		return expr;
-	}
-
 	if (mCurrentToken.type() != TokenType::RIGHT_PARENTHESIS) {
 		parseError("Expected ').'");
 	}
@@ -278,13 +269,14 @@ std::unique_ptr<Expression> Parser::parseParenthesisExpression() {
 std::unique_ptr<Expression> Parser::parsePrimaryExpression() {
 	switch (mCurrentToken.type()) {
 	case TokenType::NUMBER:
-		return parseDoubleExpression();
+		return parseNumberExpression();
 	case TokenType::IDENTIFIER:
 		return parseIdentifierExpression();
 	case TokenType::LEFT_PARENTHESIS:
 		return parseParenthesisExpression();
 	default:
-		return std::unique_ptr<Expression>();
+		parseError("Expected an expression");
+		return nullptr;
 	}	
 }
 
@@ -293,7 +285,7 @@ std::unique_ptr<Expression> Parser::parseBinaryOpRHS(int precedence, std::unique
 		//If this is a bin op, find its precedence
 		int tokPrec = getTokenPrecedence();
 
-		//If this is a binary operator that binds as least as tightly as the current operator, consume it, otherwise we are done.
+		//If this is a binary operator that binds atleast as tightly as the current operator, consume it, otherwise we are done.
 		if (tokPrec < precedence) {
 			return lhs;
 		}
@@ -304,18 +296,10 @@ std::unique_ptr<Expression> Parser::parseBinaryOpRHS(int precedence, std::unique
 		//Parse the unary expression after the binary operator
 		auto rhs = parseUnaryExpression();
 
-		if (rhs == nullptr) {
-			return rhs;
-		}
-
 		//If the binary operator binds less tightly with RHS than the operator after RHS, let the pending operator take RHS as its LHS
 		int nextPrec = getTokenPrecedence();
 		if (tokPrec < nextPrec) {
 			rhs = parseBinaryOpRHS(tokPrec + 1, std::move(rhs));
-
-			if (rhs == nullptr) {
-				return rhs;
-			}
 		}
 
 		//Merge LHS and RHS
@@ -350,13 +334,7 @@ std::unique_ptr<Expression> Parser::parseUnaryExpression() {
 
 
 std::unique_ptr<Expression> Parser::parseExpression() {
-	auto lhs = parseUnaryExpression();
-
-	if (lhs == nullptr) {
-		return lhs;
-	}
-
-	return parseBinaryOpRHS(0, std::move(lhs));
+	return parseBinaryOpRHS(0, std::move(parseUnaryExpression()));
 }
 
 std::unique_ptr<Expression> Parser::parse() {

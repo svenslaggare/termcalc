@@ -82,6 +82,7 @@ public:
     void testInvalidEval() {
         CalcEngine engine;
         TS_ASSERT_THROWS(engine.eval("3 ++ 2"), std::runtime_error);
+        TS_ASSERT_THROWS(engine.eval("3+"), std::runtime_error);
     }
 
     void testAssignment() {
