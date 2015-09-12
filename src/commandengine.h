@@ -25,6 +25,9 @@ public:
 	//Creates a new command engine
 	CommandEngine();
 
+	//Loads the given file
+	void loadFile(std::string fileName, bool printIfNotFound = true);
+
 	//Executes the given line
-	bool execute(std::string line);
+	bool execute(std::string line, bool printResult = true);
 };

@@ -1,6 +1,7 @@
 #include "commandengine.h"
 #include <cmath>
 #include <iostream>
+#include <fstream>
 #include <sstream> 
 
 CommandEngine::CommandEngine() {
@@ -141,7 +142,22 @@ std::vector<std::string> splitString(std::string str, std::string delimiter) {
 	return parts;
 }
 
-bool CommandEngine::execute(std::string line) {
+void CommandEngine::loadFile(std::string fileName, bool printIfNotFound) {
+	std::ifstream stream(fileName);
+
+	if (stream.is_open()) {
+		std::string line;
+
+		while (!stream.eof()) {
+			std::getline(stream, line);
+			execute(line, false);
+		}
+	} else if (printIfNotFound) {
+		std::cout << "Could not open the file '" << fileName << "'." << std::endl;
+	}
+}
+
+bool CommandEngine::execute(std::string line, bool printResult) {
 	if (line[0] == ':' && line.size() > 1) {
 		auto parts = splitString(line.substr(1), " ");
 		std::string cmd = parts[0];
@@ -163,39 +179,41 @@ bool CommandEngine::execute(std::string line) {
 	try {
 		auto res = mEngine.eval(line, mEnv);
 
-		if (res.type() == ResultValueType::FLOAT) {
-			//Display only different base if result is an integer
-			double resInt;
-			if (std::modf(res.floatValue(), &resInt) == 0.0) {
-				switch (mPrintNumBase) {
-				case NumberBase::BINARY:
-					std::cout << "0b" << toBase(2, (std::int64_t)res.floatValue()) << std::endl;
-					break;
-				case NumberBase::DECIMAL:
+		if (printResult) {
+			if (res.type() == ResultValueType::FLOAT) {
+				//Display only different base if result is an integer
+				double resInt;
+				if (std::modf(res.floatValue(), &resInt) == 0.0) {
+					switch (mPrintNumBase) {
+						case NumberBase::BINARY:
+							std::cout << "0b" << toBase(2, (std::int64_t)res.floatValue()) << std::endl;
+							break;
+						case NumberBase::DECIMAL:
+							std::cout << std::dec << res << std::endl;
+							break;
+						case NumberBase::HEXADECIMAL:
+							std::cout << std::hex << "0x" << (std::int64_t)res.floatValue() << std::endl;
+							break;
+					}
+				} else {
 					std::cout << std::dec << res << std::endl;
-					break;
-				case NumberBase::HEXADECIMAL:
-					std::cout << std::hex << "0x" << (std::int64_t)res.floatValue() << std::endl;
-					break;	
 				}
 			} else {
-				std::cout << std::dec << res << std::endl;
+				switch (mPrintNumBase) {
+					case NumberBase::BINARY:
+						std::cout << "0b" << toBase(2, res.intValue()) << std::endl;
+						break;
+					case NumberBase::DECIMAL:
+						std::cout << std::dec << res << std::endl;
+						break;
+					case NumberBase::HEXADECIMAL:
+						std::cout << std::hex << "0x" << res.intValue() << std::endl;
+						break;
+				}
 			}
-		} else {
-			switch (mPrintNumBase) {
-			case NumberBase::BINARY:
-				std::cout << "0b" << toBase(2, res.intValue()) << std::endl;
-				break;
-			case NumberBase::DECIMAL:
-				std::cout << std::dec << res << std::endl;
-				break;
-			case NumberBase::HEXADECIMAL:
-				std::cout << std::hex << "0x" << res.intValue() << std::endl;
-				break;	
-			}
-		}
 
-		mEnv.set("ans", res);
+			mEnv.set("ans", res);
+		}
 	} catch (std::runtime_error& e) {
 		std::cout << "Error: " << e.what() << std::endl;
 	}
