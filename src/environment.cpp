@@ -49,6 +49,15 @@ Environment::Environment() {
 
 			return ResultValue(mEvalMode, result);
 		}, "Computes x mod y.") },
+		{ "ceil", Function("ceil", 1, [this](FnArgs x) {
+			return ResultValue(mEvalMode, ceil(x.at(0).floatValue()));
+		}, "Ceils x.") },
+		{ "floor", Function("floor", 1, [this](FnArgs x) {
+			return ResultValue(mEvalMode, floor(x.at(0).floatValue()));
+		}, "Floors x.") },
+		{ "round", Function("round", 1, [this](FnArgs x) {
+			return ResultValue(mEvalMode, round(x.at(0).floatValue()));
+		}, "Rounds x.") },
 	};
 }
 
