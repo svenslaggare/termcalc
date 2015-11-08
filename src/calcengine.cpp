@@ -6,27 +6,98 @@
 #include <stdexcept>
 #include <queue>
 #include <stack>
+#include <cmath>
 
 //Calc engine
 CalcEngine::CalcEngine()
 	: mEvalMode(ResultValueType::FLOAT) {
 	mBinaryOperators = { {
-		{ '^', Operator('^', 6, OperatorAssociativity::RIGHT) },
-		{ '*', Operator('*', 5, OperatorAssociativity::LEFT) },
-		{ '/', Operator('/', 5, OperatorAssociativity::LEFT) },
-		{ '%', Operator('%', 5, OperatorAssociativity::LEFT) },
-		{ '+', Operator('+', 4, OperatorAssociativity::LEFT) },
-		{ '-', Operator('-', 4, OperatorAssociativity::LEFT) },
-		{ OperatorChar('<', '<'), Operator(OperatorChar('<', '<'), 3, OperatorAssociativity::LEFT) },
-		{ OperatorChar('>', '>'), Operator(OperatorChar('>', '>'), 3, OperatorAssociativity::LEFT) },
-		{ '|', Operator('|', 2, OperatorAssociativity::LEFT) },
-		{ '&', Operator('&', 2, OperatorAssociativity::LEFT) },
-		{ '=', Operator('=', 1, OperatorAssociativity::RIGHT) }
+		{ '^', Operator('^', 6, OperatorAssociativity::RIGHT, [](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+			if (evalMode == ResultValueType::FLOAT) {
+				return ResultValue(pow(lhs.floatValue(), rhs.floatValue()));
+			} else {
+				return ResultValue((std::int64_t)pow(lhs.intValue(), rhs.intValue()));
+			}
+		}) },
+		{ '*', Operator('*', 5, OperatorAssociativity::LEFT, [](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+			if (evalMode == ResultValueType::FLOAT) {
+				return ResultValue(lhs.floatValue() * rhs.floatValue());
+			} else {
+				return ResultValue(lhs.intValue() * rhs.intValue());
+			}
+		}) },
+		{ '/', Operator('/', 5, OperatorAssociativity::LEFT, [](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+			if (evalMode == ResultValueType::FLOAT) {
+				return ResultValue(lhs.floatValue() / rhs.floatValue());
+			} else {
+				return ResultValue(lhs.intValue() / rhs.intValue());
+			}
+		}) },
+		{ '%', Operator('%', 5, OperatorAssociativity::LEFT, [](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+			return ResultValue();
+		}) },
+		{ '+', Operator('+', 4, OperatorAssociativity::LEFT, [](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+			if (evalMode == ResultValueType::FLOAT) {
+				return ResultValue(lhs.floatValue() + rhs.floatValue());
+			} else {
+				return ResultValue(lhs.intValue() + rhs.intValue());
+			}
+		}) },
+		{ '-', Operator('-', 4, OperatorAssociativity::LEFT, [](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+			if (evalMode == ResultValueType::FLOAT) {
+				return ResultValue(lhs.floatValue() - rhs.floatValue());
+			} else {
+				return ResultValue(lhs.intValue() - rhs.intValue());
+			}
+		}) },
+		{ OperatorChar('<', '<'), Operator(OperatorChar('<', '<'), 3, OperatorAssociativity::LEFT, [](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+			if (evalMode == ResultValueType::FLOAT) {
+				return ResultValue((double)((std::int64_t)lhs.floatValue() << (std::int64_t)rhs.floatValue()));
+			} else {
+				return ResultValue(lhs.intValue() << rhs.intValue());
+			}
+		}) },
+		{ OperatorChar('>', '>'), Operator(OperatorChar('>', '>'), 3, OperatorAssociativity::LEFT, [](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+			if (evalMode == ResultValueType::FLOAT) {
+				return ResultValue((double)((std::int64_t)lhs.floatValue() >> (std::int64_t)rhs.floatValue()));
+			} else {
+				return ResultValue(lhs.intValue() >> rhs.intValue());
+			}
+		}) },
+		{ '|', Operator('|', 2, OperatorAssociativity::LEFT, [](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+			if (evalMode == ResultValueType::FLOAT) {
+				return ResultValue((double)((std::int64_t)lhs.floatValue() | (std::int64_t)rhs.floatValue()));
+			} else {
+				return ResultValue(lhs.intValue() | rhs.intValue());
+			}
+		}) },
+		{ '&', Operator('&', 2, OperatorAssociativity::LEFT, [](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+			if (evalMode == ResultValueType::FLOAT) {
+				return ResultValue((double)((std::int64_t)lhs.floatValue() & (std::int64_t)rhs.floatValue()));
+			} else {
+				return ResultValue(lhs.intValue() & rhs.intValue());
+			}
+		}) },
+		{ '=', Operator('=', 1, OperatorAssociativity::RIGHT, [](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+			return ResultValue();
+		}) }
 	}, 15, OperatorChar::HASH, OperatorChar::EQUAL };
 
 	mUnaryOperators = {
-		{ '-', Operator('-', 7, OperatorAssociativity::LEFT, true) },
-		{ '~', Operator('~', 7, OperatorAssociativity::LEFT, true) },
+		{ '-', Operator('-', 7, OperatorAssociativity::LEFT, [](ResultValueType evalMode, ResultValue op) {
+			if (evalMode == ResultValueType::FLOAT) {
+				return ResultValue(-op.floatValue());
+			} else {
+				return ResultValue(-op.intValue());
+			}
+		}) },
+		{ '~', Operator('~', 7, OperatorAssociativity::LEFT, [](ResultValueType evalMode, ResultValue op) {
+			if (evalMode == ResultValueType::FLOAT) {
+				return ResultValue((double)(~(std::int64_t)op.floatValue()));
+			} else {
+				return ResultValue(~op.intValue());
+			}
+		}) },
 	};
 }
 

@@ -1,6 +1,8 @@
 #pragma once
 #include <functional>
+#include "resultvalue.h"
 
+//The operator associativity
 enum class OperatorAssociativity {
 	LEFT,
 	RIGHT
@@ -44,13 +46,20 @@ public:
 
 //Represents an operator
 class Operator {
+public:
+	using BinaryOperatorFn = std::function<ResultValue (ResultValueType, ResultValue, ResultValue)>;
+	using UnaryOperatorFn = std::function<ResultValue (ResultValueType, ResultValue)>;
+private:
 	OperatorChar mOp;
 	int mPrecedence;
 	OperatorAssociativity mAssociativity;
 	bool mIsUnary = false;
+	UnaryOperatorFn mUnaryFn;
+	BinaryOperatorFn mBinaryFn;
 public:
 	//Creates a new operator
-	Operator(OperatorChar op, int precedence, OperatorAssociativity associativity, bool isUnary = false);
+	Operator(OperatorChar op, int precedence, OperatorAssociativity associativity, BinaryOperatorFn applyFn);
+	Operator(OperatorChar op, int precedence, OperatorAssociativity associativity, UnaryOperatorFn applyFn);
 
 	//Returns the operator character
 	OperatorChar op() const;
@@ -63,4 +72,10 @@ public:
 
 	//Indicates if an unary operator
 	bool isUnary() const;
+
+	//Applies the operator to the given values. Fails if not a binary operator.
+	ResultValue apply(ResultValueType evalMode, ResultValue lhs, ResultValue rhs) const;
+
+	//Applies the operator to the given value. Fails if not an unary operator.
+	ResultValue apply(ResultValueType evalMode, ResultValue op) const;
 };

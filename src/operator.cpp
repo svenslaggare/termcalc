@@ -48,8 +48,13 @@ OperatorChar::Equal_t OperatorChar::EQUAL = [](const OperatorChar& lhs, const Op
 };
 
 //Operator
-Operator::Operator(OperatorChar op, int precedence, OperatorAssociativity associativity, bool isUnary)
-	: mOp(op), mPrecedence(precedence), mIsUnary(isUnary) {
+Operator::Operator(OperatorChar op, int precedence, OperatorAssociativity associativity, BinaryOperatorFn applyFn)
+	: mOp(op), mPrecedence(precedence), mIsUnary(false), mBinaryFn(applyFn) {
+
+}
+
+Operator::Operator(OperatorChar op, int precedence, OperatorAssociativity associativity, UnaryOperatorFn applyFn)
+	: mOp(op), mPrecedence(precedence), mIsUnary(true), mUnaryFn(applyFn) {
 
 }
 
@@ -67,4 +72,20 @@ OperatorAssociativity Operator::associativity() const {
 
 bool Operator::isUnary() const {
 	return mIsUnary;
+}
+
+ResultValue Operator::apply(ResultValueType evalMode, ResultValue lhs, ResultValue rhs) const {
+	if (mIsUnary) {
+		throw std::runtime_error("Not a binary operator.");
+	}
+
+	return mBinaryFn(evalMode, lhs, rhs);
+}
+
+ResultValue Operator::apply(ResultValueType evalMode, ResultValue op) const {
+	if (!mIsUnary) {
+		throw std::runtime_error("Not an unary operator.");
+	}
+
+	return mUnaryFn(evalMode, op);
 }

@@ -179,84 +179,7 @@ void BinaryOperatorExpression::evaluate(Environment& env, EvalStack& evalStack) 
 		auto op1 = evalStack.top();
 		evalStack.pop();
 
-		bool floatMode = env.evalMode() == ResultValueType::FLOAT;
-
-		if (!mOp.op().isTwoChars()) {
-			switch (mOp.op().op1()) {
-			case '+':
-				if (floatMode) {
-					evalStack.push(op1.floatValue() + op2.floatValue());
-				} else {
-					evalStack.push(op1.intValue() + op2.intValue());
-				}
-				break;
-			case '-':
-				if (floatMode) {
-					evalStack.push(op1.floatValue() - op2.floatValue());
-				} else {
-					evalStack.push(op1.intValue() - op2.intValue());
-				}
-				break;
-			case '*':
-				if (floatMode) {
-					evalStack.push(op1.floatValue() * op2.floatValue());
-				} else {
-					evalStack.push(op1.intValue() * op2.intValue());
-				}
-				break;
-			case '/':
-				if (floatMode) {
-					evalStack.push(op1.floatValue() / op2.floatValue());
-				} else {
-					evalStack.push(op1.intValue() / op2.intValue());
-				}
-				break;
-			case '%':
-				if (floatMode) {
-					evalStack.push((double)((std::int64_t)op1.floatValue() % (std::int64_t)op2.floatValue()));
-				} else {
-					evalStack.push(op1.intValue() % op2.intValue());
-				}
-				break;
-			case '^':
-				if (floatMode) {
-					evalStack.push(pow(op1.floatValue(), op2.floatValue()));
-				} else {
-					evalStack.push((std::int64_t)pow(op1.intValue(), op2.intValue()));
-				}
-				break;
-			case '|':
-				if (floatMode) {
-					evalStack.push((double)((std::int64_t)op1.floatValue() | (std::int64_t)op2.floatValue()));
-				} else {
-					evalStack.push(op1.intValue() | op2.intValue());
-				}
-				break;
-			case '&':
-				if (floatMode) {
-					evalStack.push((double)((std::int64_t)op1.floatValue() & (std::int64_t)op2.floatValue()));
-				} else {
-					evalStack.push(op1.intValue() & op2.intValue());
-				}
-				break;	
-			}
-		} else {
-			auto op = mOp.op();
-
-			if (op == OperatorChar('<', '<')) {
-				if (floatMode) {
-					evalStack.push((double)((std::int64_t)op1.floatValue() << (std::int64_t)op2.floatValue()));
-				} else {
-					evalStack.push(op1.intValue() << op2.intValue());
-				}
-			} else if (op == OperatorChar('>', '>')) {
-				if (floatMode) {
-					evalStack.push((double)((std::int64_t)op1.floatValue() >> (std::int64_t)op2.floatValue()));
-				} else {
-					evalStack.push(op1.intValue() >> op2.intValue());
-				}
-			}
-		}
+		evalStack.push(mOp.apply(env.evalMode(), op1, op2));
 	}
 }
 
@@ -276,20 +199,5 @@ void UnaryOperatorExpression::evaluate(Environment& env, EvalStack& evalStack) {
 	auto operand = evalStack.top();
 	evalStack.pop();
 
-	switch (mOp.op().op1()) {
-	case '-':
-		if (operand.type() == ResultValueType::FLOAT) {
-			evalStack.push(-operand.floatValue());
-		} else {
-			evalStack.push(-operand.intValue());
-		}
-		break;
-	case '~':
-		if (operand.type() == ResultValueType::FLOAT) {
-			evalStack.push((double)(~(std::int64_t)operand.floatValue()));
-		} else {
-			evalStack.push(~operand.intValue());
-		}
-		break;
-	}
+	evalStack.push(mOp.apply(env.evalMode(), operand));
 }
