@@ -1,4 +1,5 @@
 #include "commandengine.h"
+#include "linenoise.h"
 #include <iostream>
 
 #ifdef __unix__
@@ -8,7 +9,6 @@
 #endif
 
 int main() {
-	std::string line;
 	CommandEngine engine;
 	std::string homeDir = "";
 
@@ -19,11 +19,21 @@ int main() {
 
 	engine.loadFile(homeDir + "/default.termcalc", false);
 
-	while (std::cin) {
-		std::cout << "> ";
-		std::getline(std::cin, line);
+//	std::string line;
+//	while (std::cin) {
+//		std::cout << "> ";
+//		std::getline(std::cin, line);
+//		if (engine.execute(line)) {
+//			break;
+//		}
+//	}
+
+	char* line;
+	while((line = linenoise("> ")) != nullptr) {
+		linenoiseHistoryAdd(line);
 		if (engine.execute(line)) {
 			break;
 		}
+		free(line);
 	}
 }

@@ -108,7 +108,9 @@ void FunctionCallExpression::evaluate(Environment& env, EvalStack& evalStack) {
 	auto& func = env.functions().at(mName);
 
 	if (mArguments.size() != func.numArgs()) {
-		throw std::runtime_error("Expected " + std::to_string(func.numArgs()) + " arguments but got " + std::to_string(mArguments.size()));
+		throw std::runtime_error(
+				"Expected " + std::to_string(func.numArgs())
+				+ " arguments but got " + std::to_string(mArguments.size()));
 	}
 
 	for (auto& arg : mArguments) {
