@@ -34,7 +34,11 @@ CalcEngine::CalcEngine()
 			}
 		}) },
 		{ '%', Operator('%', 5, OperatorAssociativity::LEFT, [](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
-			return ResultValue();
+			if (evalMode == ResultValueType::FLOAT) {
+				return ResultValue((double)((std::int64_t)lhs.floatValue() % (std::int64_t)rhs.floatValue()));
+			} else {
+				return ResultValue(lhs.intValue() % rhs.intValue());
+			}
 		}) },
 		{ '+', Operator('+', 4, OperatorAssociativity::LEFT, [](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
 			if (evalMode == ResultValueType::FLOAT) {

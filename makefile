@@ -53,7 +53,7 @@ test: $(TESTS_DIR)/test.h $(OBJDIR) $(TEST_OBJECTS)
 	./$(TEST_EXECUTABLE)
 
 run: $(OBJDIR) $(SOURCES) $(EXECUTABLE)
-	rlwrap ./$(EXECUTABLE)
+	./$(EXECUTABLE)
 
 ifeq ($(OS),Windows_NT)
 clean:
