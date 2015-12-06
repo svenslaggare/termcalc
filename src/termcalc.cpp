@@ -19,21 +19,23 @@ int main() {
 
 	engine.loadFile(homeDir + "/default.termcalc", false);
 
-//	std::string line;
-//	while (std::cin) {
-//		std::cout << "> ";
-//		std::getline(std::cin, line);
-//		if (engine.execute(line)) {
-//			break;
-//		}
-//	}
-
-	char* line;
-	while((line = linenoise("> ")) != nullptr) {
-		linenoiseHistoryAdd(line);
-		if (engine.execute(line)) {
-			break;
+	#if __unix__
+		char* line;
+		while((line = linenoise("> ")) != nullptr) {
+			linenoiseHistoryAdd(line);
+			if (engine.execute(line)) {
+				break;
+			}
+			free(line);
 		}
-		free(line);
-	}
+	#else
+		std::string line;
+		while (std::cin) {
+			std::cout << "> ";
+			std::getline(std::cin, line);
+			if (engine.execute(line)) {
+				break;
+			}
+		}
+	#endif
 }
