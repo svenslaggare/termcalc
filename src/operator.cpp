@@ -39,14 +39,6 @@ bool OperatorChar::operator!=(const OperatorChar& rhs) const {
 	return !(*this == rhs);
 }
 
-OperatorChar::Hash_t OperatorChar::HASH = [](const OperatorChar& op) {
-	return (37 * op.mIsTwoChars) + (37 * op.mOp1) + (37 * op.mOp2);
-};
-
-OperatorChar::Equal_t OperatorChar::EQUAL = [](const OperatorChar& lhs, const OperatorChar& rhs) {
-	return lhs == rhs;
-};
-
 //Operator
 Operator::Operator(OperatorChar op, int precedence, OperatorAssociativity associativity, BinaryOperatorFn applyFn)
 	: mOp(op), mPrecedence(precedence), mIsUnary(false), mBinaryFn(applyFn) {

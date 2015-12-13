@@ -23,7 +23,7 @@ private:
 	Token mCurrentToken;
 	int mTokenIndex;
 
-	//Signals that a parse error has occured
+	//Signals that a parse error has occurred
 	void parseError(std::string message);
 
 	//Advances to the next token

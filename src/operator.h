@@ -35,14 +35,17 @@ public:
 
 	bool operator==(const OperatorChar& rhs) const;
 	bool operator!=(const OperatorChar& rhs) const;
-
-	//Custom hash
-	using Hash_t = std::function<std::size_t(const OperatorChar& op)>;
-	static Hash_t HASH;
-
-	using Equal_t = std::function<bool(const OperatorChar& rhs, const OperatorChar& lhs)>;
-	static Equal_t EQUAL;
 };
+
+//Custom hash
+namespace std {
+	template <>
+	struct hash<OperatorChar> {
+		std::size_t operator()(const OperatorChar& op) const {
+			return (37 * (std::size_t)op.isTwoChars()) + (37 * (std::size_t)op.op1()) + (37 * (std::size_t)op.op2());
+		}
+	};
+}
 
 //Represents an operator
 class Operator {

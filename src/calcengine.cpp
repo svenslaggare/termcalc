@@ -12,97 +12,60 @@
 CalcEngine::CalcEngine()
 	: mEvalMode(ResultValueType::FLOAT) {
 	mBinaryOperators = { {
-		{ '^', Operator('^', 6, OperatorAssociativity::RIGHT, [](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
-			if (evalMode == ResultValueType::FLOAT) {
-				return ResultValue(pow(lhs.floatValue(), rhs.floatValue()));
-			} else {
-				return ResultValue((std::int64_t)pow(lhs.intValue(), rhs.intValue()));
-			}
+		{ '^', Operator('^', 6, OperatorAssociativity::RIGHT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+			return binaryOperator(NumberOperators::Pow, evalMode, lhs, rhs);
 		}) },
-		{ '*', Operator('*', 5, OperatorAssociativity::LEFT, [](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
-			if (evalMode == ResultValueType::FLOAT) {
-				return ResultValue(lhs.floatValue() * rhs.floatValue());
-			} else {
-				return ResultValue(lhs.intValue() * rhs.intValue());
-			}
+		{ '*', Operator('*', 5, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+			return binaryOperator(NumberOperators::Mul, evalMode, lhs, rhs);
 		}) },
-		{ '/', Operator('/', 5, OperatorAssociativity::LEFT, [](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
-			if (evalMode == ResultValueType::FLOAT) {
-				return ResultValue(lhs.floatValue() / rhs.floatValue());
-			} else {
-				return ResultValue(lhs.intValue() / rhs.intValue());
-			}
+		{ '/', Operator('/', 5, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+			return binaryOperator(NumberOperators::Div, evalMode, lhs, rhs);
 		}) },
-		{ '%', Operator('%', 5, OperatorAssociativity::LEFT, [](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
-			if (evalMode == ResultValueType::FLOAT) {
-				return ResultValue((double)((std::int64_t)lhs.floatValue() % (std::int64_t)rhs.floatValue()));
-			} else {
-				return ResultValue(lhs.intValue() % rhs.intValue());
-			}
+		{ '%', Operator('%', 5, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+			return binaryOperator(NumberOperators::Rem, evalMode, lhs, rhs);
 		}) },
-		{ '+', Operator('+', 4, OperatorAssociativity::LEFT, [](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
-			if (evalMode == ResultValueType::FLOAT) {
-				return ResultValue(lhs.floatValue() + rhs.floatValue());
-			} else {
-				return ResultValue(lhs.intValue() + rhs.intValue());
-			}
+		{ '+', Operator('+', 4, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+			return binaryOperator(NumberOperators::Add, evalMode, lhs, rhs);
 		}) },
-		{ '-', Operator('-', 4, OperatorAssociativity::LEFT, [](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
-			if (evalMode == ResultValueType::FLOAT) {
-				return ResultValue(lhs.floatValue() - rhs.floatValue());
-			} else {
-				return ResultValue(lhs.intValue() - rhs.intValue());
-			}
+		{ '-', Operator('-', 4, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+			return binaryOperator(NumberOperators::Sub, evalMode, lhs, rhs);
 		}) },
-		{ OperatorChar('<', '<'), Operator(OperatorChar('<', '<'), 3, OperatorAssociativity::LEFT, [](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
-			if (evalMode == ResultValueType::FLOAT) {
-				return ResultValue((double)((std::int64_t)lhs.floatValue() << (std::int64_t)rhs.floatValue()));
-			} else {
-				return ResultValue(lhs.intValue() << rhs.intValue());
-			}
+		{ OperatorChar('<', '<'), Operator(OperatorChar('<', '<'), 3, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+			return binaryOperator(NumberOperators::LeftShift, evalMode, lhs, rhs);
 		}) },
-		{ OperatorChar('>', '>'), Operator(OperatorChar('>', '>'), 3, OperatorAssociativity::LEFT, [](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
-			if (evalMode == ResultValueType::FLOAT) {
-				return ResultValue((double)((std::int64_t)lhs.floatValue() >> (std::int64_t)rhs.floatValue()));
-			} else {
-				return ResultValue(lhs.intValue() >> rhs.intValue());
-			}
+		{ OperatorChar('>', '>'), Operator(OperatorChar('>', '>'), 3, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+			return binaryOperator(NumberOperators::RightShift, evalMode, lhs, rhs);
 		}) },
-		{ '|', Operator('|', 2, OperatorAssociativity::LEFT, [](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
-			if (evalMode == ResultValueType::FLOAT) {
-				return ResultValue((double)((std::int64_t)lhs.floatValue() | (std::int64_t)rhs.floatValue()));
-			} else {
-				return ResultValue(lhs.intValue() | rhs.intValue());
-			}
+		{ '|', Operator('|', 2, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+			return binaryOperator(NumberOperators::BitwiseOr, evalMode, lhs, rhs);
 		}) },
-		{ '&', Operator('&', 2, OperatorAssociativity::LEFT, [](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
-			if (evalMode == ResultValueType::FLOAT) {
-				return ResultValue((double)((std::int64_t)lhs.floatValue() & (std::int64_t)rhs.floatValue()));
-			} else {
-				return ResultValue(lhs.intValue() & rhs.intValue());
-			}
+		{ '&', Operator('&', 2, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+			return binaryOperator(NumberOperators::BitwiseAnd, evalMode, lhs, rhs);
 		}) },
-		{ '=', Operator('=', 1, OperatorAssociativity::RIGHT, [](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+		{ '=', Operator('=', 1, OperatorAssociativity::RIGHT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
 			return ResultValue();
 		}) }
-	}, 15, OperatorChar::HASH, OperatorChar::EQUAL };
+	} };
 
 	mUnaryOperators = {
-		{ '-', Operator('-', 7, OperatorAssociativity::LEFT, [](ResultValueType evalMode, ResultValue op) {
-			if (evalMode == ResultValueType::FLOAT) {
-				return ResultValue(-op.floatValue());
-			} else {
-				return ResultValue(-op.intValue());
-			}
+		{ '-', Operator('-', 7, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue op) {
+			return unaryOperator(NumberOperators::Neg, evalMode, op);
 		}) },
-		{ '~', Operator('~', 7, OperatorAssociativity::LEFT, [](ResultValueType evalMode, ResultValue op) {
-			if (evalMode == ResultValueType::FLOAT) {
-				return ResultValue((double)(~(std::int64_t)op.floatValue()));
-			} else {
-				return ResultValue(~op.intValue());
-			}
+		{ '~', Operator('~', 7, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue op) {
+			return unaryOperator(NumberOperators::Inv, evalMode, op);
 		}) },
 	};
+
+	mNumberTypes.emplace_back(std::unique_ptr<FloatType>(new FloatType));
+	mNumberTypes.emplace_back(std::unique_ptr<IntegerType>(new IntegerType));
+}
+
+ResultValue CalcEngine::binaryOperator(NumberOperators op, ResultValueType evalMode, ResultValue x, ResultValue y) {
+	return mNumberTypes.at((std::size_t)evalMode)->binaryOperator(op, x, y);
+}
+
+ResultValue CalcEngine::unaryOperator(NumberOperators op, ResultValueType evalMode, ResultValue x) {
+	return mNumberTypes.at((std::size_t)evalMode)->unaryOperator(op, x);
 }
 
 const CalcEngine::BinaryOperators& CalcEngine::binaryOperators() const {

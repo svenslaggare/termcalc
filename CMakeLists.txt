@@ -22,6 +22,8 @@ set(SOURCE_FILES
         src/resultvalue.h
         src/termcalc.cpp
         src/token.cpp
-        src/token.h src/linenoise.cpp src/linenoise.h)
+        src/token.h
+        src/linenoise.cpp
+        src/linenoise.h src/numbertype.cpp src/numbertype.h)
 
 add_executable(termcalc ${SOURCE_FILES})

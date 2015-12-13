@@ -1,21 +1,32 @@
 #pragma once
 #include "resultvalue.h"
 #include "operator.h"
+#include "numbertype.h"
 #include <string>
 #include <unordered_map>
+#include <vector>
+#include <memory>
 
 class Environment;
 
 //Represents the calculation engine
 class CalcEngine {
 public:
-	using BinaryOperators = std::unordered_map<OperatorChar, Operator, OperatorChar::Hash_t, OperatorChar::Equal_t>;
+	using BinaryOperators = std::unordered_map<OperatorChar, Operator>;
 private:
 	ResultValueType mEvalMode;	
 
 	BinaryOperators mBinaryOperators;
 	std::unordered_map<char, Operator> mUnaryOperators;
-public:	
+
+	std::vector<std::unique_ptr<NumberType>> mNumberTypes;
+
+	//Applies the given binary operator
+	ResultValue binaryOperator(NumberOperators op, ResultValueType evalMode, ResultValue x, ResultValue y);
+
+	//Applies the given unary operator
+	ResultValue unaryOperator(NumberOperators op, ResultValueType evalMode, ResultValue x);
+public:
 	//Creates a new calc engine
 	CalcEngine();
 
