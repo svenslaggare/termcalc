@@ -7,44 +7,44 @@ Environment::Environment() {
 	};
 
 	mFunctions = {
-		{ "sin", Function("sin", 1, [this](FnArgs x) {
-			return ResultValue(mEvalMode, sin(x.at(0).floatValue()));
+		{ "sin", Function("sin", 1, [this](FnArgs args) {
+			return ResultValue(mEvalMode, sin(args.at(0).floatValue()));
 		}, "Computes the sine of x.") },
-		{ "cos", Function("cos", 1, [this](FnArgs x) {
-			return ResultValue(mEvalMode, cos(x.at(0).floatValue()));
+		{ "cos", Function("cos", 1, [this](FnArgs args) {
+			return ResultValue(mEvalMode, cos(args.at(0).floatValue()));
 		}, "Computes the cosine of x.") },
-		{ "tan", Function("tan", 1, [this](FnArgs x) {
-			return ResultValue(mEvalMode, tan(x.at(0).floatValue()));
+		{ "tan", Function("tan", 1, [this](FnArgs args) {
+			return ResultValue(mEvalMode, tan(args.at(0).floatValue()));
 		}, "Computes the tangent of x.") },
-		{ "sqrt", Function("sqrt", 1, [this](FnArgs x) {
-			return ResultValue(mEvalMode, sqrt(x.at(0).floatValue()));
+		{ "sqrt", Function("sqrt", 1, [this](FnArgs args) {
+			return ResultValue(mEvalMode, sqrt(args.at(0).floatValue()));
 		}, "Computes the square root of x.") },
-		{ "asin", Function("asin", 1, [this](FnArgs x) {
-			return ResultValue(mEvalMode, asin(x.at(0).floatValue()));
+		{ "asin", Function("asin", 1, [this](FnArgs args) {
+			return ResultValue(mEvalMode, asin(args.at(0).floatValue()));
 		}, "Computes the inverse sine of x.") },
-		{ "acos", Function("acos", 1, [this](FnArgs x) {
-			return ResultValue(mEvalMode, acos(x.at(0).floatValue()));
+		{ "acos", Function("acos", 1, [this](FnArgs args) {
+			return ResultValue(mEvalMode, acos(args.at(0).floatValue()));
 		}, "Computes the inverse cosine of x.") },
-		{ "atan", Function("atan", 1, [this](FnArgs x) {
-			return ResultValue(mEvalMode, atan(x.at(0).floatValue()));
+		{ "atan", Function("atan", 1, [this](FnArgs args) {
+			return ResultValue(mEvalMode, atan(args.at(0).floatValue()));
 		}, "Computes the inverse tangent of x.") },
-		{ "ln", Function("ln", 1, [this](FnArgs x) {
-			return ResultValue(mEvalMode, log(x.at(0).floatValue()));
+		{ "ln", Function("ln", 1, [this](FnArgs args) {
+			return ResultValue(mEvalMode, log(args.at(0).floatValue()));
 		}, "Computes the natrual logaritm of x.") },
-		{ "log", Function("log", 1, [this](FnArgs x) {
-			return ResultValue(mEvalMode, log10(x.at(0).floatValue()));
+		{ "log", Function("log", 1, [this](FnArgs args) {
+			return ResultValue(mEvalMode, log10(args.at(0).floatValue()));
 		}, "Computes the 10-logaritm of x.") },
-		{ "logb", Function("logb", 2, [this](FnArgs x) {
-			return ResultValue(mEvalMode, log(x.at(0).floatValue()) / log(x.at(1).floatValue()));
+		{ "logb", Function("logb", 2, [this](FnArgs args) {
+			return ResultValue(mEvalMode, log(args.at(0).floatValue()) / log(args.at(1).floatValue()));
 		}, "Computes the y-logaritm of x.") },
-		{ "xor", Function("xor", 2, [this](FnArgs x) {
-			return ResultValue(mEvalMode, x.at(0).intValue() ^ x.at(1).intValue());
+		{ "xor", Function("xor", 2, [this](FnArgs args) {
+			return ResultValue(mEvalMode, args.at(0).intValue() ^ args.at(1).intValue());
 		}, "Bitwise XOR between x and y.") },
-		{ "mod", Function("mod", 2, [this](FnArgs x) {
-			std::int64_t result = x.at(0).intValue() % x.at(1).intValue();
+		{ "mod", Function("mod", 2, [this](FnArgs args) {
+			std::int64_t result = args.at(0).intValue() % args.at(1).intValue();
 
 			if (result < 0) {
-				result += x.at(1).intValue();
+				result += args.at(1).intValue();
 			}
 
 			return ResultValue(mEvalMode, result);

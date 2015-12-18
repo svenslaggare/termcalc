@@ -3,7 +3,7 @@
 
 //Integer type
 namespace {
-	//Parses a 64 bits integer
+	//Parses a 64 bits integer in the given base
 	std::int64_t parseInt64(std::string str, int base) {
 		#if defined(__MINGW32__)
 		return std::stoll(str, nullptr, base);
