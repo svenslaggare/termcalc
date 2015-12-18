@@ -15,7 +15,7 @@ std::string NumberExpression::toString() {
 	return mValue.toString();
 }
 
-void NumberExpression::evaluate(Environment& env, EvalStack& evalStack) {
+void NumberExpression::evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) {
 	evalStack.push(mValue);
 }
 
@@ -33,7 +33,7 @@ std::string VariableExpression::toString() {
 	return mName;
 }
 
-void VariableExpression::evaluate(Environment& env, EvalStack& evalStack) {
+void VariableExpression::evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) {
 	ResultValue value;
 	if (env.getVariable(mName, value, true)) {
 		evalStack.push(value);
@@ -57,11 +57,11 @@ std::size_t FunctionCallExpression::numArguments() const {
 }
 
 Expression* FunctionCallExpression::getArgument(std::size_t index) const {
-	if (index < mArguments.size()) {
-		return mArguments[index].get();
-	} else {
-		return nullptr;
+	if (index >= mArguments.size()) {
+		throw std::runtime_error("Invalid argument index.");
 	}
+
+	return mArguments[index].get();
 }
 
 std::string FunctionCallExpression::toString() {
@@ -86,7 +86,7 @@ std::string FunctionCallExpression::toString() {
 	return stream.str();
 }
 
-void FunctionCallExpression::evaluate(Environment& env, EvalStack& evalStack) {
+void FunctionCallExpression::evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) {
 	//Find the function
 	if (env.functions().count(mName) == 0) {
 		throw std::runtime_error("'" + mName + "' is not a defined function.");
@@ -101,7 +101,7 @@ void FunctionCallExpression::evaluate(Environment& env, EvalStack& evalStack) {
 	}
 
 	for (auto& arg : mArguments) {
-		arg->evaluate(env, evalStack);
+		arg->evaluate(calcEngine, env, evalStack);
 	}
 
 	FnArgs args;
@@ -111,23 +111,23 @@ void FunctionCallExpression::evaluate(Environment& env, EvalStack& evalStack) {
 		args.insert(args.begin(), arg);
 	}
 
-	evalStack.push(func.apply(env, args));
+	evalStack.push(func.apply(calcEngine, env, args));
 }
 
 //Binary operator expression
-BinaryOperatorExpression::BinaryOperatorExpression(Operator op, std::unique_ptr<Expression> lhs, std::unique_ptr<Expression> rhs)
+BinaryOperatorExpression::BinaryOperatorExpression(OperatorChar op, std::unique_ptr<Expression> lhs, std::unique_ptr<Expression> rhs)
 	: mOp(op), mLHS(std::move(lhs)), mRHS(std::move(rhs)) {
 
 }
 
 std::string BinaryOperatorExpression::toString() {
-	return mLHS->toString() + mOp.op().toString() + mRHS->toString();
+	return mLHS->toString() + mOp.toString() + mRHS->toString();
 }
 
-void BinaryOperatorExpression::evaluate(Environment& env, EvalStack& evalStack) {
-	if (mOp.op() == '=') {
+void BinaryOperatorExpression::evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) {
+	if (mOp == '=') {
 		if (auto var = dynamic_cast<VariableExpression*>(mLHS.get())) {
-			mRHS->evaluate(env, evalStack);
+			mRHS->evaluate(calcEngine, env, evalStack);
 
 			auto value = evalStack.top().floatValue();
 			evalStack.pop();
@@ -159,8 +159,15 @@ void BinaryOperatorExpression::evaluate(Environment& env, EvalStack& evalStack) 
 			throw std::runtime_error("The left hand side must be a variable or a function definition.");
 		}
 	} else {
-		mLHS->evaluate(env, evalStack);
-		mRHS->evaluate(env, evalStack);
+		//It's possible that the expression was defined using a type that don't support the current operator.
+		if (calcEngine.binaryOperators().count(mOp) == 0) {
+			throw std::runtime_error("The current mode does not support the operator '" + mOp.toString() + "'.");
+		}
+
+		auto& op = calcEngine.binaryOperators().at(mOp);
+
+		mLHS->evaluate(calcEngine, env, evalStack);
+		mRHS->evaluate(calcEngine, env, evalStack);
 
 		auto op2 = evalStack.top();
 		evalStack.pop();
@@ -168,25 +175,32 @@ void BinaryOperatorExpression::evaluate(Environment& env, EvalStack& evalStack) 
 		auto op1 = evalStack.top();
 		evalStack.pop();
 
-		evalStack.push(mOp.apply(op1, op2));
+		evalStack.push(op.apply(op1, op2));
 	}
 }
 
 //Unary expression
-UnaryOperatorExpression::UnaryOperatorExpression(Operator op, std::unique_ptr<Expression> operand)
+UnaryOperatorExpression::UnaryOperatorExpression(OperatorChar op, std::unique_ptr<Expression> operand)
 	: mOp(op), mOperand(std::move(operand)) {
 
 }
 
 std::string UnaryOperatorExpression::toString() {
-	return mOp.op().toString() + mOperand->toString();
+	return mOp.toString() + mOperand->toString();
 }
 
-void UnaryOperatorExpression::evaluate(Environment& env, EvalStack& evalStack) {
-	mOperand->evaluate(env, evalStack);
+void UnaryOperatorExpression::evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) {
+	//It's possible that the expression was defined using a type that don't support the current operator.
+	if (calcEngine.unaryOperators().count(mOp) == 0) {
+		throw std::runtime_error("The current mode does not support the operator '" + mOp.toString() + "'.");
+	}
+
+	auto& op = calcEngine.unaryOperators().at(mOp);
+
+	mOperand->evaluate(calcEngine, env, evalStack);
 
 	auto operand = evalStack.top();
 	evalStack.pop();
 
-	evalStack.push(mOp.apply(operand));
+	evalStack.push(op.apply(operand));
 }

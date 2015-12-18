@@ -50,7 +50,7 @@ ResultValue CalcEngine::eval(std::string expressionString, Environment& env) {
 	EvalStack evalStack;
 
 	//Evaluate
-	expression->evaluate(env, evalStack);
+	expression->evaluate(*this, env, evalStack);
 
 	if (evalStack.empty()) {
 		throw std::runtime_error("Expected result.");

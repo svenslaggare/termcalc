@@ -296,7 +296,7 @@ std::unique_ptr<Expression> Parser::parseBinaryOpRHS(int precedence, std::unique
 			return lhs;
 		}
 
-		auto op = mCalcEngine.binaryOperators().at(tokenAsOperator(mCurrentToken)); 
+		auto op = tokenAsOperator(mCurrentToken);
 		nextToken(); //Eat the operator
 
 		//Parse the unary expression after the binary operator
@@ -321,18 +321,18 @@ std::unique_ptr<Expression> Parser::parseUnaryExpression() {
 	}
 
 	//If this is a unary operator, read it.
-	char opChar = mCurrentToken.charValue();
+	auto op = tokenAsOperator(mCurrentToken);
 	nextToken(); //Eat the operator
 
 	auto operand = parseUnaryExpression();
 
 	if (operand != nullptr) {
-		if (mCalcEngine.unaryOperators().count(opChar) == 0) {
-			parseError("'" + std::string { opChar } + "' is not a defined unary operator.");
+		if (mCalcEngine.unaryOperators().count(op) == 0) {
+			parseError("'" + op.toString() + "' is not a defined unary operator.");
 		}
 
 		return std::unique_ptr<UnaryOperatorExpression>(
-			new UnaryOperatorExpression(mCalcEngine.unaryOperators().at(opChar), std::move(operand)));
+			new UnaryOperatorExpression(op, std::move(operand)));
 	} 
 
 	return operand;

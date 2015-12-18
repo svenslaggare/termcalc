@@ -6,12 +6,12 @@ ResultValue::ResultValue(std::int64_t value)
 }
 
 ResultValue::ResultValue(double value)
-	:  mType(ResultValueType::FLOAT), mIntValue(value), mFloatValue(value) {
+	:  mType(ResultValueType::FLOAT), mIntValue((std::int64_t)value), mFloatValue(value) {
 
 }
 
 ResultValue::ResultValue(ResultValueType type, double value)
-	:  mType(type), mIntValue(value), mFloatValue(value) {
+	:  mType(type), mIntValue((std::int64_t)value), mFloatValue(value) {
 
 }
 
@@ -82,12 +82,7 @@ double ResultValue::operator+(double value) const {
 }
 
 std::ostream& operator<<(std::ostream& os, ResultValue value) {
-	if (value.type() == ResultValueType::FLOAT) {
-		os << value.floatValue();
-	} else {
-		os << value.intValue();
-	}
-
+	os << value.toString();
 	return os;
 }
 

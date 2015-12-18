@@ -9,6 +9,7 @@
 using FnArgs = std::vector<ResultValue>;
 using ApplyFunction = std::function<ResultValue(FnArgs)>;
 class Environment;
+class CalcEngine;
 class Expression;
 	
 //Represents a function body for an user defined function
@@ -26,7 +27,7 @@ public:
 	std::string toString() const;
 
 	//Applies the function to the given arguments
-	ResultValue apply(Environment& environment, FnArgs args) const;	
+	ResultValue apply(CalcEngine& calcEngine, Environment& environment, FnArgs args) const;
 };
 
 //Represents a function
@@ -63,7 +64,7 @@ public:
 	std::shared_ptr<FunctionBody> body() const;
 
 	//Applies the function to the given arguments
-	ResultValue apply(Environment& environment, FnArgs args) const;
+	ResultValue apply(CalcEngine& calcEngine, Environment& environment, FnArgs args) const;
 };
 
 std::ostream& operator<<(std::ostream& os, const Function& func);

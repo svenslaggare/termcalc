@@ -5,7 +5,7 @@
 #include "operator.h"
 
 using BinaryOperators = std::unordered_map<OperatorChar, Operator>;
-using UnaryOperators = std::unordered_map<char, Operator>;
+using UnaryOperators = std::unordered_map<OperatorChar, Operator>;
 
 //Represents a number type
 class NumberType {

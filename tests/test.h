@@ -81,9 +81,8 @@ public:
         engine.eval("f(x)=x^2", env);
         TS_ASSERT_EQUALS(engine.eval("f(4)", env), ResultValue(16.0));   
 
-		//Test case fails since the bounded operator is a float.
-//        engine.setEvalMode(ResultValueType::INTEGER);
-//        TS_ASSERT_EQUALS(engine.eval("f(4)", env), ResultValue(16L));
+        engine.setEvalMode(ResultValueType::INTEGER);
+        TS_ASSERT_EQUALS(engine.eval("f(4)", env), ResultValue(16L));
     }
 
 	void testDefineFunctions2() {

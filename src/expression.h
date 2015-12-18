@@ -9,6 +9,7 @@
 
 using EvalStack = std::stack<ResultValue>;
 class Environment;
+class CalcEngine;
 
 //Represents an expression
 class Expression {
@@ -20,7 +21,7 @@ public:
 	virtual std::string toString() = 0;
 
 	//Evaluates the current expression
-	virtual void evaluate(Environment& env, EvalStack& evalStack) = 0;
+	virtual void evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) = 0;
 };
 
 //Represents a number expression
@@ -32,7 +33,7 @@ public:
 	NumberExpression(ResultValue value);
 
 	virtual std::string toString() override;
-	virtual void evaluate(Environment& env, EvalStack& evalStack) override;
+	virtual void evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) override;
 };
 
 //Represents a variable expression
@@ -47,7 +48,7 @@ public:
 	std::string name() const;
 
 	virtual std::string toString() override;
-	virtual void evaluate(Environment& env, EvalStack& evalStack) override;
+	virtual void evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) override;
 };
 
 //Represents a function call expression
@@ -69,32 +70,32 @@ public:
 	Expression* getArgument(std::size_t index) const;
 
 	virtual std::string toString() override;
-	virtual void evaluate(Environment& env, EvalStack& evalStack) override;
+	virtual void evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) override;
 };
 
 //Represents a binary operator expression
 class BinaryOperatorExpression : public Expression {
 private:
-	Operator mOp;
+	OperatorChar mOp;
 	std::unique_ptr<Expression> mLHS;
 	std::unique_ptr<Expression> mRHS;
 public:
 	//Creates a new binary operator expression
-	BinaryOperatorExpression(Operator op, std::unique_ptr<Expression> lhs, std::unique_ptr<Expression> rhs);
+	BinaryOperatorExpression(OperatorChar op, std::unique_ptr<Expression> lhs, std::unique_ptr<Expression> rhs);
 
 	virtual std::string toString() override;
-	virtual void evaluate(Environment& env, EvalStack& evalStack) override;
+	virtual void evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) override;
 };
 
 //Represents a unary operator expression
 class UnaryOperatorExpression : public Expression {
 private:
-	Operator mOp;
+	OperatorChar mOp;
 	std::unique_ptr<Expression> mOperand;
 public:
 	//Creates a new binary operator expression
-	UnaryOperatorExpression(Operator op, std::unique_ptr<Expression> operand);
+	UnaryOperatorExpression(OperatorChar op, std::unique_ptr<Expression> operand);
 
 	virtual std::string toString() override;
-	virtual void evaluate(Environment& env, EvalStack& evalStack) override;
+	virtual void evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) override;
 };

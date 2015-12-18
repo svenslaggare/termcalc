@@ -17,7 +17,7 @@ std::string FunctionBody::toString() const {
 	return mBody->toString();
 }
 
-ResultValue FunctionBody::apply(Environment& environment, FnArgs args) const {
+ResultValue FunctionBody::apply(CalcEngine& calcEngine, Environment& environment, FnArgs args) const {
 	//First, save the environment values
 	std::unordered_map<std::string, ResultValue> savedValues;
 	for (auto param : mParameters) {
@@ -35,7 +35,7 @@ ResultValue FunctionBody::apply(Environment& environment, FnArgs args) const {
 
 	//Apply the function
 	EvalStack stack;
-	mBody->evaluate(environment, stack);
+	mBody->evaluate(calcEngine, environment, stack);
 
 	if (stack.size() != 1) {
 		throw std::runtime_error("Expected result.");
@@ -80,11 +80,11 @@ std::shared_ptr<FunctionBody> Function::body() const {
 	return mUserBody;;
 }
 
-ResultValue Function::apply(Environment& environment, FnArgs args) const {
+ResultValue Function::apply(CalcEngine& calcEngine, Environment& environment, FnArgs args) const {
 	if (!mIsUserDefined) {
 		return mFunc(args);
 	} else {
-		return mUserBody->apply(environment, args);
+		return mUserBody->apply(calcEngine, environment, args);
 	}
 }
 
