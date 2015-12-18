@@ -217,15 +217,9 @@ int Parser::getTokenPrecedence() {
 }
 
 std::unique_ptr<Expression> Parser::parseNumberExpression() {
-	if (mCalcEngine.evalMode() == ResultValueType::FLOAT) {
-		double value = mCurrentToken.doubleValue();
-		nextToken(); //Consume the number
-		return std::unique_ptr<DoubleExpression>(new DoubleExpression(value));
-	} else {
-		std::int64_t value = mCurrentToken.int64Value();
-		nextToken(); //Consume the number
-		return std::unique_ptr<Int64Expression>(new Int64Expression(value));
-	}
+	ResultValue value(mCalcEngine.evalMode(), mCurrentToken.int64Value(), mCurrentToken.doubleValue());
+	nextToken(); //Consume the number
+	return std::unique_ptr<NumberExpression>(new NumberExpression(value));
 }
 
 std::unique_ptr<Expression> Parser::parseIdentifierExpression() {
@@ -297,7 +291,7 @@ std::unique_ptr<Expression> Parser::parseBinaryOpRHS(int precedence, std::unique
 		//If this is a bin op, find its precedence
 		int tokPrecedence = getTokenPrecedence();
 
-		//If this is a binary operator that binds atleast as tightly as the current operator, consume it, otherwise we are done.
+		//If this is a binary operator that binds at least as tightly as the current operator, consume it, otherwise we are done.
 		if (tokPrecedence < precedence) {
 			return lhs;
 		}

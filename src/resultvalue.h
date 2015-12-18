@@ -13,15 +13,17 @@ private:
 	std::int64_t mIntValue;
 	double mFloatValue;
 
+public:
+	//Create a new value of the given type
 	ResultValue(ResultValueType type, std::int64_t intValue, double floatValue);
-public:	
+
 	//Creates a new int64 value
 	ResultValue(std::int64_t value);
 
 	//Creates a new double value
 	ResultValue(double value);
 
-	//Creates a new value of the given type.
+	//Creates a new value of the given type
 	ResultValue(ResultValueType type, double value);
 
 	//Crate a new result value
@@ -39,6 +41,9 @@ public:
 	//Converts the current value to the given type
 	ResultValue convertTo(ResultValueType type) const;
 
+	//Returns a string representation
+	std::string toString();
+
 	//Compare operators
 	bool operator==(const ResultValue& rhs) const;
 	bool operator!=(const ResultValue& rhs) const;
@@ -46,9 +51,6 @@ public:
 
 	double operator+(double value) const;
 };
-
-std::ostream& operator<<(std::ostream& os, ResultValue value);
-std::ostream& operator<<(std::ostream& os, ResultValueType value);
 
 namespace std {
 	template <>
@@ -58,3 +60,6 @@ namespace std {
 		}
 	};
 }
+
+std::ostream& operator<<(std::ostream& os, ResultValue value);
+std::ostream& operator<<(std::ostream& os, ResultValueType value);

@@ -4,46 +4,46 @@
 //Integer type
 IntegerType::IntegerType() {
 	mBinaryOperators = {
-		 { '^', Operator('^', 6, OperatorAssociativity::RIGHT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+		 { '^', Operator('^', 6, OperatorAssociativity::RIGHT, [&](ResultValue lhs, ResultValue rhs) {
 			 return power(lhs.intValue(), rhs.intValue());
 		 }) },
-		 { '*', Operator('*', 5, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+		 { '*', Operator('*', 5, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.intValue() * rhs.intValue();
 		 }) },
-		 { '/', Operator('/', 5, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+		 { '/', Operator('/', 5, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.intValue() / rhs.intValue();
 		 }) },
-		 { '%', Operator('%', 5, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+		 { '%', Operator('%', 5, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.intValue() % rhs.intValue();
 		 }) },
-		 { '+', Operator('+', 4, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+		 { '+', Operator('+', 4, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.intValue() + rhs.intValue();
 		 }) },
-		 { '-', Operator('-', 4, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+		 { '-', Operator('-', 4, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.intValue() - rhs.intValue();
 		 }) },
-		 { OperatorChar('<', '<'), Operator(OperatorChar('<', '<'), 3, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+		 { OperatorChar('<', '<'), Operator(OperatorChar('<', '<'), 3, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.intValue() << rhs.intValue();
 		 }) },
-		 { OperatorChar('>', '>'), Operator(OperatorChar('>', '>'), 3, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+		 { OperatorChar('>', '>'), Operator(OperatorChar('>', '>'), 3, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.intValue() >> rhs.intValue();
 		 }) },
-		 { '|', Operator('|', 2, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+		 { '|', Operator('|', 2, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.intValue() | rhs.intValue();
 		 }) },
-		 { '&', Operator('&', 2, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+		 { '&', Operator('&', 2, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.intValue() & rhs.intValue();
 		 }) },
-		 { '=', Operator('=', 1, OperatorAssociativity::RIGHT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+		 { '=', Operator('=', 1, OperatorAssociativity::RIGHT, [&](ResultValue lhs, ResultValue rhs) {
 			 return ResultValue();
 		 }) }
 	 };
 
 	mUnaryOperators = {
-		{ '-', Operator('-', 7, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue op) {
+		{ '-', Operator('-', 7, OperatorAssociativity::LEFT, [&](ResultValue op) {
 			return -op.intValue();
 		}) },
-		{ '~', Operator('~', 7, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue op) {
+		{ '~', Operator('~', 7, OperatorAssociativity::LEFT, [&](ResultValue op) {
 			return ~op.intValue();
 		}) },
 	};
@@ -82,28 +82,28 @@ const UnaryOperators& IntegerType::unaryOperators() const {
 //Float type
 FloatType::FloatType() {
 	mBinaryOperators = {
-		 { '^', Operator('^', 6, OperatorAssociativity::RIGHT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+		 { '^', Operator('^', 6, OperatorAssociativity::RIGHT, [&](ResultValue lhs, ResultValue rhs) {
 			 return pow(lhs.floatValue(), rhs.floatValue());
 		 }) },
-		 { '*', Operator('*', 5, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+		 { '*', Operator('*', 5, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.floatValue() * rhs.floatValue();
 		 }) },
-		 { '/', Operator('/', 5, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+		 { '/', Operator('/', 5, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.intValue() / rhs.floatValue();
 		 }) },
-		 { '+', Operator('+', 4, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+		 { '+', Operator('+', 4, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.floatValue() + rhs.floatValue();
 		 }) },
-		 { '-', Operator('-', 4, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+		 { '-', Operator('-', 4, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.floatValue() - rhs.floatValue();
 		 }) },
-		 { '=', Operator('=', 1, OperatorAssociativity::RIGHT, [&](ResultValueType evalMode, ResultValue lhs, ResultValue rhs) {
+		 { '=', Operator('=', 1, OperatorAssociativity::RIGHT, [&](ResultValue lhs, ResultValue rhs) {
 			 return ResultValue();
 		 }) }
 	 };
 
 	mUnaryOperators = {
-		{ '-', Operator('-', 7, OperatorAssociativity::LEFT, [&](ResultValueType evalMode, ResultValue op) {
+		{ '-', Operator('-', 7, OperatorAssociativity::LEFT, [&](ResultValue op) {
 			return -op.floatValue();
 		}) }
 	};

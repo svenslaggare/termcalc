@@ -50,8 +50,8 @@ namespace std {
 //Represents an operator
 class Operator {
 public:
-	using BinaryOperatorFn = std::function<ResultValue (ResultValueType, ResultValue, ResultValue)>;
-	using UnaryOperatorFn = std::function<ResultValue (ResultValueType, ResultValue)>;
+	using BinaryOperatorFn = std::function<ResultValue (ResultValue, ResultValue)>;
+	using UnaryOperatorFn = std::function<ResultValue (ResultValue)>;
 private:
 	OperatorChar mOp;
 	int mPrecedence;
@@ -77,8 +77,8 @@ public:
 	bool isUnary() const;
 
 	//Applies the operator to the given values. Fails if not a binary operator.
-	ResultValue apply(ResultValueType evalMode, ResultValue lhs, ResultValue rhs) const;
+	ResultValue apply(ResultValue lhs, ResultValue rhs) const;
 
 	//Applies the operator to the given value. Fails if not an unary operator.
-	ResultValue apply(ResultValueType evalMode, ResultValue op) const;
+	ResultValue apply(ResultValue op) const;
 };

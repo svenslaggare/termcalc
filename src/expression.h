@@ -23,25 +23,13 @@ public:
 	virtual void evaluate(Environment& env, EvalStack& evalStack) = 0;
 };
 
-//Represents a double expression
-class DoubleExpression : public Expression {
+//Represents a number expression
+class NumberExpression : public Expression {
 private:
-	double mValue;
+	ResultValue mValue;
 public:
-	//Creates a new double expression
-	DoubleExpression(double value);
-
-	virtual std::string toString() override;
-	virtual void evaluate(Environment& env, EvalStack& evalStack) override;
-};
-
-//Represents an int64 expression
-class Int64Expression : public Expression {
-private:
-	std::int64_t mValue;
-public:
-	//Creates a new int64 expression
-	Int64Expression(std::int64_t value);
+	//Creates a new number expression
+	NumberExpression(ResultValue value);
 
 	virtual std::string toString() override;
 	virtual void evaluate(Environment& env, EvalStack& evalStack) override;

@@ -66,18 +66,18 @@ bool Operator::isUnary() const {
 	return mIsUnary;
 }
 
-ResultValue Operator::apply(ResultValueType evalMode, ResultValue lhs, ResultValue rhs) const {
+ResultValue Operator::apply(ResultValue lhs, ResultValue rhs) const {
 	if (mIsUnary) {
 		throw std::runtime_error("Not a binary operator.");
 	}
 
-	return mBinaryFn(evalMode, lhs, rhs);
+	return mBinaryFn(lhs, rhs);
 }
 
-ResultValue Operator::apply(ResultValueType evalMode, ResultValue op) const {
+ResultValue Operator::apply(ResultValue op) const {
 	if (!mIsUnary) {
 		throw std::runtime_error("Not an unary operator.");
 	}
 
-	return mUnaryFn(evalMode, op);
+	return mUnaryFn(op);
 }

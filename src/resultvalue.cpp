@@ -41,6 +41,14 @@ ResultValue ResultValue::convertTo(ResultValueType type) const {
 	return ResultValue(type, mIntValue, mFloatValue);
 }
 
+std::string ResultValue::toString() {
+	if (type() == ResultValueType::FLOAT) {
+		return std::to_string(floatValue());
+	} else {
+		return std::to_string(intValue());
+	}
+}
+
 bool ResultValue::operator==(const ResultValue& rhs) const {
 	if (mType == rhs.mType) {
 		if (mType == ResultValueType::FLOAT) {

@@ -7,28 +7,15 @@
 #include <sstream>
 
 //Double expression
-DoubleExpression::DoubleExpression(double value): mValue(value) {
+NumberExpression::NumberExpression(ResultValue value): mValue(value) {
 
 }
 
-std::string DoubleExpression::toString() {
-	return std::to_string(mValue);
+std::string NumberExpression::toString() {
+	return mValue.toString();
 }
 
-void DoubleExpression::evaluate(Environment& env, EvalStack& evalStack) {
-	evalStack.push(mValue);
-}
-
-//Int64 expression
-Int64Expression::Int64Expression(std::int64_t value): mValue(value) {
-
-}
-
-std::string Int64Expression::toString() {
-	return std::to_string(mValue);
-}
-
-void Int64Expression::evaluate(Environment& env, EvalStack& evalStack) {
+void NumberExpression::evaluate(Environment& env, EvalStack& evalStack) {
 	evalStack.push(mValue);
 }
 
@@ -181,7 +168,7 @@ void BinaryOperatorExpression::evaluate(Environment& env, EvalStack& evalStack) 
 		auto op1 = evalStack.top();
 		evalStack.pop();
 
-		evalStack.push(mOp.apply(env.evalMode(), op1, op2));
+		evalStack.push(mOp.apply(op1, op2));
 	}
 }
 
@@ -201,5 +188,5 @@ void UnaryOperatorExpression::evaluate(Environment& env, EvalStack& evalStack) {
 	auto operand = evalStack.top();
 	evalStack.pop();
 
-	evalStack.push(mOp.apply(env.evalMode(), operand));
+	evalStack.push(mOp.apply(operand));
 }
