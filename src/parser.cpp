@@ -7,13 +7,22 @@
 namespace {
 	std::unordered_set<char> twoCharOps = { '<', '>' };
 
+	//Parses a 64 bits integer
+	std::int64_t parseInt64(std::string str, int base) {
+		#if defined(__MINGW32__)
+		return std::stoll(str, nullptr, base);
+		#else
+		return std::stol(str, nullptr, base);
+		#endif
+	}
+
 	//Parses a number
 	void parseNumber(std::vector<Token>& tokens, std::string& str, char& current, std::size_t& i) {
 		std::string num { current };
 		bool hasDecimalPoint = false;
 		int base = 10;
 
-		//Check if different base
+		//Check which base the number is
 		if (current == '0' && (i + 1) < str.size()) {
 			char baseChar = str[i + 1];
 
@@ -70,13 +79,13 @@ namespace {
 		}
 
 		if (base == 10) {
-			tokens.emplace_back(std::stod(num));
+			if (hasDecimalPoint) {
+				tokens.emplace_back(std::stod(num));
+			} else {
+				tokens.emplace_back(parseInt64(num, base));
+			}
 		} else {
-			#if defined(__MINGW32__)
-			tokens.emplace_back(std::stoll(num, nullptr, base));
-			#else
-			tokens.emplace_back(std::stol(num, nullptr, base));
-			#endif
+			tokens.emplace_back(parseInt64(num, base));
 		}
 	}
 }

@@ -42,6 +42,12 @@ public:
             Tokens({ Token(84L) }));
     }
 
+    void testParseNumbers() {
+		TS_ASSERT_EQUALS(
+			Tokenizer::tokenize("425354312421461441"),
+			Tokens({ Token(425354312421461441) }));
+    }
+
     void testEval() {
         CalcEngine engine;
         TS_ASSERT_EQUALS(engine.eval("3+2"), ResultValue(5.0));
