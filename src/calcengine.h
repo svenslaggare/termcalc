@@ -11,21 +11,9 @@ class Environment;
 
 //Represents the calculation engine
 class CalcEngine {
-public:
-	using BinaryOperators = std::unordered_map<OperatorChar, Operator>;
 private:
-	ResultValueType mEvalMode;	
-
-	BinaryOperators mBinaryOperators;
-	std::unordered_map<char, Operator> mUnaryOperators;
-
-	std::vector<std::unique_ptr<NumberType>> mNumberTypes;
-
-	//Applies the given binary operator
-	ResultValue binaryOperator(NumberOperators op, ResultValueType evalMode, ResultValue x, ResultValue y);
-
-	//Applies the given unary operator
-	ResultValue unaryOperator(NumberOperators op, ResultValueType evalMode, ResultValue x);
+	ResultValueType mEvalMode;
+	std::unordered_map<ResultValueType, std::unique_ptr<NumberType>> mNumberTypes;
 public:
 	//Creates a new calc engine
 	CalcEngine();
@@ -34,7 +22,7 @@ public:
 	const BinaryOperators& binaryOperators() const;
 
 	//Returns the unary operators
-	const std::unordered_map<char, Operator>& unaryOperators() const;
+	const UnaryOperators& unaryOperators() const;
 
 	//Returns the eval mode
 	ResultValueType evalMode() const;

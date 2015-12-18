@@ -81,7 +81,7 @@ public:
         engine.eval("f(x)=x^2", env);
         TS_ASSERT_EQUALS(engine.eval("f(4)", env), ResultValue(16.0));   
 
-        engine.setEvalMode(ResultValueType::INTEGER);     
+        engine.setEvalMode(ResultValueType::INTEGER);
         TS_ASSERT_EQUALS(engine.eval("f(4)", env), ResultValue(16L));  
     }
 

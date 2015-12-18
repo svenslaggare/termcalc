@@ -19,7 +19,7 @@ void DoubleExpression::evaluate(Environment& env, EvalStack& evalStack) {
 	evalStack.push(mValue);
 }
 
-//Long expression
+//Int64 expression
 Int64Expression::Int64Expression(std::int64_t value): mValue(value) {
 
 }

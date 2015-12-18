@@ -49,3 +49,12 @@ public:
 
 std::ostream& operator<<(std::ostream& os, ResultValue value);
 std::ostream& operator<<(std::ostream& os, ResultValueType value);
+
+namespace std {
+	template <>
+	struct hash<ResultValueType> {
+		std::size_t operator()(const ResultValueType& value) const {
+			return std::hash<std::int64_t>()((std::int64_t)value);
+		}
+	};
+}

@@ -149,7 +149,8 @@ std::vector<Token> Tokenizer::tokenize(std::string str) {
 		}
 
 		//Operator
-		if (tokens.size() > 0 && tokens.back().type() == TokenType::OPERATOR && twoCharOps.count(tokens.back().charValue()) > 0) {
+		if (tokens.size() > 0 && tokens.back().type() == TokenType::OPERATOR
+			&& twoCharOps.count(tokens.back().charValue()) > 0) {
 			//If the previous token is an operator and the current one is, upgrade to a two-op char 
 			tokens.back() = { TokenType::TWO_CHAR_OPERATOR, tokens.back().charValue(), current };
 		} else {
@@ -267,7 +268,6 @@ std::unique_ptr<Expression> Parser::parseIdentifierExpression() {
 
 std::unique_ptr<Expression> Parser::parseParenthesisExpression() {
 	nextToken(); //Eat the '('
-
 	auto expr = parseExpression();
 
 	if (mCurrentToken.type() != TokenType::RIGHT_PARENTHESIS) {
@@ -275,7 +275,6 @@ std::unique_ptr<Expression> Parser::parseParenthesisExpression() {
 	}
 
 	nextToken(); //Eat the ')'
-
 	return expr;
 }
 
@@ -296,10 +295,10 @@ std::unique_ptr<Expression> Parser::parsePrimaryExpression() {
 std::unique_ptr<Expression> Parser::parseBinaryOpRHS(int precedence, std::unique_ptr<Expression> lhs) {
 	while (true) {
 		//If this is a bin op, find its precedence
-		int tokPrec = getTokenPrecedence();
+		int tokPrecedence = getTokenPrecedence();
 
 		//If this is a binary operator that binds atleast as tightly as the current operator, consume it, otherwise we are done.
-		if (tokPrec < precedence) {
+		if (tokPrecedence < precedence) {
 			return lhs;
 		}
 
@@ -310,9 +309,9 @@ std::unique_ptr<Expression> Parser::parseBinaryOpRHS(int precedence, std::unique
 		auto rhs = parseUnaryExpression();
 
 		//If the binary operator binds less tightly with RHS than the operator after RHS, let the pending operator take RHS as its LHS
-		int nextPrec = getTokenPrecedence();
-		if (tokPrec < nextPrec) {
-			rhs = parseBinaryOpRHS(tokPrec + 1, std::move(rhs));
+		int nextPrecedence = getTokenPrecedence();
+		if (tokPrecedence < nextPrecedence) {
+			rhs = parseBinaryOpRHS(tokPrecedence + 1, std::move(rhs));
 		}
 
 		//Merge LHS and RHS
