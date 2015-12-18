@@ -14,6 +14,9 @@ class CalcEngine {
 private:
 	ResultValueType mEvalMode;
 	std::unordered_map<ResultValueType, std::unique_ptr<NumberType>> mNumberTypes;
+
+	//Returns the current number type
+	NumberType& currentNumberType() const;
 public:
 	//Creates a new calc engine
 	CalcEngine();

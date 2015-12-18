@@ -7,11 +7,12 @@
 class Token;
 class Expression;
 class CalcEngine;
+class NumberType;
 
 //Represents a tokenizer
 namespace Tokenizer {
 	//Tokenizes the given string
-	std::vector<Token> tokenize(std::string str);
+	std::vector<Token> tokenize(std::string str, NumberType& numberType);
 };
 
 //Represents a parser

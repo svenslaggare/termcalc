@@ -15,12 +15,16 @@ CalcEngine::CalcEngine()
 	mNumberTypes.emplace(ResultValueType::INTEGER, std::unique_ptr<IntegerType>(new IntegerType));
 }
 
+NumberType& CalcEngine::currentNumberType() const {
+	return *mNumberTypes.at(mEvalMode).get();
+}
+
 const BinaryOperators& CalcEngine::binaryOperators() const {
-	return mNumberTypes.at(mEvalMode)->binaryOperators();
+	return currentNumberType().binaryOperators();
 }
 
 const UnaryOperators& CalcEngine::unaryOperators() const {
-	return mNumberTypes.at(mEvalMode)->unaryOperators();
+	return currentNumberType().unaryOperators();
 }
 
 ResultValueType CalcEngine::evalMode() const {
@@ -41,7 +45,7 @@ ResultValue CalcEngine::eval(std::string expressionString, Environment& env) {
 	env.setEvalMode(mEvalMode);
 
 	//Tokenize
-	auto tokens = Tokenizer::tokenize(expressionString);
+	auto tokens = Tokenizer::tokenize(expressionString, currentNumberType());
 	tokens.push_back(Token(TokenType::END_OF_EXPRESSION));
 
 	//Parse

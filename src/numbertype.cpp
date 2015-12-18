@@ -2,6 +2,16 @@
 #include <cmath>
 
 //Integer type
+namespace {
+	//Parses a 64 bits integer
+	std::int64_t parseInt64(std::string str, int base) {
+		#if defined(__MINGW32__)
+		return std::stoll(str, nullptr, base);
+		#else
+		return std::stol(str, nullptr, base);
+		#endif
+	}
+}
 IntegerType::IntegerType() {
 	mBinaryOperators = {
 		 { '^', Operator('^', 6, OperatorAssociativity::RIGHT, [&](ResultValue lhs, ResultValue rhs) {
@@ -79,6 +89,60 @@ const UnaryOperators& IntegerType::unaryOperators() const {
 	return mUnaryOperators;
 }
 
+Token IntegerType::parseNumber(std::string& str, char& current, std::size_t& index) const {
+	std::string num { current };
+	int base = 10;
+
+	//Check which base the number is
+	if (current == '0' && (index + 1) < str.size()) {
+		char baseChar = str[index + 1];
+
+		if (baseChar == 'b') {
+			base = 2;
+			num = "";
+			index++;
+		} else if (baseChar == 'x') {
+			base = 16;
+			num = "";
+			index++;
+		}
+	}
+
+	while (true) {
+		std::size_t next = index + 1;
+
+		if (next >= str.size()) {
+			break;
+		}
+
+		current = std::tolower(str[next]);
+
+		if (base == 2) {
+			//Binary
+			if (!(current == '0' || current == '1')) {
+				break;
+			}
+		} else if (base == 10) {
+			//Decimal
+			if (!isdigit(current)) {
+				break;
+			}
+		} else {
+			//Hex
+			if (!(isdigit(current)
+				  || current == 'a' || current == 'b' || current == 'c'
+				  || current == 'd' || current == 'e' || current == 'f')) {
+				break;
+			}
+		}
+
+		num += current;
+		index = next;
+	}
+
+	return parseInt64(num, base);
+}
+
 //Float type
 FloatType::FloatType() {
 	mBinaryOperators = {
@@ -115,4 +179,36 @@ const BinaryOperators& FloatType::binaryOperators() const {
 
 const UnaryOperators& FloatType::unaryOperators() const {
 	return mUnaryOperators;
+}
+
+Token FloatType::parseNumber(std::string& str, char& current, std::size_t& index) const {
+	std::string num { current };
+	bool hasDecimalPoint = false;
+
+	while (true) {
+		std::size_t next = index + 1;
+
+		if (next >= str.size()) {
+			break;
+		}
+
+		current = std::tolower(str[next]);
+
+		if (current == '.') {
+			if (!hasDecimalPoint) {
+				hasDecimalPoint = true;
+			} else {
+				throw std::runtime_error("The token already contains a decimal point.");
+			}
+		} else {
+			if (!isdigit(current)) {
+				break;
+			}
+		}
+
+		num += current;
+		index = next;
+	}
+
+	return std::stod(num);
 }

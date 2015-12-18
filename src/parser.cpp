@@ -6,91 +6,9 @@
 
 namespace {
 	std::unordered_set<char> twoCharOps = { '<', '>' };
-
-	//Parses a 64 bits integer
-	std::int64_t parseInt64(std::string str, int base) {
-		#if defined(__MINGW32__)
-		return std::stoll(str, nullptr, base);
-		#else
-		return std::stol(str, nullptr, base);
-		#endif
-	}
-
-	//Parses a number
-	void parseNumber(std::vector<Token>& tokens, std::string& str, char& current, std::size_t& i) {
-		std::string num { current };
-		bool hasDecimalPoint = false;
-		int base = 10;
-
-		//Check which base the number is
-		if (current == '0' && (i + 1) < str.size()) {
-			char baseChar = str[i + 1];
-
-			if (baseChar == 'b') {
-				base = 2;
-				num = "";
-				i++;
-			} else if (baseChar == 'x') {
-				base = 16;
-				num = "";
-				i++;
-			}
-		}
-
-		while (true) {
-			std::size_t next = i + 1;
-
-			if (next >= str.size()) {
-				break;
-			}
-
-			current = std::tolower(str[next]);
-
-			if (current == '.') {
-				if (!hasDecimalPoint) {
-					if (base == 10) {
-						hasDecimalPoint = true;
-					} else {
-						throw std::runtime_error("Decimal points are only allowed in base 10.");
-					}
-				} else {
-					throw std::runtime_error("The token already contains a decimal point.");
-				}
-			} else {
-				if (base == 2) {
-					if (!(current == '0' || current == '1')) {
-						break;
-					}
-				} else if (base == 10) {
-					if (!isdigit(current)) {
-						break;
-					}
-				} else if (base == 16) {
-					if (!(isdigit(current)
-						  || current == 'a' || current == 'b' || current == 'c'
-						  || current == 'd' || current == 'e' || current == 'f')) {
-						break;
-					}
-				}
-			}
-
-			num += current;
-			i = next;
-		}
-
-		if (base == 10) {
-			if (hasDecimalPoint) {
-				tokens.emplace_back(std::stod(num));
-			} else {
-				tokens.emplace_back(parseInt64(num, base));
-			}
-		} else {
-			tokens.emplace_back(parseInt64(num, base));
-		}
-	}
 }
 
-std::vector<Token> Tokenizer::tokenize(std::string str) {
+std::vector<Token> Tokenizer::tokenize(std::string str, NumberType& numberType) {
 	std::vector<Token> tokens;
 	for (std::size_t i = 0; i < str.size(); i++) {
 		char current = str[i];
@@ -119,7 +37,7 @@ std::vector<Token> Tokenizer::tokenize(std::string str) {
 
 		//Number
 		if (isdigit(current)) {
-			parseNumber(tokens, str, current, i);
+			tokens.push_back(numberType.parseNumber(str, current, i));
 			continue;
 		}
 

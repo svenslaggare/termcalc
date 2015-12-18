@@ -26,77 +26,71 @@ bool suite_TermCalcTestSuite_init = false;
 static TermCalcTestSuite suite_TermCalcTestSuite;
 
 static CxxTest::List Tests_TermCalcTestSuite = { 0, 0 };
-CxxTest::StaticSuiteDescription suiteDescription_TermCalcTestSuite( "tests/test.h", 10, "TermCalcTestSuite", suite_TermCalcTestSuite, Tests_TermCalcTestSuite );
+CxxTest::StaticSuiteDescription suiteDescription_TermCalcTestSuite( "tests/test.h", 11, "TermCalcTestSuite", suite_TermCalcTestSuite, Tests_TermCalcTestSuite );
 
 static class TestDescription_suite_TermCalcTestSuite_testTokenizer : public CxxTest::RealTestDescription {
 public:
- TestDescription_suite_TermCalcTestSuite_testTokenizer() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 18, "testTokenizer" ) {}
+ TestDescription_suite_TermCalcTestSuite_testTokenizer() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 19, "testTokenizer" ) {}
  void runTest() { suite_TermCalcTestSuite.testTokenizer(); }
 } testDescription_suite_TermCalcTestSuite_testTokenizer;
 
 static class TestDescription_suite_TermCalcTestSuite_testDifferentBase : public CxxTest::RealTestDescription {
 public:
- TestDescription_suite_TermCalcTestSuite_testDifferentBase() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 35, "testDifferentBase" ) {}
+ TestDescription_suite_TermCalcTestSuite_testDifferentBase() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 43, "testDifferentBase" ) {}
  void runTest() { suite_TermCalcTestSuite.testDifferentBase(); }
 } testDescription_suite_TermCalcTestSuite_testDifferentBase;
 
-static class TestDescription_suite_TermCalcTestSuite_testParseNumbers : public CxxTest::RealTestDescription {
-public:
- TestDescription_suite_TermCalcTestSuite_testParseNumbers() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 45, "testParseNumbers" ) {}
- void runTest() { suite_TermCalcTestSuite.testParseNumbers(); }
-} testDescription_suite_TermCalcTestSuite_testParseNumbers;
-
 static class TestDescription_suite_TermCalcTestSuite_testEval : public CxxTest::RealTestDescription {
 public:
- TestDescription_suite_TermCalcTestSuite_testEval() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 51, "testEval" ) {}
+ TestDescription_suite_TermCalcTestSuite_testEval() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 55, "testEval" ) {}
  void runTest() { suite_TermCalcTestSuite.testEval(); }
 } testDescription_suite_TermCalcTestSuite_testEval;
 
 static class TestDescription_suite_TermCalcTestSuite_testEvalVariables : public CxxTest::RealTestDescription {
 public:
- TestDescription_suite_TermCalcTestSuite_testEvalVariables() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 60, "testEvalVariables" ) {}
+ TestDescription_suite_TermCalcTestSuite_testEvalVariables() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 64, "testEvalVariables" ) {}
  void runTest() { suite_TermCalcTestSuite.testEvalVariables(); }
 } testDescription_suite_TermCalcTestSuite_testEvalVariables;
 
 static class TestDescription_suite_TermCalcTestSuite_testEvalFunctions : public CxxTest::RealTestDescription {
 public:
- TestDescription_suite_TermCalcTestSuite_testEvalFunctions() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 71, "testEvalFunctions" ) {}
+ TestDescription_suite_TermCalcTestSuite_testEvalFunctions() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 75, "testEvalFunctions" ) {}
  void runTest() { suite_TermCalcTestSuite.testEvalFunctions(); }
 } testDescription_suite_TermCalcTestSuite_testEvalFunctions;
 
 static class TestDescription_suite_TermCalcTestSuite_testDefineFunctions : public CxxTest::RealTestDescription {
 public:
- TestDescription_suite_TermCalcTestSuite_testDefineFunctions() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 78, "testDefineFunctions" ) {}
+ TestDescription_suite_TermCalcTestSuite_testDefineFunctions() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 82, "testDefineFunctions" ) {}
  void runTest() { suite_TermCalcTestSuite.testDefineFunctions(); }
 } testDescription_suite_TermCalcTestSuite_testDefineFunctions;
 
 static class TestDescription_suite_TermCalcTestSuite_testDefineFunctions2 : public CxxTest::RealTestDescription {
 public:
- TestDescription_suite_TermCalcTestSuite_testDefineFunctions2() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 88, "testDefineFunctions2" ) {}
+ TestDescription_suite_TermCalcTestSuite_testDefineFunctions2() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 92, "testDefineFunctions2" ) {}
  void runTest() { suite_TermCalcTestSuite.testDefineFunctions2(); }
 } testDescription_suite_TermCalcTestSuite_testDefineFunctions2;
 
 static class TestDescription_suite_TermCalcTestSuite_testInvalidEval : public CxxTest::RealTestDescription {
 public:
- TestDescription_suite_TermCalcTestSuite_testInvalidEval() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 96, "testInvalidEval" ) {}
+ TestDescription_suite_TermCalcTestSuite_testInvalidEval() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 100, "testInvalidEval" ) {}
  void runTest() { suite_TermCalcTestSuite.testInvalidEval(); }
 } testDescription_suite_TermCalcTestSuite_testInvalidEval;
 
 static class TestDescription_suite_TermCalcTestSuite_testAssignment : public CxxTest::RealTestDescription {
 public:
- TestDescription_suite_TermCalcTestSuite_testAssignment() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 102, "testAssignment" ) {}
+ TestDescription_suite_TermCalcTestSuite_testAssignment() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 106, "testAssignment" ) {}
  void runTest() { suite_TermCalcTestSuite.testAssignment(); }
 } testDescription_suite_TermCalcTestSuite_testAssignment;
 
 static class TestDescription_suite_TermCalcTestSuite_testEvalIntMode : public CxxTest::RealTestDescription {
 public:
- TestDescription_suite_TermCalcTestSuite_testEvalIntMode() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 109, "testEvalIntMode" ) {}
+ TestDescription_suite_TermCalcTestSuite_testEvalIntMode() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 113, "testEvalIntMode" ) {}
  void runTest() { suite_TermCalcTestSuite.testEvalIntMode(); }
 } testDescription_suite_TermCalcTestSuite_testEvalIntMode;
 
 static class TestDescription_suite_TermCalcTestSuite_testConvertToInt : public CxxTest::RealTestDescription {
 public:
- TestDescription_suite_TermCalcTestSuite_testConvertToInt() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 124, "testConvertToInt" ) {}
+ TestDescription_suite_TermCalcTestSuite_testConvertToInt() : CxxTest::RealTestDescription( Tests_TermCalcTestSuite, suiteDescription_TermCalcTestSuite, 128, "testConvertToInt" ) {}
  void runTest() { suite_TermCalcTestSuite.testConvertToInt(); }
 } testDescription_suite_TermCalcTestSuite_testConvertToInt;
 

@@ -4,6 +4,7 @@
 #include "../src/calcengine.h"
 #include "../src/environment.h"
 #include "../src/parser.h"
+#include "../src/numbertype.h"
 
 using Tokens = std::vector<Token>;
 
@@ -16,36 +17,39 @@ private:
     }
 public:
     void testTokenizer() {
+		FloatType floatType;
+		IntegerType integerType;
+
         TS_ASSERT_EQUALS(
-            Tokenizer::tokenize("2.0+5"),
+            Tokenizer::tokenize("2.0+5", floatType),
             Tokens({ Token(2.0), Token(TokenType::OPERATOR, '+'), Token(5.0) }));
 
         TS_ASSERT_EQUALS(
-            Tokenizer::tokenize("(2.0+5) * 7.0"),
+            Tokenizer::tokenize("(2.0+5) * 7.0", floatType),
             Tokens({ Token(TokenType::LEFT_PARENTHESIS), 
                      Token(2.0), Token(TokenType::OPERATOR, '+'), Token(5.0),
                      Token(TokenType::RIGHT_PARENTHESIS),
                      Token(TokenType::OPERATOR, '*'), Token( 7.0) }));
 
         TS_ASSERT_EQUALS(
-            Tokenizer::tokenize("1 << 10"),
+            Tokenizer::tokenize("1 << 10", floatType),
             Tokens({ Token(1L), Token(TokenType::TWO_CHAR_OPERATOR, '<', '<'), Token(10L) }));
+
+		TS_ASSERT_EQUALS(
+			Tokenizer::tokenize("425354312421461441", integerType),
+			Tokens({ Token(425354312421461441) }));
     }
 
     void testDifferentBase() {
+		IntegerType integerType;
+
         TS_ASSERT_EQUALS(
-            Tokenizer::tokenize("0x1337"),
+            Tokenizer::tokenize("0x1337", integerType),
             Tokens({ Token(4919L) }));
 
         TS_ASSERT_EQUALS(
-            Tokenizer::tokenize("0b1010100"),
+            Tokenizer::tokenize("0b1010100", integerType),
             Tokens({ Token(84L) }));
-    }
-
-    void testParseNumbers() {
-		TS_ASSERT_EQUALS(
-			Tokenizer::tokenize("425354312421461441"),
-			Tokens({ Token(425354312421461441) }));
     }
 
     void testEval() {
