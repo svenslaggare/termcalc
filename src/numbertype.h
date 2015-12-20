@@ -19,6 +19,9 @@ public:
 	//Returns the unary operators
 	virtual const UnaryOperators& unaryOperators() const = 0;
 
+	//Indicates if the given char is the start of a number
+	virtual bool isStartOfNumber(char current) const = 0;
+
 	//Parses the given number
 	virtual	Token parseNumber(std::string& str, char& current, std::size_t& index) const = 0;
 };
@@ -37,6 +40,8 @@ public:
 	virtual const BinaryOperators& binaryOperators() const override;
 	virtual const UnaryOperators& unaryOperators() const override;
 
+
+	virtual bool isStartOfNumber(char current) const override;
 	virtual Token parseNumber(std::string& str, char& current, std::size_t& index) const override;
 };
 
@@ -51,5 +56,6 @@ public:
 	virtual const BinaryOperators& binaryOperators() const override;
 	virtual const UnaryOperators& unaryOperators() const override;
 
+	virtual bool isStartOfNumber(char current) const override;
 	virtual Token parseNumber(std::string& str, char& current, std::size_t& index) const override;
 };

@@ -33,7 +33,7 @@ private:
 	//Returns the next token
 	Token& peekToken(int delta = 1);
 
-	//Returns the precedence for the current token or -1 if not a operator
+	//Returns the precedence for the current token or -1 if not an operator
 	int getTokenPrecedence();
 
 	//Parses a number expression

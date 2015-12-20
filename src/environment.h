@@ -5,18 +5,42 @@
 #include <string>
 #include <unordered_map>
 
+using Variables = std::unordered_map<std::string, ResultValue>;
+using Functions = std::unordered_map<std::string, Function>;
+
+//Represents a scope for an environment
+class EnvironmentScope {
+private:
+	Variables mVariables;
+	std::unordered_map<std::string, Function> mFunctions;
+public:
+	//Creates a new scope
+	EnvironmentScope(Variables variables, Functions functions);
+
+	//Returns the variables
+	Variables& variables();
+	const Variables& variables() const;
+
+	//Returns the functions
+	Functions& functions();
+	const Functions& functions() const;
+};
+
 //Represents an environment
 class Environment {
 private:
-	std::unordered_map<std::string, ResultValue> mValues;
-	std::unordered_map<std::string, Function> mFunctions;
+	std::unordered_map<ResultValueType, EnvironmentScope> mScopes;
 	ResultValueType mEvalMode;
+
+	//Returns the current scope
+	EnvironmentScope& currentScope();
+	const EnvironmentScope& currentScope() const;
 public:
 	//Creates a new environment
 	Environment();
 
 	//Returns the variables
-	const std::unordered_map<std::string, ResultValue>& variables();
+	const Variables& variables() const;
 
 	//Sets the variable to the given value
 	void set(std::string variable, ResultValue value);
@@ -31,7 +55,7 @@ public:
 	ResultValue valueOf(std::string variable) const;
 
 	//Returns the functions
-	const std::unordered_map<std::string, Function>& functions() const;
+	const Functions& functions() const;
 
 	//Defines the given function
 	void define(Function function);

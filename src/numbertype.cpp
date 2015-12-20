@@ -89,6 +89,10 @@ const UnaryOperators& IntegerType::unaryOperators() const {
 	return mUnaryOperators;
 }
 
+bool IntegerType::isStartOfNumber(char current) const {
+	return isdigit(current);
+}
+
 Token IntegerType::parseNumber(std::string& str, char& current, std::size_t& index) const {
 	std::string num { current };
 	int base = 10;
@@ -115,7 +119,7 @@ Token IntegerType::parseNumber(std::string& str, char& current, std::size_t& ind
 			break;
 		}
 
-		current = std::tolower(str[next]);
+		current = (char)std::tolower(str[next]);
 
 		if (base == 2) {
 			//Binary
@@ -192,7 +196,7 @@ Token FloatType::parseNumber(std::string& str, char& current, std::size_t& index
 			break;
 		}
 
-		current = std::tolower(str[next]);
+		current = (char)std::tolower(str[next]);
 
 		if (current == '.') {
 			if (!hasDecimalPoint) {
@@ -211,4 +215,8 @@ Token FloatType::parseNumber(std::string& str, char& current, std::size_t& index
 	}
 
 	return std::stod(num);
+}
+
+bool FloatType::isStartOfNumber(char current) const {
+	return isdigit(current);
 }

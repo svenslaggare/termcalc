@@ -1,44 +1,77 @@
 #include "environment.h"
 #include <cmath>
 
-Environment::Environment() {
-	mValues = {
-		{ "pi", ResultValue(3.141592653589793238463) }
-	};
+EnvironmentScope::EnvironmentScope(Variables variables, std::unordered_map<std::string, Function> functions)
+	: mVariables(variables), mFunctions(functions) {
 
-	mFunctions = {
+}
+
+Variables& EnvironmentScope::variables() {
+	return mVariables;
+}
+
+const Variables& EnvironmentScope::variables() const {
+	return mVariables;
+}
+
+std::unordered_map<std::string, Function>& EnvironmentScope::functions() {
+	return mFunctions;
+}
+
+const std::unordered_map<std::string, Function>& EnvironmentScope::functions() const {
+	return mFunctions;
+}
+
+Environment::Environment() {
+	//Float scope
+	mScopes.insert({ ResultValueType::FLOAT, EnvironmentScope({
+		{ "pi", ResultValue(3.141592653589793238463) }
+	}, {
 		{ "sin", Function("sin", 1, [this](FnArgs args) {
-			return ResultValue(mEvalMode, sin(args.at(0).floatValue()));
+			return ResultValue(sin(args.at(0).floatValue()));
 		}, "Computes the sine of x.") },
 		{ "cos", Function("cos", 1, [this](FnArgs args) {
-			return ResultValue(mEvalMode, cos(args.at(0).floatValue()));
+			return ResultValue(cos(args.at(0).floatValue()));
 		}, "Computes the cosine of x.") },
 		{ "tan", Function("tan", 1, [this](FnArgs args) {
-			return ResultValue(mEvalMode, tan(args.at(0).floatValue()));
+			return ResultValue(tan(args.at(0).floatValue()));
 		}, "Computes the tangent of x.") },
 		{ "sqrt", Function("sqrt", 1, [this](FnArgs args) {
-			return ResultValue(mEvalMode, sqrt(args.at(0).floatValue()));
+			return ResultValue(sqrt(args.at(0).floatValue()));
 		}, "Computes the square root of x.") },
 		{ "asin", Function("asin", 1, [this](FnArgs args) {
-			return ResultValue(mEvalMode, asin(args.at(0).floatValue()));
+			return ResultValue(asin(args.at(0).floatValue()));
 		}, "Computes the inverse sine of x.") },
 		{ "acos", Function("acos", 1, [this](FnArgs args) {
-			return ResultValue(mEvalMode, acos(args.at(0).floatValue()));
+			return ResultValue(acos(args.at(0).floatValue()));
 		}, "Computes the inverse cosine of x.") },
 		{ "atan", Function("atan", 1, [this](FnArgs args) {
-			return ResultValue(mEvalMode, atan(args.at(0).floatValue()));
+			return ResultValue(atan(args.at(0).floatValue()));
 		}, "Computes the inverse tangent of x.") },
 		{ "ln", Function("ln", 1, [this](FnArgs args) {
-			return ResultValue(mEvalMode, log(args.at(0).floatValue()));
-		}, "Computes the natrual logaritm of x.") },
+			return ResultValue(log(args.at(0).floatValue()));
+		}, "Computes the natural logarithm of x.") },
 		{ "log", Function("log", 1, [this](FnArgs args) {
-			return ResultValue(mEvalMode, log10(args.at(0).floatValue()));
-		}, "Computes the 10-logaritm of x.") },
+			return ResultValue(log10(args.at(0).floatValue()));
+		}, "Computes the 10-logarithm of x.") },
 		{ "logb", Function("logb", 2, [this](FnArgs args) {
-			return ResultValue(mEvalMode, log(args.at(0).floatValue()) / log(args.at(1).floatValue()));
-		}, "Computes the y-logaritm of x.") },
+			return ResultValue(log(args.at(0).floatValue()) / log(args.at(1).floatValue()));
+		}, "Computes the y-logarithm of x.") },
+		{ "ceil", Function("ceil", 1, [this](FnArgs x) {
+			return ResultValue(ceil(x.at(0).floatValue()));
+		}, "Ceils x.") },
+		{ "floor", Function("floor", 1, [this](FnArgs x) {
+			return ResultValue(floor(x.at(0).floatValue()));
+		}, "Floors x.") },
+		{ "round", Function("round", 1, [this](FnArgs x) {
+			return ResultValue(round(x.at(0).floatValue()));
+		}, "Rounds x.") },
+	}) });
+
+	//Int scope
+	mScopes.insert({ ResultValueType::INTEGER, EnvironmentScope(Variables({}), {
 		{ "xor", Function("xor", 2, [this](FnArgs args) {
-			return ResultValue(mEvalMode, args.at(0).intValue() ^ args.at(1).intValue());
+			return ResultValue(args.at(0).intValue() ^ args.at(1).intValue());
 		}, "Bitwise XOR between x and y.") },
 		{ "mod", Function("mod", 2, [this](FnArgs args) {
 			std::int64_t result = args.at(0).intValue() % args.at(1).intValue();
@@ -47,34 +80,50 @@ Environment::Environment() {
 				result += args.at(1).intValue();
 			}
 
-			return ResultValue(mEvalMode, result);
+			return ResultValue(result);
 		}, "Computes x mod y.") },
-		{ "ceil", Function("ceil", 1, [this](FnArgs x) {
-			return ResultValue(mEvalMode, ceil(x.at(0).floatValue()));
-		}, "Ceils x.") },
-		{ "floor", Function("floor", 1, [this](FnArgs x) {
-			return ResultValue(mEvalMode, floor(x.at(0).floatValue()));
-		}, "Floors x.") },
-		{ "round", Function("round", 1, [this](FnArgs x) {
-			return ResultValue(mEvalMode, round(x.at(0).floatValue()));
-		}, "Rounds x.") },
-	};
+		{ "gcd", Function("gcd", 2, [this](FnArgs args) {
+			auto x = args.at(0).intValue();
+			auto y = args.at(1).intValue();
+
+			std::int64_t reminder;
+
+			while (y != 0) {
+				reminder = x % y;
+				x = y;
+				y = reminder;
+			}
+
+			return ResultValue(x);
+		}, "Computes the greatest common divisor between x and y.") },
+	}) });
 }
 
-const std::unordered_map<std::string, ResultValue>& Environment::variables() {
-	return mValues;
+EnvironmentScope& Environment::currentScope() {
+	return mScopes.at(mEvalMode);
+}
+
+const EnvironmentScope& Environment::currentScope() const {
+	return mScopes.at(mEvalMode);
+}
+
+const Variables& Environment::variables() const {
+	return currentScope().variables();
 }
 
 void Environment::set(std::string variable, ResultValue value) {
-	mValues[variable] = value;
+	for (auto& current : mScopes) {
+		auto& scope = current.second;
+		scope.variables()[variable] = value;
+	}
 }
 
 bool Environment::getVariable(std::string variable, ResultValue& value, bool applyConversion) const {
-	if (mValues.count(variable) > 0) {
+	if (variables().count(variable) > 0) {
 		if (applyConversion) {
-			value = mValues.at(variable).convertTo(mEvalMode);
+			value = variables().at(variable).convertTo(mEvalMode);
 		} else {
-			value = mValues.at(variable);
+			value = variables().at(variable);
 		}
 
 		return true;
@@ -84,22 +133,28 @@ bool Environment::getVariable(std::string variable, ResultValue& value, bool app
 }
 
 void Environment::unset(std::string variable) {
-	mValues.erase(variable);
+	for (auto& current : mScopes) {
+		auto& scope = current.second;
+		scope.variables().erase(variable);
+	}
 }
 
 ResultValue Environment::valueOf(std::string variable) const {
-	return mValues.at(variable);
+	return variables().at(variable);
 }
 
-const std::unordered_map<std::string, Function>& Environment::functions() const {
-	return mFunctions;
+const Functions& Environment::functions() const {
+	return currentScope().functions();
 }
 
 void Environment::define(Function function) {
-	if (mFunctions.count(function.name()) == 0) {
-		mFunctions.insert({ function.name(), function });
-	} else {
-		mFunctions.at(function.name()) = function;
+	for (auto& current : mScopes) {
+		auto& scope = current.second;
+		if (scope.functions().count(function.name()) == 0) {
+			scope.functions().insert({ function.name(), function });
+		} else {
+			scope.functions().at(function.name()) = function;
+		}
 	}
 }
 

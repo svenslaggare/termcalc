@@ -45,9 +45,9 @@ CommandEngine::CommandEngine() {
 			int maxFuncLength = 0;
 			std::vector<std::string> funcStrs;
 
-			for (auto current : mEnv.functions()) {
+			for (auto& current : mEnv.functions()) {
 				std::stringstream strstream;
-				auto func = current.second;
+				auto& func = current.second;
 				strstream << func;
 				funcStrs.push_back(strstream.str());
 
@@ -61,8 +61,8 @@ CommandEngine::CommandEngine() {
 			bool anyUserDefined = false;
 			std::cout << "Builtin:" << std::endl;
 
-			for (auto current : mEnv.functions()) {
-				auto func = current.second;
+			for (auto& current : mEnv.functions()) {
+				auto& func = current.second;
 
 				if (!func.isUserDefined()) {
 					auto funcStr = funcStrs[i];
@@ -80,12 +80,11 @@ CommandEngine::CommandEngine() {
 				std::cout << "User defined:" << std::endl;
 
 				i = 0;
-				for (auto current : mEnv.functions()) {
-					auto func = current.second;
+				for (auto& current : mEnv.functions()) {
+					auto& func = current.second;
 
 					if (func.isUserDefined()) {
 						auto funcStr = funcStrs[i];
-						std::string spaceStr(maxFuncLength - funcStr.length(), ' ');
 						std::cout << leadingWhitespace << funcStr << " = " << func.body()->toString() << std::endl;
 					}
 
@@ -99,8 +98,10 @@ CommandEngine::CommandEngine() {
 			if (args.size() == 1) {
 				if (args[0] == "float") {
 					mEngine.setEvalMode(ResultValueType::FLOAT);
+					mEnv.setEvalMode(ResultValueType::FLOAT);
 				} else if (args[0] == "int") {
 					mEngine.setEvalMode(ResultValueType::INTEGER);
+					mEnv.setEvalMode(ResultValueType::INTEGER);
 				} else {
 					std::cout << "'" << args[0] << "' is not a valid value. Valid values are: float and int." << std::endl;
 				}
@@ -207,7 +208,7 @@ bool CommandEngine::execute(std::string line, bool printResult) {
 						std::cout << std::dec << res << std::endl;
 						break;
 					case NumberBase::HEXADECIMAL:
-						std::cout << std::hex << "0x" << res.intValue() << std::endl;
+						std::cout << std::hex << "0x" << res.intValue() << std::dec << std::endl;
 						break;
 				}
 			}

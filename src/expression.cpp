@@ -6,7 +6,7 @@
 #include <unordered_set>
 #include <sstream>
 
-//Double expression
+//Number expression
 NumberExpression::NumberExpression(ResultValue value): mValue(value) {
 
 }

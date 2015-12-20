@@ -1,19 +1,5 @@
 #include "resultvalue.h"
-
-ResultValue::ResultValue(std::int64_t value)
-	: mType(ResultValueType::INTEGER), mIntValue(value), mFloatValue(value) {
-
-}
-
-ResultValue::ResultValue(double value)
-	:  mType(ResultValueType::FLOAT), mIntValue((std::int64_t)value), mFloatValue(value) {
-
-}
-
-ResultValue::ResultValue(ResultValueType type, double value)
-	:  mType(type), mIntValue((std::int64_t)value), mFloatValue(value) {
-
-}
+#include <cmath>
 
 ResultValue::ResultValue()
 	:  mType(ResultValueType::FLOAT), mIntValue(0), mFloatValue(0.0) {
@@ -22,6 +8,16 @@ ResultValue::ResultValue()
 
 ResultValue::ResultValue(ResultValueType type, std::int64_t intValue, double floatValue)
 	:  mType(type), mIntValue(intValue), mFloatValue(floatValue) {
+
+}
+
+ResultValue::ResultValue(std::int64_t value)
+	: mType(ResultValueType::INTEGER), mIntValue(value), mFloatValue(value) {
+
+}
+
+ResultValue::ResultValue(double value)
+	:  mType(ResultValueType::FLOAT), mIntValue((std::int64_t)value), mFloatValue(value) {
 
 }
 
@@ -42,19 +38,21 @@ ResultValue ResultValue::convertTo(ResultValueType type) const {
 }
 
 std::string ResultValue::toString() {
-	if (type() == ResultValueType::FLOAT) {
-		return std::to_string(floatValue());
-	} else {
-		return std::to_string(intValue());
+	switch (mType) {
+		case ResultValueType::FLOAT:
+			return std::to_string(floatValue());
+		case ResultValueType::INTEGER:
+			return std::to_string(intValue());
 	}
 }
 
 bool ResultValue::operator==(const ResultValue& rhs) const {
 	if (mType == rhs.mType) {
-		if (mType == ResultValueType::FLOAT) {
-			return mFloatValue == rhs.mFloatValue;
-		} else {
-			return mIntValue == rhs.mIntValue;
+		switch (mType) {
+			case ResultValueType::FLOAT:
+				return std::abs(mFloatValue - rhs.mFloatValue) <= 0.0000000001;
+			case ResultValueType::INTEGER:
+				return mIntValue == rhs.mIntValue;
 		}
 	} else {
 		return false;
@@ -67,10 +65,11 @@ bool ResultValue::operator!=(const ResultValue& rhs) const {
 
 bool ResultValue::operator<=(const ResultValue& rhs) const {
 	if (mType == rhs.mType) {
-		if (mType == ResultValueType::FLOAT) {
-			return mFloatValue <= rhs.mFloatValue;
-		} else {
-			return mIntValue <= rhs.mIntValue;
+		switch (mType) {
+			case ResultValueType::FLOAT:
+				return mFloatValue <= rhs.mFloatValue;
+			case ResultValueType::INTEGER:
+				return mIntValue <= rhs.mIntValue;
 		}
 	} else {
 		return false;

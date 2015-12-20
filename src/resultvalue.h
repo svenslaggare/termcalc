@@ -12,8 +12,10 @@ private:
 	ResultValueType mType;
 	std::int64_t mIntValue;
 	double mFloatValue;
-
 public:
+	//Crate a new result value
+	ResultValue();
+
 	//Create a new value of the given type
 	ResultValue(ResultValueType type, std::int64_t intValue, double floatValue);
 
@@ -22,12 +24,6 @@ public:
 
 	//Creates a new double value
 	ResultValue(double value);
-
-	//Creates a new value of the given type
-	ResultValue(ResultValueType type, double value);
-
-	//Crate a new result value
-	ResultValue();
 
 	//Returns the type of the value
 	ResultValueType type() const;

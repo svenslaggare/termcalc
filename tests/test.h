@@ -9,12 +9,6 @@
 using Tokens = std::vector<Token>;
 
 class TermCalcTestSuite : public CxxTest::TestSuite {
-private:
-    void printTokens(Tokens tokens) {
-        for (auto token : tokens) {
-            std::cout << token << std::endl;
-        }
-    }
 public:
     void testTokenizer() {
 		FloatType floatType;
@@ -127,8 +121,10 @@ public:
 
     void testConvertToInt() {
         CalcEngine engine;
+		Environment environment;
+        engine.eval("x=3.14", environment);
         engine.setEvalMode(ResultValueType::INTEGER);
 
-        TS_ASSERT_EQUALS(engine.eval("pi+2"), ResultValue(5L));
+        TS_ASSERT_EQUALS(engine.eval("x+2", environment), ResultValue(5L));
     }
 };
