@@ -1,18 +1,17 @@
 CC=clang++
-CFLAGS=-c -std=c++11 -Wall
-LDFLAGS=-std=c++11 -Wall
+CFLAGS=-std=c++11 -Wall
 
-SRCDIR=src
-OBJDIR=obj
+SRC_DIR=src
+OBJ_DIR=obj
 EXECUTABLE=termcalc
 
-SOURCES=$(wildcard $(SRCDIR)/*.cpp)
-HEADERS=$(wildcard $(SRCDIR)/*.h)
+SOURCES=$(wildcard $(SRC_DIR)/*.cpp)
+HEADERS=$(wildcard $(SRC_DIR)/*.h)
 
 _OBJECTS=$(SOURCES:.cpp=.o)
-OBJECTS=$(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(_OBJECTS))
+OBJECTS=$(patsubst $(SRC_DIR)/%,$(OBJ_DIR)/%,$(_OBJECTS))
 
-MAIN_OBJ=$(OBJDIR)/$(EXECUTABLE).o
+MAIN_OBJ=$(OBJ_DIR)/$(EXECUTABLE).o
 TEST_OBJECTS=$(filter-out $(MAIN_OBJ), $(OBJECTS))
 
 TESTS_DIR=tests
@@ -23,48 +22,56 @@ else
 TEST_RUNNERS_DIR=$(TESTS_DIR)/runners
 endif
 
-TEST_EXECUTABLE=test
+TESTS=$(wildcard $(TESTS_DIR)/*.h)
+TEST_EXECUTABLES=$(patsubst $(TESTS_DIR)/%.h,$(TEST_RUNNERS_DIR)/%, $(TESTS))
 
-all: $(OBJDIR) $(SOURCES) $(EXECUTABLE)
+all: $(OBJ_DIR) $(SOURCES) $(EXECUTABLE)
 
-release-flags: 
+release-flags:
 	$(eval CFLAGS += -O2)
 
 release: release-flags clean all
 
 ifeq ($(OS),Windows_NT)
-$(OBJDIR):
-	mkdir $(OBJDIR)
+$(OBJ_DIR):
+	mkdir $(OBJ_DIR)
+
+$(TEST_RUNNERS_DIR):
+	mkdir $(TEST_RUNNERS_DIR)
 else
-$(OBJDIR):
-	mkdir -p $(OBJDIR)
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
+
+$(TEST_RUNNERS_DIR):
+	mkdir -p $(TEST_RUNNERS_DIR)
 endif
 
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+	$(CC) $(CFLAGS) $(OBJECTS) -o $@
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(HEADERS)
-	$(CC) $(CFLAGS) $< -o $@	
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADERS)
+	$(CC) -c $(CFLAGS) $< -o $@
 
-test: $(TESTS_DIR)/test.h $(OBJDIR) $(TEST_OBJECTS)
-	mkdir -p $(TEST_RUNNERS_DIR)
-	cxxtestgen --error-printer -o $(TEST_RUNNERS_DIR)/test-runner.cpp $(TESTS_DIR)/test.h
-	$(CC) $(LDFLAGS) -o $(TEST_EXECUTABLE) -I $(CXXTEST) $(TEST_OBJECTS) $(TEST_RUNNERS_DIR)/test-runner.cpp
-	./$(TEST_EXECUTABLE)
+test: $(TEST_RUNNERS_DIR) $(TEST_EXECUTABLES)
 
-run: $(OBJDIR) $(SOURCES) $(EXECUTABLE)
+$(TEST_RUNNERS_DIR)/%: $(TESTS_DIR)/%.h $(OBJ_DIR) $(TEST_OBJECTS)
+	cxxtestgen --error-printer -o $@-runner.cpp $<
+	$(CC) $(CFLAGS) -o $@ -I $(CXXTEST) $(TEST_OBJECTS) $@-runner.cpp
+	./$@
+
+run: $(OBJ_DIR) $(SOURCES) $(EXECUTABLE)
 	./$(EXECUTABLE)
 
 ifeq ($(OS),Windows_NT)
 clean:
-	del /S /Q $(OBJDIR)
+	del /S /Q $(OBJ_DIR)
 	del /S /Q $(TEST_RUNNERS_DIR)
 	del $(EXECUTABLE)
 	del $(TEST_EXECUTABLE)
 else
 clean:
-	rm -rf $(OBJDIR)
+	rm -rf $(OBJ_DIR)
 	rm -rf $(TEST_RUNNERS_DIR)
 	rm -f $(EXECUTABLE)
 	rm -f $(TEST_EXECUTABLE)
-endif	
+endif

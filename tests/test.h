@@ -26,7 +26,7 @@ public:
 
         TS_ASSERT_EQUALS(
             Tokenizer::tokenize("(2.0+5) * 7.0", floatType),
-            Tokens({ Token(TokenType::LEFT_PARENTHESIS), 
+            Tokens({ Token(TokenType::LEFT_PARENTHESIS),
                      Token(2.0), Token(TokenType::OPERATOR, '+'), Token(5.0),
                      Token(TokenType::RIGHT_PARENTHESIS),
                      Token(TokenType::OPERATOR, '*'), Token( 7.0) }));
@@ -69,21 +69,21 @@ public:
         env.set("e", 2.718281828);
         TS_ASSERT_DELTA(engine.eval("e^2", env), ResultValue(7.38905609893), 0.01);
 
-        TS_ASSERT_THROWS(engine.eval("2 * x"), std::runtime_error); 
+        TS_ASSERT_THROWS(engine.eval("2 * x"), std::runtime_error);
     }
 
     void testEvalFunctions() {
         CalcEngine engine;
-        TS_ASSERT_DELTA(engine.eval("sin(0.5)"), ResultValue(0.479426), 0.01);       
-        TS_ASSERT_THROWS(engine.eval("sin(2, 3)"), std::runtime_error);       
-        TS_ASSERT_THROWS(engine.eval("f(2, 3)"), std::runtime_error);       
+        TS_ASSERT_DELTA(engine.eval("sin(0.5)"), ResultValue(0.479426), 0.01);
+        TS_ASSERT_THROWS(engine.eval("sin(2, 3)"), std::runtime_error);
+        TS_ASSERT_THROWS(engine.eval("f(2, 3)"), std::runtime_error);
     }
 
     void testDefineFunctions() {
         CalcEngine engine;
         Environment env;
         engine.eval("f(x)=x^2", env);
-        TS_ASSERT_EQUALS(engine.eval("f(4)", env), ResultValue(16.0));   
+        TS_ASSERT_EQUALS(engine.eval("f(4)", env), ResultValue(16.0));
 
         engine.setEvalMode(ResultValueType::INTEGER);
         TS_ASSERT_EQUALS(engine.eval("f(4)", env), ResultValue(16L));
