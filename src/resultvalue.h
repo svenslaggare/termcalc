@@ -1,11 +1,17 @@
 #pragma once
 #include <iostream>
+#include <vector>
 
 //The type of the result value
 enum class ResultValueType {
 	FLOAT,
 	INTEGER
 };
+
+//All types
+namespace ResultValueTypes {
+	const std::vector<ResultValueType> all = { ResultValueType::FLOAT, ResultValueType::INTEGER };
+}
 
 class ResultValue {
 private:

@@ -28,31 +28,6 @@ public:
         TS_ASSERT_EQUALS(
             Tokenizer::tokenize("1 << 10", floatType),
             Tokens({ Token(1L), Token(TokenType::TWO_CHAR_OPERATOR, '<', '<'), Token(10L) }));
-
-		TS_ASSERT_EQUALS(
-			Tokenizer::tokenize("425354312421461441", integerType),
-			Tokens({ Token(425354312421461441) }));
-    }
-
-    void testDifferentBase() {
-		IntegerType integerType;
-
-        TS_ASSERT_EQUALS(
-            Tokenizer::tokenize("0x1337", integerType),
-            Tokens({ Token(4919L) }));
-
-        TS_ASSERT_EQUALS(
-            Tokenizer::tokenize("0b1010100", integerType),
-            Tokens({ Token(84L) }));
-    }
-
-    void testEval() {
-        CalcEngine engine;
-        TS_ASSERT_EQUALS(engine.eval("3+2"), ResultValue(5.0));
-        TS_ASSERT_EQUALS(engine.eval("(2 + 5) * 3"), ResultValue(21.0));
-        TS_ASSERT_EQUALS(engine.eval("5 - 3"), ResultValue(2.0));
-        TS_ASSERT_EQUALS(engine.eval("2^3"), ResultValue(8.0));
-        TS_ASSERT_EQUALS(engine.eval("-3"), ResultValue(-3.0));
     }
 
     void testEvalVariables() {
@@ -66,13 +41,6 @@ public:
         TS_ASSERT_THROWS(engine.eval("2 * x"), std::runtime_error);
     }
 
-    void testEvalFunctions() {
-        CalcEngine engine;
-        TS_ASSERT_DELTA(engine.eval("sin(0.5)"), ResultValue(0.479426), 0.01);
-        TS_ASSERT_THROWS(engine.eval("sin(2, 3)"), std::runtime_error);
-        TS_ASSERT_THROWS(engine.eval("f(2, 3)"), std::runtime_error);
-    }
-
     void testDefineFunctions() {
         CalcEngine engine;
         Environment env;
@@ -82,14 +50,6 @@ public:
         engine.setEvalMode(ResultValueType::INTEGER);
         TS_ASSERT_EQUALS(engine.eval("f(4)", env), ResultValue(16L));
     }
-
-	void testDefineFunctions2() {
-		CalcEngine engine;
-		engine.setEvalMode(ResultValueType::INTEGER);
-		Environment env;
-		engine.eval("f(x)=x^2", env);
-		TS_ASSERT_EQUALS(engine.eval("f(4)", env), ResultValue(16L));
-	}
 
     void testInvalidEval() {
         CalcEngine engine;
@@ -104,22 +64,7 @@ public:
         TS_ASSERT_EQUALS(env.valueOf("x"), ResultValue(10.0));
     }
 
-    void testEvalIntMode() {
-        CalcEngine engine;
-        engine.setEvalMode(ResultValueType::INTEGER);
-
-        TS_ASSERT_EQUALS(engine.eval("3+2"), ResultValue(5L));
-        TS_ASSERT_EQUALS(engine.eval("(2 + 5) * 3"), ResultValue(21L));
-        TS_ASSERT_EQUALS(engine.eval("5 - 3"), ResultValue(2L));
-        TS_ASSERT_EQUALS(engine.eval("2^3"), ResultValue(8L));
-        TS_ASSERT_EQUALS(engine.eval("-3"), ResultValue(-3L));
-        TS_ASSERT_EQUALS(engine.eval("2^30"), ResultValue(1L << 30L));
-
-        TS_ASSERT_EQUALS(engine.eval("1 << 30"), ResultValue(1L << 30L));
-        TS_ASSERT_EQUALS(engine.eval("24 >> 2"), ResultValue(24L >> 2L));
-    }
-
-    void testConvertToInt() {
+    void testConvert() {
         CalcEngine engine;
 		Environment environment;
         engine.eval("x=3.14", environment);

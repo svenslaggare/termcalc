@@ -4,7 +4,8 @@
 #include <fstream>
 #include <sstream> 
 
-CommandEngine::CommandEngine() {
+CommandEngine::CommandEngine()
+	: mEnv(mEngine.defaultEnvironment()) {
 	std::string leadingWhitespace = "   ";
 
 	mCommands = {

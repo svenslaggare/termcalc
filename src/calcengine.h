@@ -27,6 +27,9 @@ public:
 	//Returns the unary operators
 	const UnaryOperators& unaryOperators() const;
 
+	//Creates a default environment
+	Environment defaultEnvironment() const;
+
 	//Returns the eval mode
 	ResultValueType evalMode() const;
 

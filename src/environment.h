@@ -15,6 +15,7 @@ private:
 	std::unordered_map<std::string, Function> mFunctions;
 public:
 	//Creates a new scope
+	EnvironmentScope();
 	EnvironmentScope(Variables variables, Functions functions);
 
 	//Returns the variables
@@ -38,6 +39,9 @@ private:
 public:
 	//Creates a new environment
 	Environment();
+
+	//Creates a new environment from the given scopes
+	Environment(std::unordered_map<ResultValueType, EnvironmentScope> scopes);
 
 	//Returns the variables
 	const Variables& variables() const;

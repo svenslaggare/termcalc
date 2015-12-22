@@ -4,6 +4,7 @@
 #include "resultvalue.h"
 #include "operator.h"
 #include "token.h"
+#include "environment.h"
 
 using BinaryOperators = std::unordered_map<OperatorChar, Operator>;
 using UnaryOperators = std::unordered_map<OperatorChar, Operator>;
@@ -19,6 +20,9 @@ public:
 	//Returns the unary operators
 	virtual const UnaryOperators& unaryOperators() const = 0;
 
+	//Returns the environment scope
+	virtual const EnvironmentScope& environment() const = 0;
+
 	//Indicates if the given char is the start of a number
 	virtual bool isStartOfNumber(char current) const = 0;
 
@@ -31,6 +35,7 @@ class IntegerType : public NumberType {
 private:
 	BinaryOperators mBinaryOperators;
 	UnaryOperators mUnaryOperators;
+	EnvironmentScope mEnvironment;
 
 	//Computes x^n
 	std::int64_t power(std::int64_t x, std::int64_t n) const;
@@ -40,6 +45,7 @@ public:
 	virtual const BinaryOperators& binaryOperators() const override;
 	virtual const UnaryOperators& unaryOperators() const override;
 
+	virtual const EnvironmentScope& environment() const override;
 
 	virtual bool isStartOfNumber(char current) const override;
 	virtual Token parseNumber(std::string& str, char& current, std::size_t& index) const override;
@@ -50,11 +56,14 @@ class FloatType : public NumberType {
 private:
 	BinaryOperators mBinaryOperators;
 	UnaryOperators mUnaryOperators;
+	EnvironmentScope mEnvironment;
 public:
 	FloatType();
 
 	virtual const BinaryOperators& binaryOperators() const override;
 	virtual const UnaryOperators& unaryOperators() const override;
+
+	virtual const EnvironmentScope& environment() const override;
 
 	virtual bool isStartOfNumber(char current) const override;
 	virtual Token parseNumber(std::string& str, char& current, std::size_t& index) const override;

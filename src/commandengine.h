@@ -17,8 +17,8 @@ using Args = std::vector<std::string>;
 //Represents a command engine
 class CommandEngine {
 private:
-	Environment mEnv;
 	CalcEngine mEngine;
+	Environment mEnv;
 	NumberBase mPrintNumBase = NumberBase::DECIMAL;
 	std::unordered_map<std::string, std::function<bool(Args)>> mCommands;
 public:

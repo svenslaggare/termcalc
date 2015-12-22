@@ -27,6 +27,15 @@ const UnaryOperators& CalcEngine::unaryOperators() const {
 	return currentNumberType().unaryOperators();
 }
 
+Environment CalcEngine::defaultEnvironment() const {
+	std::unordered_map<ResultValueType, EnvironmentScope> scopes;
+	for (auto& numberType : mNumberTypes) {
+		scopes.insert({ numberType.first, numberType.second->environment() });
+	}
+
+	return Environment(scopes);
+}
+
 ResultValueType CalcEngine::evalMode() const {
 	return mEvalMode;
 }
@@ -36,8 +45,7 @@ void CalcEngine::setEvalMode(ResultValueType evalMode) {
 }
 
 ResultValue CalcEngine::eval(std::string expressionString) {
-	Environment env;
-	env.setEvalMode(mEvalMode);
+	auto env = defaultEnvironment();
 	return eval(expressionString, env);
 }
 
