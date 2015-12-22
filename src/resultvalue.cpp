@@ -1,6 +1,10 @@
 #include "resultvalue.h"
 #include <cmath>
 
+namespace {
+	static constexpr double EPSILON = 0.0000000001;
+}
+
 ResultValue::ResultValue()
 	:  mType(ResultValueType::FLOAT),
 	   mIntValue(0),
@@ -68,7 +72,7 @@ std::string ResultValue::toString() {
 		case ResultValueType::INTEGER:
 			return std::to_string(intValue());
 		case ResultValueType::COMPLEX:
-			if (mComplexValue.imag() == 0.0) {
+			if (mComplexValue.imag() <= EPSILON) {
 				return std::to_string(mComplexValue.real());
 			} else {
 				return std::to_string(mComplexValue.real()) + "+" + std::to_string(mComplexValue.imag()) + "i";
@@ -77,8 +81,6 @@ std::string ResultValue::toString() {
 }
 
 bool ResultValue::operator==(const ResultValue& rhs) const {
-	const double EPSILON = 0.0000000001;
-
 	if (mType == rhs.mType) {
 		switch (mType) {
 			case ResultValueType::FLOAT:
@@ -118,7 +120,24 @@ double ResultValue::operator+(double value) const {
 }
 
 std::ostream& operator<<(std::ostream& os, ResultValue value) {
-	os << value.toString();
+//	os << value.toString();
+
+	switch (value.type()) {
+		case ResultValueType::FLOAT:
+			os << value.floatValue();
+			break;
+		case ResultValueType::INTEGER:
+			os << value.intValue();
+			break;
+		case ResultValueType::COMPLEX:
+			if (value.complexValue().imag() <= EPSILON) {
+				os << value.complexValue().real();
+			} else {
+				os << value.complexValue().real() << "+" << value.complexValue().imag() << "i";
+			}
+			break;
+	}
+
 	return os;
 }
 
