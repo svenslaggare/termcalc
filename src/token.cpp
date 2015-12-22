@@ -2,37 +2,80 @@
 #include <cmath>
 
 Token::Token()
-	: mType(TokenType::NUMBER), mDoubleValue(0), mCharValue(0), mCharValue2(0) {
+	: mType(TokenType::NUMBER),
+	  mDoubleValue(0.0),
+	  mInt64Value(0),
+	  mComplexValue(0.0),
+	  mCharValue(0),
+	  mCharValue2(0) {
 
 }
 
 Token::Token(TokenType type)
-	: mType(type), mDoubleValue(0.0), mInt64Value(0), mCharValue(0), mCharValue2(0) {
+	: mType(type),
+	  mDoubleValue(0.0),
+	  mInt64Value(0),
+	  mComplexValue(0.0),
+	  mCharValue(0),
+	  mCharValue2(0) {
 
 }
 
 Token::Token(double value)
-	: mType(TokenType::NUMBER), mDoubleValue(value), mInt64Value(value), mCharValue(0), mCharValue2(0) {
+	: mType(TokenType::NUMBER),
+	  mDoubleValue(value),
+	  mInt64Value((std::int64_t)value),
+	  mComplexValue(value),
+	  mCharValue(0),
+	  mCharValue2(0) {
 
 }
 
 Token::Token(std::int64_t value)
-	: mType(TokenType::NUMBER), mDoubleValue(value), mInt64Value(value), mCharValue(0), mCharValue2(0) {
+	: mType(TokenType::NUMBER),
+	  mDoubleValue(value),
+	  mInt64Value(value),
+	  mComplexValue(value),
+	  mCharValue(0),
+	  mCharValue2(0) {
+
+}
+
+Token::Token(std::complex<double> value)
+	: mType(TokenType::NUMBER),
+	  mDoubleValue(value.real()),
+	  mInt64Value((std::int64_t)value.real()),
+	  mComplexValue(value),
+	  mCharValue(0),
+	  mCharValue2(0) {
 
 }
 
 Token::Token(TokenType type, char value)
-	: mType(type), mDoubleValue(0), mInt64Value(0), mCharValue(value), mCharValue2(0) {
+	: mType(type),
+	  mDoubleValue(0),
+	  mInt64Value(0),
+	  mCharValue(value),
+	  mCharValue2(0) {
 
 }
 
 Token::Token(TokenType type, char value1, char value2)
-	: mType(type), mDoubleValue(0), mInt64Value(0), mCharValue(value1), mCharValue2(value1) {
+	: mType(type),
+	  mDoubleValue(0),
+	  mInt64Value(0),
+	  mCharValue(value1),
+	  mCharValue2(value1) {
 
 }
 
 Token::Token(std::string identifier)
-	: mType(TokenType::IDENTIFIER), mDoubleValue(0), mInt64Value(0), mCharValue(0), mCharValue2(0), mIdentifier(identifier) {
+	: mType(TokenType::IDENTIFIER),
+	  mDoubleValue(0),
+	  mInt64Value(0),
+	  mCharValue(0),
+	  mCharValue2(0),
+	  mIdentifier(identifier) {
 
 }
 
@@ -46,6 +89,10 @@ double Token::doubleValue() const {
 
 std::int64_t Token::int64Value() const {
 	return mInt64Value;
+}
+
+std::complex<double> Token::complexValue() const {
+	return mComplexValue;
 }
 
 char Token::charValue() const {
@@ -81,6 +128,10 @@ bool Token::operator==(const Token& rhs) const {
 		return false;
 	}
 
+	if (mComplexValue != rhs.mComplexValue) {
+		return false;
+	}
+
 	if (mIdentifier != rhs.mIdentifier) {
 		return false;
 	}
@@ -88,29 +139,29 @@ bool Token::operator==(const Token& rhs) const {
 	return true;
 }
 
-std::ostream& operator<<(std::ostream& ostream, const Token& token) {
+std::ostream& operator<<(std::ostream& os, const Token& token) {
 	switch (token.type()) {
 		case TokenType::NUMBER:
-			ostream << token.doubleValue();
+			os << token.doubleValue();
 			break;
 		case TokenType::OPERATOR:
-			ostream << token.charValue();
+			os << token.charValue();
 			break;
 		case TokenType::IDENTIFIER:
-			ostream << token.identifier();
+			os << token.identifier();
 			break;
 		case TokenType::LEFT_PARENTHESIS:
-			ostream << "(";
+			os << "(";
 			break;
 		case TokenType::RIGHT_PARENTHESIS:
-			ostream << ")";
+			os << ")";
 			break;
 		case TokenType::COMMA:
-			ostream << ",";
+			os << ",";
 			break;
 		default:
 			break;
 	}
 
-	return ostream;
+	return os;
 }

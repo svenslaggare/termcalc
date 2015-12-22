@@ -190,7 +190,7 @@ FloatType::FloatType() {
 			 return lhs.floatValue() * rhs.floatValue();
 		 }) },
 		 { '/', Operator('/', 5, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
-			 return lhs.intValue() / rhs.floatValue();
+			 return lhs.floatValue() / rhs.floatValue();
 		 }) },
 		 { '+', Operator('+', 4, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.floatValue() + rhs.floatValue();
@@ -210,7 +210,8 @@ FloatType::FloatType() {
 	};
 
 	mEnvironment = EnvironmentScope({
-		{ "pi", ResultValue(3.141592653589793238463) }
+		{ "pi", ResultValue(3.141592653589793238463) },
+		{ "e", ResultValue(2.718281828459045235360) },
 	}, {
 		{ "sin", Function("sin", 1, [this](FnArgs args) {
 			return ResultValue(sin(args.at(0).floatValue()));
@@ -299,5 +300,127 @@ bool FloatType::isStartOfNumber(char current) const {
 }
 
 const EnvironmentScope& FloatType::environment() const {
+	return mEnvironment;
+}
+
+//Complex type
+ComplexType::ComplexType() {
+	mBinaryOperators = {
+		{ '^', Operator('^', 6, OperatorAssociativity::RIGHT, [&](ResultValue lhs, ResultValue rhs) {
+			return pow(lhs.complexValue(), rhs.complexValue());
+		}) },
+		{ '*', Operator('*', 5, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
+			return lhs.complexValue() * rhs.complexValue();
+		}) },
+		{ '/', Operator('/', 5, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
+			return lhs.complexValue() / rhs.complexValue();
+		}) },
+		{ '+', Operator('+', 4, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
+			return lhs.complexValue() + rhs.complexValue();
+		}) },
+		{ '-', Operator('-', 4, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
+			return lhs.complexValue() - rhs.complexValue();
+		}) },
+		{ '=', Operator('=', 1, OperatorAssociativity::RIGHT, [&](ResultValue lhs, ResultValue rhs) {
+			return ResultValue();
+		}) }
+	};
+
+	mUnaryOperators = {
+		{ '-', Operator('-', 7, OperatorAssociativity::LEFT, [&](ResultValue op) {
+			return -op.complexValue();
+		}) }
+	};
+
+	mEnvironment = EnvironmentScope({
+		{ "pi", ResultValue(3.141592653589793238463) },
+		{ "e", ResultValue(2.718281828459045235360) },
+	}, {
+		{ "sin", Function("sin", 1, [this](FnArgs args) {
+			return ResultValue(sin(args.at(0).complexValue()));
+		}, "Computes the sine of x.") },
+		{ "cos", Function("cos", 1, [this](FnArgs args) {
+			return ResultValue(cos(args.at(0).complexValue()));
+		}, "Computes the cosine of x.") },
+		{ "tan", Function("tan", 1, [this](FnArgs args) {
+			return ResultValue(tan(args.at(0).complexValue()));
+		}, "Computes the tangent of x.") },
+		{ "sqrt", Function("sqrt", 1, [this](FnArgs args) {
+			return ResultValue(sqrt(args.at(0).complexValue()));
+		}, "Computes the square root of x.") },
+		{ "asin", Function("asin", 1, [this](FnArgs args) {
+			return ResultValue(asin(args.at(0).complexValue()));
+		}, "Computes the inverse sine of x.") },
+		{ "acos", Function("acos", 1, [this](FnArgs args) {
+			return ResultValue(acos(args.at(0).complexValue()));
+		}, "Computes the inverse cosine of x.") },
+		{ "atan", Function("atan", 1, [this](FnArgs args) {
+			return ResultValue(atan(args.at(0).complexValue()));
+		}, "Computes the inverse tangent of x.") },
+		{ "ln", Function("ln", 1, [this](FnArgs args) {
+			return ResultValue(log(args.at(0).complexValue()));
+		}, "Computes the natural logarithm of x.") },
+	});
+}
+
+const BinaryOperators& ComplexType::binaryOperators() const {
+	return mBinaryOperators;
+}
+
+const UnaryOperators& ComplexType::unaryOperators() const {
+	return mUnaryOperators;
+}
+
+Token ComplexType::parseNumber(std::string& str, char& current, std::size_t& index) const {
+	if (current == 'i') {
+		return Complex(0, 1);
+	}
+
+	std::string num { current };
+	bool hasDecimalPoint = false;
+	bool hasImagUnit = false;
+
+	while (true) {
+		std::size_t next = index + 1;
+
+		if (next >= str.size()) {
+			break;
+		}
+
+		current = (char)std::tolower(str[next]);
+
+		if (current == '.') {
+			if (!hasDecimalPoint) {
+				hasDecimalPoint = true;
+			} else {
+				throw std::runtime_error("The token already contains a decimal point.");
+			}
+		} else if (current == 'i') {
+			hasImagUnit = true;
+			index = next;
+			break;
+		} else {
+			if (!isdigit(current)) {
+				break;
+			}
+		}
+
+		num += current;
+		index = next;
+	}
+
+	auto value = std::stod(num);
+	if (hasImagUnit) {
+		return Complex(0, value);
+	} else {
+		return Complex(value, 0);
+	}
+}
+
+bool ComplexType::isStartOfNumber(char current) const {
+	return isdigit(current) || current == 'i';
+}
+
+const EnvironmentScope& ComplexType::environment() const {
 	return mEnvironment;
 }

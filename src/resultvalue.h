@@ -1,35 +1,47 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include <complex>
 
 //The type of the result value
 enum class ResultValueType {
 	FLOAT,
-	INTEGER
+	INTEGER,
+	COMPLEX
 };
 
 //All types
 namespace ResultValueTypes {
-	const std::vector<ResultValueType> all = { ResultValueType::FLOAT, ResultValueType::INTEGER };
+	const std::vector<ResultValueType> all = {
+		ResultValueType::FLOAT,
+		ResultValueType::INTEGER,
+		ResultValueType::COMPLEX
+	};
 }
+
+using Complex = std::complex<double>;
 
 class ResultValue {
 private:
 	ResultValueType mType;
 	std::int64_t mIntValue;
 	double mFloatValue;
+	Complex mComplexValue;
 public:
 	//Crate a new result value
 	ResultValue();
 
 	//Create a new value of the given type
-	ResultValue(ResultValueType type, std::int64_t intValue, double floatValue);
+	ResultValue(ResultValueType type, std::int64_t intValue, double floatValue, Complex complexValue);
 
 	//Creates a new int64 value
 	ResultValue(std::int64_t value);
 
 	//Creates a new double value
 	ResultValue(double value);
+
+	//Creates a new complex value
+	ResultValue(Complex value);
 
 	//Returns the type of the value
 	ResultValueType type() const;
@@ -39,6 +51,9 @@ public:
 
 	//Returns the float value
 	double floatValue() const;
+
+	//Returns the complex value
+	Complex complexValue() const;
 
 	//Converts the current value to the given type
 	ResultValue convertTo(ResultValueType type) const;

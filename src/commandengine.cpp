@@ -17,7 +17,7 @@ CommandEngine::CommandEngine()
 			std::cout << leadingWhitespace << ":hex           Sets to display the result in base 16." << std::endl;
 			std::cout << leadingWhitespace << ":vars          Prints the defined variables." << std::endl;
 			std::cout << leadingWhitespace << ":funcs         Prints the defined functions." << std::endl;
-			std::cout << leadingWhitespace << ":mode          Sets the evaluation mode: float (default) or int." << std::endl;
+			std::cout << leadingWhitespace << ":mode          Sets the evaluation mode: float (default), int or complex." << std::endl;
 			return false;
 		} },
 		{ "exit", [](Args args) {
@@ -103,8 +103,11 @@ CommandEngine::CommandEngine()
 				} else if (args[0] == "int") {
 					mEngine.setEvalMode(ResultValueType::INTEGER);
 					mEnv.setEvalMode(ResultValueType::INTEGER);
+				} else if (args[0] == "complex") {
+					mEngine.setEvalMode(ResultValueType::COMPLEX);
+					mEnv.setEvalMode(ResultValueType::COMPLEX);
 				} else {
-					std::cout << "'" << args[0] << "' is not a valid value. Valid values are: float and int." << std::endl;
+					std::cout << "'" << args[0] << "' is not a valid value. Valid values are: float, int and complex." << std::endl;
 				}
 			} else {
 				std::cout << "Expected one argument (float or int)." << std::endl;

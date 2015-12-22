@@ -2,7 +2,10 @@
 A terminal based calculator written in C++.
 
 ## Usage
-Works like a normal calculator. The calculator can be in two modes, float and integer.
+Works like a normal calculator. The calculator can be in the following modes:
+* float: Arithemtic done in 64 bits floating point.
+* int: Arithemtic done in 64 bits integer.
+* complex: For each component, the drithemtic done in 64 bits floating point.
 
 ### Defining variables and functions
 Variables can be defined as: `x = 4`. Functions are defined as: `f(x)=x^2`.
@@ -15,7 +18,7 @@ The following commands are available:
 * `:hex`:           Sets to display the result in base 16.
 * `:vars`:          Prints the defined variables.
 * `:funcs`:         Prints the defined functions.
-* `:mode`:          Sets the evaluation mode: float (default) or int.
+* `:mode`:          Sets the evaluation mode: float (default), int or complex.
 
 ### Predefined
 Variables and functions can be predefined by adding a file `default.termcalc` in your home folder.

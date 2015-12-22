@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <iostream>
+#include <complex>
 
 //The token types
 enum class TokenType {
@@ -20,6 +21,7 @@ private:
 	TokenType mType;
 	double mDoubleValue;
 	std::int64_t mInt64Value;
+	std::complex<double> mComplexValue;
 	char mCharValue;
 	char mCharValue2;
 	std::string mIdentifier;
@@ -35,6 +37,9 @@ public:
 
 	//Creates a new int64 token
 	Token(std::int64_t value);
+
+	//Creates a new complex token
+	Token(std::complex<double> value);
 
 	//Creates a new token with a char value
 	Token(TokenType type, char value);
@@ -54,6 +59,9 @@ public:
 	//Returns the int64 value
 	std::int64_t int64Value() const;
 
+	//Returns the complex value
+	std::complex<double> complexValue() const;
+
 	//Returns the char value
 	char charValue() const;
 
@@ -66,4 +74,4 @@ public:
 	bool operator==(const Token& rhs) const;
 };
 
-std::ostream& operator<<(std::ostream& ostream, const Token& token);
+std::ostream& operator<<(std::ostream& os, const Token& token);
