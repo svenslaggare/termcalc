@@ -5,7 +5,9 @@ A terminal based calculator written in C++.
 Works like a normal calculator. The calculator can be in the following modes:
 * float: Arithemtic done in 64 bits floating point.
 * int: Arithemtic done in 64 bits integer.
-* complex: For each component, the drithemtic done in 64 bits floating point.
+* complex: For each component, the arithemtic is done in 64 bits floating point.
+
+Each mode has different function and constants.
 
 ### Defining variables and functions
 Variables can be defined as: `x = 4`. Functions are defined as: `f(x)=x^2`.
