@@ -23,11 +23,15 @@ CommandEngine::CommandEngine()
 		} },
 		{ "display", [&](Args args) {
 			if (args.size() == 1) {
-				auto base = std::stoi(args[0]);
-				if (base >= 2) {
-					mPrintNumBase = base;
-				} else {
-					std::cout << "The base must be >= 2." << std::endl;
+				try {
+					auto base = std::stoi(args[0]);
+					if (base >= 2) {
+						mPrintNumBase = base;
+					} else {
+						std::cout << "The base must be >= 2." << std::endl;
+					}
+				} catch (std::exception& e) {
+					std::cout << "The base must be an integer." << std::endl;
 				}
 			} else {
 				std::cout << "Expected one argument (int >= 2)." << std::endl;
