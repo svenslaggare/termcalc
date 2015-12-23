@@ -12,27 +12,26 @@ CommandEngine::CommandEngine()
 		{ "help", [=](Args args) {
 			std::cout << "Commands:" << std::endl;
 			std::cout << leadingWhitespace << ":exit|:q|:quit Exits the program." << std::endl;
-			std::cout << leadingWhitespace << ":bin           Sets to display the result in base 2." << std::endl;
-			std::cout << leadingWhitespace << ":dec           Sets to display the result in base 10. (default)" << std::endl;
-			std::cout << leadingWhitespace << ":hex           Sets to display the result in base 16." << std::endl;
+			std::cout << leadingWhitespace << ":mode          Sets the evaluation mode: float (default), int or complex." << std::endl;
+			std::cout << leadingWhitespace << ":display       Sets to display the result in the given base." << std::endl;
 			std::cout << leadingWhitespace << ":vars          Prints the defined variables." << std::endl;
 			std::cout << leadingWhitespace << ":funcs         Prints the defined functions." << std::endl;
-			std::cout << leadingWhitespace << ":mode          Sets the evaluation mode: float (default), int or complex." << std::endl;
 			return false;
 		} },
 		{ "exit", [](Args args) {
 			return true;
 		} },
-		{ "bin", [&](Args args) {
-			mPrintNumBase = NumberBase::BINARY;
-			return false;
-		} },
-		{ "dec", [&](Args args) {
-			mPrintNumBase = NumberBase::DECIMAL;
-			return false;
-		} },
-		{ "hex", [&](Args args) {
-			mPrintNumBase = NumberBase::HEXADECIMAL;
+		{ "display", [&](Args args) {
+			if (args.size() == 1) {
+				auto base = std::stoi(args[0]);
+				if (base >= 2) {
+					mPrintNumBase = base;
+				} else {
+					std::cout << "The base must be >= 2." << std::endl;
+				}
+			} else {
+				std::cout << "Expected one argument (int >= 2)." << std::endl;
+			}
 			return false;
 		} },
 		{ "vars", [&](Args args) {
@@ -122,29 +121,49 @@ CommandEngine::CommandEngine()
 	mCommands["h"] = mCommands["help"];
 }
 
-std::string toBase(int base, std::int64_t value) {
-	std::string res;
-	while (value > 0) {
-		res += std::to_string(value % base);
-		value /= base;
+namespace {
+	//Converts the given value into a string with the given base
+	std::string toBase(std::int64_t value, int base) {
+		std::string res;
+		while (value > 0) {
+			res += std::to_string(value % base);
+			value /= base;
+		}
+
+		return std::string(res.rbegin(), res.rend());
 	}
 
-	return std::string(res.rbegin(), res.rend());
-}
+	//Returns the given number as a subscript
+	std::string getSubscript(int num) {
+		static const std::vector<std::string> subscripts{ "\xe2\x82\x80", "\xe2\x82\x81", "\xe2\x82\x82",
+														  "\xe2\x82\x83", "\xe2\x82\x84", "\xe2\x82\x85", "\xe2\x82\x86",
+														  "\xe2\x82\x87", "\xe2\x82\x88", "\xe2\x82\x89"};
 
-std::vector<std::string> splitString(std::string str, std::string delimiter) {
-	std::vector<std::string> parts;
+		std::string str = std::to_string(num);
+		std::string substr;
 
-	size_t pos = 0;
-	std::string token;
-	while ((pos = str.find(delimiter)) != std::string::npos) {
-	    token = str.substr(0, pos);
-	    parts.push_back(token);
-	    str.erase(0, pos + delimiter.length());
+		for (std::size_t i = 0; i < str.length(); i++) {
+			substr += subscripts[str[i] - '0'];
+		}
+
+		return substr;
 	}
-	
-	parts.push_back(str);
-	return parts;
+
+	//Splits the given string
+	std::vector<std::string> splitString(std::string str, std::string delimiter) {
+		std::vector<std::string> parts;
+
+		size_t pos = 0;
+		std::string token;
+		while ((pos = str.find(delimiter)) != std::string::npos) {
+			token = str.substr(0, pos);
+			parts.push_back(token);
+			str.erase(0, pos + delimiter.length());
+		}
+
+		parts.push_back(str);
+		return parts;
+	}
 }
 
 void CommandEngine::loadFile(std::string fileName, bool printIfNotFound) {
@@ -185,36 +204,29 @@ bool CommandEngine::execute(std::string line, bool printResult) {
 		auto res = mEngine.eval(line, mEnv);
 
 		if (printResult) {
-			if (res.type() == ResultValueType::FLOAT) {
-				//Display only different base if result is an integer
-				double resInt;
-				if (std::modf(res.floatValue(), &resInt) == 0.0) {
-					switch (mPrintNumBase) {
-						case NumberBase::BINARY:
-							std::cout << "0b" << toBase(2, (std::int64_t)res.floatValue()) << std::endl;
-							break;
-						case NumberBase::DECIMAL:
-							std::cout << std::dec << res << std::endl;
-							break;
-						case NumberBase::HEXADECIMAL:
-							std::cout << std::hex << "0x" << (std::int64_t)res.floatValue() << std::endl;
-							break;
-					}
-				} else {
-					std::cout << std::dec << res << std::endl;
+			if (res.type() == ResultValueType::INTEGER) {
+				switch (mPrintNumBase) {
+					case 2:
+						std::cout << "0b" << toBase(res.intValue(), 2) << std::endl;
+						break;
+					case 10:
+						std::cout << res.intValue() << std::endl;
+						break;
+					case 16:
+						std::cout << "0x" << toBase(res.intValue(), 16) << std::endl;
+						break;
+					default:
+						std::string baseSubscript = "";
+
+						#ifdef __unix__
+						baseSubscript = getSubscript(mPrintNumBase);
+						#endif
+
+						std::cout << toBase(res.intValue(), mPrintNumBase) << baseSubscript << std::endl;
+						break;
 				}
 			} else {
-				switch (mPrintNumBase) {
-					case NumberBase::BINARY:
-						std::cout << "0b" << toBase(2, res.intValue()) << std::endl;
-						break;
-					case NumberBase::DECIMAL:
-						std::cout << std::dec << res << std::endl;
-						break;
-					case NumberBase::HEXADECIMAL:
-						std::cout << std::hex << "0x" << res.intValue() << std::dec << std::endl;
-						break;
-				}
+				std::cout << res << std::endl;
 			}
 
 			mEnv.set("ans", res);

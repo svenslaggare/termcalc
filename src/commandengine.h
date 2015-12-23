@@ -5,13 +5,6 @@
 #include <functional>
 #include <vector>
 
-//The number bases
-enum class NumberBase {
-	BINARY,
-	DECIMAL,
-	HEXADECIMAL
-};
-
 using Args = std::vector<std::string>;
 
 //Represents a command engine
@@ -19,7 +12,7 @@ class CommandEngine {
 private:
 	CalcEngine mEngine;
 	Environment mEnv;
-	NumberBase mPrintNumBase = NumberBase::DECIMAL;
+	int mPrintNumBase = 10;
 	std::unordered_map<std::string, std::function<bool(Args)>> mCommands;
 public:
 	//Creates a new command engine
