@@ -72,10 +72,14 @@ std::string ResultValue::toString() {
 		case ResultValueType::INTEGER:
 			return std::to_string(intValue());
 		case ResultValueType::COMPLEX:
-			if (mComplexValue.imag() <= EPSILON) {
+			if (std::abs(mComplexValue.imag()) <= EPSILON) {
 				return std::to_string(mComplexValue.real());
 			} else {
-				return std::to_string(mComplexValue.real()) + "+" + std::to_string(mComplexValue.imag()) + "i";
+				if (mComplexValue.imag() > 0) {
+					return std::to_string(mComplexValue.real()) + "+" + std::to_string(mComplexValue.imag()) + "i";
+				} else {
+					return std::to_string(mComplexValue.real()) + std::to_string(mComplexValue.imag()) + "i";
+				}
 			}
 	}
 }
@@ -100,28 +104,11 @@ bool ResultValue::operator!=(const ResultValue& rhs) const {
 	return !(*this == rhs);
 }
 
-bool ResultValue::operator<=(const ResultValue& rhs) const {
-	if (mType == rhs.mType) {
-		switch (mType) {
-			case ResultValueType::FLOAT:
-				return mFloatValue <= rhs.mFloatValue;
-			case ResultValueType::INTEGER:
-				return mIntValue <= rhs.mIntValue;
-			case ResultValueType::COMPLEX:
-				return false;
-		}
-	} else {
-		return false;
-	}
-}
-
 double ResultValue::operator+(double value) const {
 	return mFloatValue + value;
 }
 
 std::ostream& operator<<(std::ostream& os, ResultValue value) {
-//	os << value.toString();
-
 	switch (value.type()) {
 		case ResultValueType::FLOAT:
 			os << value.floatValue();
@@ -130,10 +117,14 @@ std::ostream& operator<<(std::ostream& os, ResultValue value) {
 			os << value.intValue();
 			break;
 		case ResultValueType::COMPLEX:
-			if (value.complexValue().imag() <= EPSILON) {
+			if (std::abs(value.complexValue().imag()) <= EPSILON) {
 				os << value.complexValue().real();
 			} else {
-				os << value.complexValue().real() << "+" << value.complexValue().imag() << "i";
+				if (value.complexValue().imag() > 0) {
+					os << value.complexValue().real() << "+" << value.complexValue().imag() << "i";
+				} else {
+					os << value.complexValue().real() << value.complexValue().imag() << "i";
+				}
 			}
 			break;
 	}

@@ -1,5 +1,6 @@
 #include "numbertype.h"
 #include <cmath>
+#include <complex>
 
 //Integer type
 namespace {
@@ -122,7 +123,7 @@ const EnvironmentScope& IntegerType::environment() const {
 	return mEnvironment;
 }
 
-bool IntegerType::isStartOfNumber(char current) const {
+bool IntegerType::isStartOfNumber(const std::string& str, char current, std::size_t index) const {
 	return isdigit(current);
 }
 
@@ -295,7 +296,7 @@ Token FloatType::parseNumber(std::string& str, char& current, std::size_t& index
 	return std::stod(num);
 }
 
-bool FloatType::isStartOfNumber(char current) const {
+bool FloatType::isStartOfNumber(const std::string& str, char current, std::size_t index) const {
 	return isdigit(current);
 }
 
@@ -360,6 +361,26 @@ ComplexType::ComplexType() {
 		{ "ln", Function("ln", 1, [this](FnArgs args) {
 			return ResultValue(log(args.at(0).complexValue()));
 		}, "Computes the natural logarithm of x.") },
+		{ "real", Function("real", 1, [this](FnArgs args) {
+			return ResultValue(Complex(std::real(args.at(0).complexValue()), 0));
+		}, "Returns the real part of x.") },
+		{ "imag", Function("imag", 1, [this](FnArgs args) {
+			return ResultValue(Complex(std::imag(args.at(0).complexValue()), 0));
+		}, "Returns the imaginary part of x.") },
+		{ "abs", Function("abs", 1, [this](FnArgs args) {
+			return ResultValue(Complex(std::abs(args.at(0).complexValue())));
+		}, "Computes absolute value (magnitude) of x.") },
+		{ "arg", Function("arg", 1, [this](FnArgs args) {
+			return ResultValue(Complex(std::arg(args.at(0).complexValue())));
+		}, "Computes argument of x.") },
+		{ "conj", Function("conj", 1, [this](FnArgs args) {
+			return ResultValue(std::conj(args.at(0).complexValue()));
+		}, "Computes the conjugate x.") },
+		{ "polar", Function("polar", 2, [this](FnArgs args) {
+			return ResultValue(std::polar(
+				args.at(0).floatValue(),
+				args.at(1).floatValue()));
+		}, "Create a complex from polar form (x*e^(y*i)).") },
 	});
 }
 
@@ -417,8 +438,20 @@ Token ComplexType::parseNumber(std::string& str, char& current, std::size_t& ind
 	}
 }
 
-bool ComplexType::isStartOfNumber(char current) const {
-	return isdigit(current) || current == 'i';
+bool ComplexType::isStartOfNumber(const std::string& str, char current, std::size_t index) const {
+	if (isdigit(current)) {
+		return true;
+	} else if (current == 'i') {
+		//We only want if 'i' is separate
+		auto next = index + 1;
+		if (next < str.length()) {
+			return !isalpha(str[next]);
+		} else {
+			return true;
+		}
+ 	} else {
+		return false;
+	}
 }
 
 const EnvironmentScope& ComplexType::environment() const {

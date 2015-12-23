@@ -21,7 +21,7 @@ public:
 
 	void testEvalFunctions() {
 		CalcEngine engine;
-		TS_ASSERT_DELTA(engine.eval("sin(0.5)"), ResultValue(0.479426), 0.01);
+		TS_ASSERT_DELTA(engine.eval("sin(0.5)").floatValue(), ResultValue(0.479426).floatValue(), 0.01);
 		TS_ASSERT_THROWS(engine.eval("sin(2, 3)"), std::runtime_error);
 		TS_ASSERT_THROWS(engine.eval("f(2, 3)"), std::runtime_error);
 	}

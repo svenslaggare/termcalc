@@ -36,7 +36,7 @@ std::vector<Token> Tokenizer::tokenize(std::string str, NumberType& numberType) 
 		}
 
 		//Number
-		if (numberType.isStartOfNumber(current)) {
+		if (numberType.isStartOfNumber(str, current, i)) {
 			tokens.push_back(numberType.parseNumber(str, current, i));
 			continue;
 		}

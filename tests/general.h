@@ -32,13 +32,13 @@ public:
 
     void testEvalVariables() {
         CalcEngine engine;
-        TS_ASSERT_DELTA(engine.eval("2 * pi"), ResultValue(6.28), 0.01);
+        TS_ASSERT_DELTA(engine.eval("2 * pi").floatValue(), ResultValue(6.28).floatValue(), 0.01);
 
         Environment env;
         env.set("e", 2.718281828);
-        TS_ASSERT_DELTA(engine.eval("e^2", env), ResultValue(7.38905609893), 0.01);
+        TS_ASSERT_DELTA(engine.eval("e^2", env).floatValue(), ResultValue(7.38905609893).floatValue(), 0.01);
 
-        TS_ASSERT_THROWS(engine.eval("2 * x"), std::runtime_error);
+        TS_ASSERT_THROWS(engine.eval("2 * x").floatValue(), std::runtime_error);
     }
 
     void testDefineFunctions() {
