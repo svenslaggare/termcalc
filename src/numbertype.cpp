@@ -442,7 +442,7 @@ bool ComplexType::isStartOfNumber(const std::string& str, char current, std::siz
 	if (isdigit(current)) {
 		return true;
 	} else if (current == 'i') {
-		//We only want if 'i' is separate
+		//We only want if 'i' is separate, not part of identifier such as 'imag'.
 		auto next = index + 1;
 		if (next < str.length()) {
 			return !isalpha(str[next]);
