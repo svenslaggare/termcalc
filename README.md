@@ -7,7 +7,7 @@ Works like a normal calculator. The calculator can be in the following modes:
 * int: Arithemtic done in 64 bits integer.
 * complex: For each component, the arithemtic is done in 64 bits floating point.
 
-Each mode has different function and constants.
+Each mode has different predefined functions and constants.
 
 ### Defining variables and functions
 Variables can be defined as: `x = 4`. Functions are defined as: `f(x)=x^2`.
@@ -28,7 +28,7 @@ Variables and functions can be predefined by adding a file `default.termcalc` in
 ## Build
 To build:
 ```
-make all
+make release
 ```
 To run tests (requires [CXXTest](http://cxxtest.com/)):
 ```
