@@ -66,22 +66,9 @@ ResultValue ResultValue::convertTo(ResultValueType type) const {
 }
 
 std::string ResultValue::toString() {
-	switch (mType) {
-		case ResultValueType::FLOAT:
-			return std::to_string(floatValue());
-		case ResultValueType::INTEGER:
-			return std::to_string(intValue());
-		case ResultValueType::COMPLEX:
-			if (std::abs(mComplexValue.imag()) <= EPSILON) {
-				return std::to_string(mComplexValue.real());
-			} else {
-				if (mComplexValue.imag() > 0) {
-					return std::to_string(mComplexValue.real()) + "+" + std::to_string(mComplexValue.imag()) + "i";
-				} else {
-					return std::to_string(mComplexValue.real()) + std::to_string(mComplexValue.imag()) + "i";
-				}
-			}
-	}
+	std::stringstream strstream;
+	strstream << *this;
+	return strstream.str();
 }
 
 bool ResultValue::operator==(const ResultValue& rhs) const {
@@ -120,11 +107,28 @@ std::ostream& operator<<(std::ostream& os, ResultValue value) {
 			if (std::abs(value.complexValue().imag()) <= EPSILON) {
 				os << value.complexValue().real();
 			} else {
-				if (value.complexValue().imag() > 0) {
-					os << value.complexValue().real() << "+" << value.complexValue().imag() << "i";
-				} else {
-					os << value.complexValue().real() << value.complexValue().imag() << "i";
+				std::string sign = "+";
+				if (value.complexValue().imag() < 0) {
+					sign = "";
 				}
+
+				if (value.complexValue().real() != 0) {
+					os << value.complexValue().real();
+				} else {
+					sign = "";
+				}
+
+				os << sign;
+
+				if (std::abs(value.complexValue().imag()) != 1) {
+					os << value.complexValue().imag();
+				}
+
+				if (value.complexValue().imag() == -1) {
+					os << "-";
+				}
+
+				os << "i";
 			}
 			break;
 	}

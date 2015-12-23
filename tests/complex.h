@@ -41,6 +41,7 @@ public:
 		TS_ASSERT_EQUALS(engine.eval("1+3i"), ResultValue(Complex(1, 3)));
 		TS_ASSERT_EQUALS(engine.eval("(2+3i)*(2+6i)"), ResultValue(Complex(-14, 18)));
 		TS_ASSERT_EQUALS(engine.eval("2-i"), ResultValue(Complex(2, -1)));
+		TS_ASSERT_EQUALS(engine.eval("-2i"), ResultValue(Complex(0, -2)));
 	}
 
 	void testEvalVariables() {
@@ -60,5 +61,15 @@ public:
 		TS_ASSERT_EQUALS(engine.eval("abs(5-2i)"), ResultValue(Complex(std::abs(Complex(5, -2)), 0)));
 		TS_ASSERT_EQUALS(engine.eval("polar(10, 5.12)"), ResultValue(std::polar(10.0, 5.12)));
 		TS_ASSERT_EQUALS(engine.eval("conj(5-2i)"), ResultValue(Complex(5, 2)));
+	}
+
+	void testToString() {
+		TS_ASSERT_EQUALS("2", ResultValue(Complex(2, 0)).toString());
+		TS_ASSERT_EQUALS("-2", ResultValue(Complex(-2, 0)).toString());
+		TS_ASSERT_EQUALS("2+i", ResultValue(Complex(2, 1)).toString());
+		TS_ASSERT_EQUALS("i", ResultValue(Complex(0, 1)).toString());
+		TS_ASSERT_EQUALS("-i", ResultValue(Complex(0, -1)).toString());
+		TS_ASSERT_EQUALS("2-7i", ResultValue(Complex(2, -7)).toString());
+		TS_ASSERT_EQUALS("-2-7i", ResultValue(Complex(-2, -7)).toString());
 	}
 };
