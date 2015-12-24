@@ -217,7 +217,7 @@ bool CommandEngine::execute(std::string line, bool printResult) {
 						std::cout << res.intValue() << std::endl;
 						break;
 					case 16:
-						std::cout << "0x" << toBase(res.intValue(), 16) << std::endl;
+						std::cout << "0x" << std::hex << res.intValue() << std::dec << std::endl;
 						break;
 					default:
 						std::string baseSubscript = "";
