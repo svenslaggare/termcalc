@@ -25,10 +25,10 @@ CommandEngine::CommandEngine()
 			if (args.size() == 1) {
 				try {
 					auto base = std::stoi(args[0]);
-					if (base >= 2) {
+					if (base >= 2 && base <= 36) {
 						mPrintNumBase = base;
 					} else {
-						std::cout << "The base must be >= 2." << std::endl;
+						std::cout << "The base must be >= 2 and <= 36." << std::endl;
 					}
 				} catch (std::exception& e) {
 					std::cout << "The base must be an integer." << std::endl;
@@ -126,11 +126,13 @@ CommandEngine::CommandEngine()
 }
 
 namespace {
+	const std::string alphanum = "0123456789abcdefghijklmnopqrstuvwxyz";
+
 	//Converts the given value into a string with the given base
 	std::string toBase(std::int64_t value, int base) {
 		std::string res;
 		while (value > 0) {
-			res += std::to_string(value % base);
+			res += alphanum[value % base];
 			value /= base;
 		}
 
@@ -217,7 +219,7 @@ bool CommandEngine::execute(std::string line, bool printResult) {
 						std::cout << res.intValue() << std::endl;
 						break;
 					case 16:
-						std::cout << "0x" << std::hex << res.intValue() << std::dec << std::endl;
+						std::cout << "0x" << toBase(res.intValue(), 16) << std::endl;
 						break;
 					default:
 						std::string baseSubscript = "";
