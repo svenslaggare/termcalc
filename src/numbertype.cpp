@@ -15,46 +15,46 @@ namespace {
 }
 IntegerType::IntegerType() {
 	mBinaryOperators = {
-		 { '^', Operator('^', 6, OperatorAssociativity::RIGHT, [&](ResultValue lhs, ResultValue rhs) {
+		 { '^', Operator::binary('^', 6, OperatorAssociativity::RIGHT, [&](ResultValue lhs, ResultValue rhs) {
 			 return power(lhs.intValue(), rhs.intValue());
 		 }) },
-		 { '*', Operator('*', 5, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
+		 { '*', Operator::binary('*', 5, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.intValue() * rhs.intValue();
 		 }) },
-		 { '/', Operator('/', 5, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
+		 { '/', Operator::binary('/', 5, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.intValue() / rhs.intValue();
 		 }) },
-		 { '%', Operator('%', 5, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
+		 { '%', Operator::binary('%', 5, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.intValue() % rhs.intValue();
 		 }) },
-		 { '+', Operator('+', 4, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
+		 { '+', Operator::binary('+', 4, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.intValue() + rhs.intValue();
 		 }) },
-		 { '-', Operator('-', 4, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
+		 { '-', Operator::binary('-', 4, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.intValue() - rhs.intValue();
 		 }) },
-		 { OperatorChar('<', '<'), Operator(OperatorChar('<', '<'), 3, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
+		 { OperatorChar('<', '<'), Operator::binary(OperatorChar('<', '<'), 3, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.intValue() << rhs.intValue();
 		 }) },
-		 { OperatorChar('>', '>'), Operator(OperatorChar('>', '>'), 3, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
+		 { OperatorChar('>', '>'), Operator::binary(OperatorChar('>', '>'), 3, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.intValue() >> rhs.intValue();
 		 }) },
-		 { '|', Operator('|', 2, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
+		 { '|', Operator::binary('|', 2, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.intValue() | rhs.intValue();
 		 }) },
-		 { '&', Operator('&', 2, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
+		 { '&', Operator::binary('&', 2, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.intValue() & rhs.intValue();
 		 }) },
-		 { '=', Operator('=', 1, OperatorAssociativity::RIGHT, [&](ResultValue lhs, ResultValue rhs) {
+		 { '=', Operator::binary('=', 1, OperatorAssociativity::RIGHT, [&](ResultValue lhs, ResultValue rhs) {
 			 return ResultValue();
 		 }) }
 	 };
 
 	mUnaryOperators = {
-		{ '-', Operator('-', 7, OperatorAssociativity::LEFT, [&](ResultValue op) {
+		{ '-', Operator::unary('-', 7, OperatorAssociativity::LEFT, [&](ResultValue op) {
 			return -op.intValue();
 		}) },
-		{ '~', Operator('~', 7, OperatorAssociativity::LEFT, [&](ResultValue op) {
+		{ '~', Operator::unary('~', 7, OperatorAssociativity::LEFT, [&](ResultValue op) {
 			return ~op.intValue();
 		}) },
 	};
@@ -184,28 +184,28 @@ Token IntegerType::parseNumber(std::string& str, char& current, std::size_t& ind
 //Float type
 FloatType::FloatType() {
 	mBinaryOperators = {
-		 { '^', Operator('^', 6, OperatorAssociativity::RIGHT, [&](ResultValue lhs, ResultValue rhs) {
+		 { '^', Operator::binary('^', 6, OperatorAssociativity::RIGHT, [&](ResultValue lhs, ResultValue rhs) {
 			 return pow(lhs.floatValue(), rhs.floatValue());
 		 }) },
-		 { '*', Operator('*', 5, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
+		 { '*', Operator::binary('*', 5, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.floatValue() * rhs.floatValue();
 		 }) },
-		 { '/', Operator('/', 5, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
+		 { '/', Operator::binary('/', 5, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.floatValue() / rhs.floatValue();
 		 }) },
-		 { '+', Operator('+', 4, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
+		 { '+', Operator::binary('+', 4, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.floatValue() + rhs.floatValue();
 		 }) },
-		 { '-', Operator('-', 4, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
+		 { '-', Operator::binary('-', 4, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			 return lhs.floatValue() - rhs.floatValue();
 		 }) },
-		 { '=', Operator('=', 1, OperatorAssociativity::RIGHT, [&](ResultValue lhs, ResultValue rhs) {
+		 { '=', Operator::binary('=', 1, OperatorAssociativity::RIGHT, [&](ResultValue lhs, ResultValue rhs) {
 			 return ResultValue();
 		 }) }
 	 };
 
 	mUnaryOperators = {
-		{ '-', Operator('-', 7, OperatorAssociativity::LEFT, [&](ResultValue op) {
+		{ '-', Operator::unary('-', 7, OperatorAssociativity::LEFT, [&](ResultValue op) {
 			return -op.floatValue();
 		}) }
 	};
@@ -307,28 +307,28 @@ const EnvironmentScope& FloatType::environment() const {
 //Complex type
 ComplexType::ComplexType() {
 	mBinaryOperators = {
-		{ '^', Operator('^', 6, OperatorAssociativity::RIGHT, [&](ResultValue lhs, ResultValue rhs) {
+		{ '^', Operator::binary('^', 6, OperatorAssociativity::RIGHT, [&](ResultValue lhs, ResultValue rhs) {
 			return pow(lhs.complexValue(), rhs.complexValue());
 		}) },
-		{ '*', Operator('*', 5, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
+		{ '*', Operator::binary('*', 5, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			return lhs.complexValue() * rhs.complexValue();
 		}) },
-		{ '/', Operator('/', 5, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
+		{ '/', Operator::binary('/', 5, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			return lhs.complexValue() / rhs.complexValue();
 		}) },
-		{ '+', Operator('+', 4, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
+		{ '+', Operator::binary('+', 4, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			return lhs.complexValue() + rhs.complexValue();
 		}) },
-		{ '-', Operator('-', 4, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
+		{ '-', Operator::binary('-', 4, OperatorAssociativity::LEFT, [&](ResultValue lhs, ResultValue rhs) {
 			return lhs.complexValue() - rhs.complexValue();
 		}) },
-		{ '=', Operator('=', 1, OperatorAssociativity::RIGHT, [&](ResultValue lhs, ResultValue rhs) {
+		{ '=', Operator::binary('=', 1, OperatorAssociativity::RIGHT, [&](ResultValue lhs, ResultValue rhs) {
 			return ResultValue();
 		}) }
 	};
 
 	mUnaryOperators = {
-		{ '-', Operator('-', 7, OperatorAssociativity::LEFT, [&](ResultValue op) {
+		{ '-', Operator::unary('-', 7, OperatorAssociativity::LEFT, [&](ResultValue op) {
 			return -op.complexValue();
 		}) }
 	};

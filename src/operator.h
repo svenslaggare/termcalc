@@ -57,12 +57,17 @@ private:
 	int mPrecedence;
 	OperatorAssociativity mAssociativity;
 	bool mIsUnary = false;
-	UnaryOperatorFn mUnaryFn;
 	BinaryOperatorFn mBinaryFn;
-public:
+	UnaryOperatorFn mUnaryFn;
+
 	//Creates a new operator
-	Operator(OperatorChar op, int precedence, OperatorAssociativity associativity, BinaryOperatorFn applyFn);
-	Operator(OperatorChar op, int precedence, OperatorAssociativity associativity, UnaryOperatorFn applyFn);
+	Operator(OperatorChar op, int precedence, OperatorAssociativity associativity, bool isUnary, BinaryOperatorFn binaryFn, UnaryOperatorFn unaryFn);
+public:
+	//Creates a new binary operator
+	static Operator binary(OperatorChar op, int precedence, OperatorAssociativity associativity, BinaryOperatorFn applyFn);
+
+	//Creates a new unary operator
+	static Operator unary(OperatorChar op, int precedence, OperatorAssociativity associativity, UnaryOperatorFn applyFn);
 
 	//Returns the operator character
 	OperatorChar op() const;

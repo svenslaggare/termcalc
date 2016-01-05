@@ -40,14 +40,17 @@ bool OperatorChar::operator!=(const OperatorChar& rhs) const {
 }
 
 //Operator
-Operator::Operator(OperatorChar op, int precedence, OperatorAssociativity associativity, BinaryOperatorFn applyFn)
-	: mOp(op), mPrecedence(precedence), mIsUnary(false), mBinaryFn(applyFn) {
+Operator::Operator(OperatorChar op, int precedence, OperatorAssociativity associativity, bool isUnary, BinaryOperatorFn binaryFn, UnaryOperatorFn unaryFn)
+	: mOp(op), mPrecedence(precedence), mIsUnary(isUnary), mBinaryFn(binaryFn), mUnaryFn(unaryFn) {
 
 }
 
-Operator::Operator(OperatorChar op, int precedence, OperatorAssociativity associativity, UnaryOperatorFn applyFn)
-	: mOp(op), mPrecedence(precedence), mIsUnary(true), mUnaryFn(applyFn) {
+Operator Operator::binary(OperatorChar op, int precedence, OperatorAssociativity associativity, BinaryOperatorFn applyFn) {
+	return Operator(op, precedence, associativity, false, applyFn, {});
+}
 
+Operator Operator::unary(OperatorChar op, int precedence, OperatorAssociativity associativity, UnaryOperatorFn applyFn) {
+	return Operator(op, precedence, associativity, true, {}, applyFn);
 }
 
 OperatorChar Operator::op() const {
