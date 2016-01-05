@@ -34,10 +34,20 @@ set(TESTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 
 find_package(CxxTest)
 if(CXXTEST_FOUND)
+    add_library(TestLib SHARED ${SOURCE_FILES})
+
     include_directories(${CXXTEST_INCLUDE_DIR})
     enable_testing()
-    CXXTEST_ADD_TEST(tests-general test-general-runner.cpp ${TESTS_DIR}/general.h ${SOURCE_FILES})
-    CXXTEST_ADD_TEST(tests-int test-int-runner.cpp ${TESTS_DIR}/int.h ${SOURCE_FILES})
-    CXXTEST_ADD_TEST(tests-float test-float-runner.cpp ${TESTS_DIR}/float.h ${SOURCE_FILES})
-    CXXTEST_ADD_TEST(tests-complex test-complex-runner.cpp ${TESTS_DIR}/complex.h ${SOURCE_FILES})
+
+    CXXTEST_ADD_TEST(tests-general test-general-runner.cpp ${TESTS_DIR}/general.h)
+    target_link_libraries(tests-general TestLib)
+
+    CXXTEST_ADD_TEST(tests-int test-int-runner.cpp ${TESTS_DIR}/int.h)
+    target_link_libraries(tests-int TestLib)
+
+    CXXTEST_ADD_TEST(tests-float test-float-runner.cpp ${TESTS_DIR}/float.h)
+    target_link_libraries(tests-float TestLib)
+
+    CXXTEST_ADD_TEST(tests-complex test-complex-runner.cpp ${TESTS_DIR}/complex.h)
+    target_link_libraries(tests-complex TestLib)
 endif()

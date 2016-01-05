@@ -8,6 +8,9 @@ CommandEngine::CommandEngine()
 	: mEnv(mEngine.defaultEnvironment()) {
 	std::string leadingWhitespace = "   ";
 
+	mEngine.setEvalMode(ResultValueType::FLOAT);
+	mEnv.setEvalMode(mEngine.evalMode());
+
 	mCommands = {
 		{ "help", [=](Args args) {
 			std::cout << "Commands:" << std::endl;
