@@ -18,8 +18,9 @@ OBJECTS=$(patsubst $(SRC_DIR)/%,$(OBJ_DIR)/%,$(_OBJECTS))
 MAIN_OBJ=$(OBJ_DIR)/$(EXECUTABLE).o
 TEST_OBJECTS=$(filter-out $(MAIN_OBJ), $(OBJECTS))
 
-ifeq ($(OS),Windows_NT)
+ifeq ($(OS), Windows_NT)
 TEST_RUNNERS_DIR=$(TESTS_DIR)\\runners
+EXECUTABLE=termcalc.exe
 else
 TEST_RUNNERS_DIR=$(TESTS_DIR)/runners
 endif
@@ -37,7 +38,7 @@ release: release-flags clean all
 install: release
 	sudo cp termcalc /opt/util
 
-ifeq ($(OS),Windows_NT)
+ifeq ($(OS), Windows_NT)
 $(OBJ_DIR):
 	mkdir $(OBJ_DIR)
 
