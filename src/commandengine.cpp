@@ -143,7 +143,7 @@ namespace {
 	}
 
 	//Returns the given number as a subscript
-	std::string getSubscript(int num) {
+	std::string getSubscript(std::int64_t num) {
 		static const std::vector<std::string> subscripts{ "\xe2\x82\x80", "\xe2\x82\x81", "\xe2\x82\x82",
 														  "\xe2\x82\x83", "\xe2\x82\x84", "\xe2\x82\x85", "\xe2\x82\x86",
 														  "\xe2\x82\x87", "\xe2\x82\x88", "\xe2\x82\x89"};
