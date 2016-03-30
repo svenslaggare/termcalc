@@ -6,9 +6,6 @@ namespace NumberHelpers {
 	//Converts the given value into a string with the given base
 	std::string toBase(std::int64_t value, int base, std::string prefix = "");
 
-	//Calculates the negated binary string
-	std::string getBinaryNegated(std::string binStr, int size);
-
-	//Converts the given value into a string with the binary base
-	std::string toBaseBinary(std::int64_t value);
+	//Converts the given value into a string with the binary base of the given size
+	std::string toBaseBinary(std::int64_t value, int size = 64);
 }

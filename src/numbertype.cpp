@@ -91,6 +91,11 @@ IntegerType::IntegerType(std::ostream& os) {
 			os << "0b" << NumberHelpers::toBaseBinary(args.at(0).intValue()) << std::endl;
 			return ResultValue();
 		}, "Prints the given value in two-complements form.") },
+		{ "twocompsize", Function("twocompsize", 2, [this, &os](FnArgs args) {
+			int size = (int)args.at(1).intValue();
+			os << "0b" << NumberHelpers::toBaseBinary(args.at(0).intValue(), size) << std::endl;
+			return ResultValue();
+		}, "Prints the x in two-complements form of size y.") },
 	});
 }
 
