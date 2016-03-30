@@ -157,15 +157,13 @@ namespace {
 		}
 
 		//Add one
-		auto isOne = true;
 		for (int i = size - 1; i >= 0; i--) {
 			char bit = negBin[i];
 
-			if (isOne && bit == '0') {
+			if (bit == '0') {
 				negBin[i] = '1';
-				isOne = false;
 				break;
-			} else if (isOne && bit == '1') {
+			} else if (bit == '1') {
 				negBin[i] = '0';
 			}
 		}
@@ -267,7 +265,8 @@ bool CommandEngine::execute(std::string line, bool printResult) {
 			if (res.type() == ResultValueType::INTEGER) {
 				switch (mPrintNumBase) {
 					case 2:
-						std::cout << "0b" << toBaseBinary(res.intValue()) << std::endl;
+//						std::cout << "0b" << toBaseBinary(res.intValue()) << std::endl;
+						std::cout << toBase(res.intValue(), 2, "0b") << std::endl;
 						break;
 					case 10:
 						std::cout << res.intValue() << std::endl;
