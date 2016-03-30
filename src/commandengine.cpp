@@ -1,11 +1,12 @@
 #include "commandengine.h"
+#include "numberhelpers.h"
 #include <cmath>
 #include <iostream>
 #include <fstream>
 #include <sstream> 
 
-CommandEngine::CommandEngine()
-	: mEnv(mEngine.defaultEnvironment()) {
+CommandEngine::CommandEngine(std::ostream& os)
+	: mOutStream(os), mEngine(os), mEnv(mEngine.defaultEnvironment()) {
 	std::string leadingWhitespace = "   ";
 
 	mEngine.setEvalMode(ResultValueType::FLOAT);
@@ -13,12 +14,12 @@ CommandEngine::CommandEngine()
 
 	mCommands = {
 		{ "help", [=](Args args) {
-			std::cout << "Commands:" << std::endl;
-			std::cout << leadingWhitespace << ":exit|:q|:quit Exits the program." << std::endl;
-			std::cout << leadingWhitespace << ":mode          Sets the evaluation mode: float (default), int or complex." << std::endl;
-			std::cout << leadingWhitespace << ":display       Sets to display the result in the given base." << std::endl;
-			std::cout << leadingWhitespace << ":vars          Prints the defined variables." << std::endl;
-			std::cout << leadingWhitespace << ":funcs         Prints the defined functions." << std::endl;
+			mOutStream << "Commands:" << std::endl;
+			mOutStream << leadingWhitespace << ":exit|:q|:quit Exits the program." << std::endl;
+			mOutStream << leadingWhitespace << ":mode          Sets the evaluation mode: float (default), int or complex." << std::endl;
+			mOutStream << leadingWhitespace << ":display       Sets to display the result in the given base." << std::endl;
+			mOutStream << leadingWhitespace << ":vars          Prints the defined variables." << std::endl;
+			mOutStream << leadingWhitespace << ":funcs         Prints the defined functions." << std::endl;
 			return false;
 		} },
 		{ "exit", [](Args args) {
@@ -31,19 +32,19 @@ CommandEngine::CommandEngine()
 					if (base >= 2 && base <= 36) {
 						mPrintNumBase = base;
 					} else {
-						std::cout << "The base must be >= 2 and <= 36." << std::endl;
+						mOutStream << "The base must be >= 2 and <= 36." << std::endl;
 					}
 				} catch (std::exception& e) {
-					std::cout << "The base must be an integer." << std::endl;
+					mOutStream << "The base must be an integer." << std::endl;
 				}
 			} else {
-				std::cout << "Expected one argument (int >= 2)." << std::endl;
+				mOutStream << "Expected one argument (int >= 2)." << std::endl;
 			}
 			return false;
 		} },
 		{ "vars", [&](Args args) {
 			for (auto var : mEnv.variables()) {
-				std::cout << var.first << ": " << var.second << std::endl;
+				mOutStream << var.first << ": " << var.second << std::endl;
 			}
 			return false;
 		} },
@@ -66,7 +67,7 @@ CommandEngine::CommandEngine()
 
 			std::size_t i = 0;
 			bool anyUserDefined = false;
-			std::cout << "Builtin:" << std::endl;
+			mOutStream << "Builtin:" << std::endl;
 
 			for (auto& current : mEnv.functions()) {
 				auto& func = current.second;
@@ -74,7 +75,7 @@ CommandEngine::CommandEngine()
 				if (!func.isUserDefined()) {
 					auto funcStr = funcStrs[i];
 					std::string spaceStr(maxFuncLength - funcStr.length(), ' ');
-					std::cout << leadingWhitespace << funcStr << spaceStr << func.infoText() << std::endl;
+					mOutStream << leadingWhitespace << funcStr << spaceStr << func.infoText() << std::endl;
 				} else {
 					anyUserDefined = true;
 				}
@@ -84,7 +85,7 @@ CommandEngine::CommandEngine()
 
 			//Check if any user defined functions
 			if (anyUserDefined) {
-				std::cout << "User defined:" << std::endl;
+				mOutStream << "User defined:" << std::endl;
 
 				i = 0;
 				for (auto& current : mEnv.functions()) {
@@ -92,7 +93,7 @@ CommandEngine::CommandEngine()
 
 					if (func.isUserDefined()) {
 						auto funcStr = funcStrs[i];
-						std::cout << leadingWhitespace << funcStr << " = " << func.body()->toString() << std::endl;
+						mOutStream << leadingWhitespace << funcStr << " = " << func.body()->toString() << std::endl;
 					}
 
 					i++;
@@ -113,10 +114,10 @@ CommandEngine::CommandEngine()
 					mEngine.setEvalMode(ResultValueType::COMPLEX);
 					mEnv.setEvalMode(ResultValueType::COMPLEX);
 				} else {
-					std::cout << "'" << args[0] << "' is not a valid value. Valid values are: float, int and complex." << std::endl;
+					mOutStream << "'" << args[0] << "' is not a valid value. Valid values are: float, int and complex." << std::endl;
 				}
 			} else {
-				std::cout << "Expected one argument (float or int)." << std::endl;
+				mOutStream << "Expected one argument (float or int)." << std::endl;
 			}
 			return false;
 		} },
@@ -129,71 +130,9 @@ CommandEngine::CommandEngine()
 }
 
 namespace {
-	const std::string alphanum = "0123456789abcdefghijklmnopqrstuvwxyz";
-
-	//Converts the given value into a string with the given base
-	std::string toBase(std::int64_t value, int base, std::string prefix = "") {
-		std::string res;
-		bool isNegative = value < 0;
-		value = std::abs(value);
-		while (value > 0) {
-			res += alphanum[value % base];
-			value /= base;
-		}
-
-		return (isNegative ? "-" : "") + prefix + std::string(res.rbegin(), res.rend());
-	}
-
-	//Calculates the negated binary string
-	std::string getBinaryNegated(std::string binStr, int size) {
-		//Invert all bits
-		std::string negBin = binStr;
-		for (auto i = 0; i < size; i++) {
-			if (binStr[i] == '0') {
-				negBin[i] = '1';
-			} else {
-				negBin[i] = '0';
-			}
-		}
-
-		//Add one
-		for (int i = size - 1; i >= 0; i--) {
-			char bit = negBin[i];
-
-			if (bit == '0') {
-				negBin[i] = '1';
-				break;
-			} else if (bit == '1') {
-				negBin[i] = '0';
-			}
-		}
-
-		return negBin;
-	}
-
-	//Converts the given value into a string with the binary base
-	std::string toBaseBinary(std::int64_t value) {
-		//Convert to string
-		bool isNegative = value < 0;
-		std::string binStr = toBase(std::abs(value), 2);
-		int size = 64;
-
-		if (isNegative) {
-			//Pad with zeros
-			auto padding = size - binStr.size();
-			for (auto i = 0; i < padding; i++) {
-				binStr.insert(binStr.begin(), '0');
-			}
-
-			return getBinaryNegated(binStr, size);
-		} else {
-			return binStr;
-		}
-	}
-
 	//Returns the given number as a subscript
 	std::string getSubscript(std::int64_t num) {
-		static const std::vector<std::string> subscripts{ "\xe2\x82\x80", "\xe2\x82\x81", "\xe2\x82\x82",
+		static const std::vector<std::string> subscripts { "\xe2\x82\x80", "\xe2\x82\x81", "\xe2\x82\x82",
 														  "\xe2\x82\x83", "\xe2\x82\x84", "\xe2\x82\x85", "\xe2\x82\x86",
 														  "\xe2\x82\x87", "\xe2\x82\x88", "\xe2\x82\x89"};
 
@@ -235,7 +174,7 @@ void CommandEngine::loadFile(std::string fileName, bool printIfNotFound) {
 			execute(line, false);
 		}
 	} else if (printIfNotFound) {
-		std::cout << "Could not open the file '" << fileName << "'." << std::endl;
+		mOutStream << "Could not open the file '" << fileName << "'." << std::endl;
 	}
 }
 
@@ -248,7 +187,7 @@ bool CommandEngine::execute(std::string line, bool printResult) {
 			parts.erase(parts.begin());
 			return mCommands[cmd](parts);
 		} else {
-			std::cout << "There exists no command called '" + cmd + "'. Type ':help' for a list of commands." << std::endl;
+			mOutStream << "There exists no command called '" + cmd + "'. Type ':help' for a list of commands." << std::endl;
 		}
 
 		return false;
@@ -261,37 +200,38 @@ bool CommandEngine::execute(std::string line, bool printResult) {
 	try {
 		auto res = mEngine.eval(line, mEnv);
 
-		if (printResult) {
-			if (res.type() == ResultValueType::INTEGER) {
-				switch (mPrintNumBase) {
-					case 2:
-//						std::cout << "0b" << toBaseBinary(res.intValue()) << std::endl;
-						std::cout << toBase(res.intValue(), 2, "0b") << std::endl;
-						break;
-					case 10:
-						std::cout << res.intValue() << std::endl;
-						break;
-					case 16:
-						std::cout << toBase(res.intValue(), 16, "0x") << std::endl;
-						break;
-					default:
-						std::string baseSubscript = "";
+		if (res.type() != ResultValueType::NONE) {
+			if (printResult) {
+				if (res.type() == ResultValueType::INTEGER) {
+					switch (mPrintNumBase) {
+						case 2:
+							mOutStream << NumberHelpers::toBase(res.intValue(), 2, "0b") << std::endl;
+							break;
+						case 10:
+							mOutStream << res.intValue() << std::endl;
+							break;
+						case 16:
+							mOutStream << NumberHelpers::toBase(res.intValue(), 16, "0x") << std::endl;
+							break;
+						default:
+							std::string baseSubscript = "";
 
-						#ifdef __unix__
-						baseSubscript = getSubscript(mPrintNumBase);
-						#endif
+							#ifdef __unix__
+							baseSubscript = getSubscript(mPrintNumBase);
+							#endif
 
-						std::cout << toBase(res.intValue(), mPrintNumBase) << baseSubscript << std::endl;
-						break;
+							mOutStream << NumberHelpers::toBase(res.intValue(), mPrintNumBase) << baseSubscript << std::endl;
+							break;
+					}
+				} else {
+					mOutStream << res << std::endl;
 				}
-			} else {
-				std::cout << res << std::endl;
-			}
 
-			mEnv.set("ans", res);
+				mEnv.set("ans", res);
+			}
 		}
 	} catch (std::runtime_error& e) {
-		std::cout << "Error: " << e.what() << std::endl;
+		mOutStream << "Error: " << e.what() << std::endl;
 	}
 
 	return false;

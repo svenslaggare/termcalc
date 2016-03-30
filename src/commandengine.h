@@ -10,13 +10,14 @@ using Args = std::vector<std::string>;
 //Represents a command engine
 class CommandEngine {
 private:
+	std::ostream& mOutStream;
 	CalcEngine mEngine;
 	Environment mEnv;
 	int mPrintNumBase = 10;
 	std::unordered_map<std::string, std::function<bool(Args)>> mCommands;
 public:
 	//Creates a new command engine
-	CommandEngine();
+	CommandEngine(std::ostream& os = std::cout);
 
 	//Loads the given file
 	void loadFile(std::string fileName, bool printIfNotFound = true);

@@ -1,4 +1,5 @@
 #include "numbertype.h"
+#include "numberhelpers.h"
 #include <cmath>
 #include <complex>
 
@@ -13,7 +14,7 @@ namespace {
 		#endif
 	}
 }
-IntegerType::IntegerType() {
+IntegerType::IntegerType(std::ostream& os) {
 	mBinaryOperators = {
 		 { '^', Operator::binary('^', 6, OperatorAssociativity::RIGHT, [&](ResultValue lhs, ResultValue rhs) {
 			 return power(lhs.intValue(), rhs.intValue());
@@ -86,6 +87,10 @@ IntegerType::IntegerType() {
 
 			return ResultValue(x);
 		}, "Computes the greatest common divisor between x and y.") },
+		{ "twocomp", Function("twocomp", 1, [this, &os](FnArgs args) {
+			os << "0b" << NumberHelpers::toBaseBinary(args.at(0).intValue()) << std::endl;
+			return ResultValue();
+		}, "Prints the given value in two-complements form.") },
 	});
 }
 

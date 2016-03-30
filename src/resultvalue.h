@@ -5,6 +5,7 @@
 
 //The type of the result value
 enum class ResultValueType {
+	NONE,
 	FLOAT,
 	INTEGER,
 	COMPLEX
@@ -28,7 +29,7 @@ private:
 	double mFloatValue;
 	Complex mComplexValue;
 public:
-	//Crate a new result value
+	//Crate a none result value
 	ResultValue();
 
 	//Create a new value of the given type

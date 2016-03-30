@@ -19,7 +19,7 @@ private:
 	NumberType& currentNumberType() const;
 public:
 	//Creates a new calc engine
-	CalcEngine();
+	CalcEngine(std::ostream& os = std::cout);
 
 	//Returns the binary operators
 	const BinaryOperators& binaryOperators() const;

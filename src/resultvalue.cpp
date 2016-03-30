@@ -6,7 +6,7 @@ namespace {
 }
 
 ResultValue::ResultValue()
-	:  mType(ResultValueType::FLOAT),
+	:  mType(ResultValueType::NONE),
 	   mIntValue(0),
 	   mFloatValue(0.0),
 	   mComplexValue(0.0) {
@@ -74,6 +74,8 @@ std::string ResultValue::toString() {
 bool ResultValue::operator==(const ResultValue& rhs) const {
 	if (mType == rhs.mType) {
 		switch (mType) {
+			case ResultValueType::NONE:
+				return true;
 			case ResultValueType::FLOAT:
 				return std::abs(mFloatValue - rhs.mFloatValue) <= EPSILON;
 			case ResultValueType::INTEGER:
@@ -97,6 +99,9 @@ double ResultValue::operator+(double value) const {
 
 std::ostream& operator<<(std::ostream& os, ResultValue value) {
 	switch (value.type()) {
+		case ResultValueType::NONE:
+			os << "NONE";
+			break;
 		case ResultValueType::FLOAT:
 			os << value.floatValue();
 			break;
@@ -138,6 +143,9 @@ std::ostream& operator<<(std::ostream& os, ResultValue value) {
 
 std::ostream& operator<<(std::ostream& os, ResultValueType value) {
 	switch (value) {
+	case ResultValueType::NONE:
+		os << "NONE";
+		break;
 	case ResultValueType::INTEGER:
 		os << "INTEGER";
 		break;

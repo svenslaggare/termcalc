@@ -154,7 +154,7 @@ void BinaryOperatorExpression::evaluate(CalcEngine& calcEngine, Environment& env
 			}
 
 			env.define(Function(func->name(), parameters.size(), std::make_shared<FunctionBody>(parameters, std::move(mRHS))));
-			evalStack.push(ResultValue((std::int64_t)0));
+			evalStack.push(ResultValue());
 		} else {
 			throw std::runtime_error("The left hand side must be a variable or a function definition.");
 		}

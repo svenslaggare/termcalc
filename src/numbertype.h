@@ -40,7 +40,7 @@ private:
 	//Computes x^n
 	std::int64_t power(std::int64_t x, std::int64_t n) const;
 public:
-	IntegerType();
+	IntegerType(std::ostream& os = std::cout);
 
 	virtual const BinaryOperators& binaryOperators() const override;
 	virtual const UnaryOperators& unaryOperators() const override;
