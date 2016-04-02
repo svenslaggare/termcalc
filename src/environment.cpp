@@ -1,13 +1,35 @@
 #include "environment.h"
 #include <cmath>
 
+namespace {
+	//Returns the name of the given function
+	std::string getFuncName(std::string name, std::size_t numArgs) {
+		std::stringstream stream;
+
+		stream << name << "(";
+		for (int i = 0; i < numArgs; i++) {
+			if (i != 0) {
+				stream << ", ";
+			}
+
+			stream << "x" << i;
+		}
+
+		stream << ")";
+
+		return stream.str();
+	}
+}
+
 EnvironmentScope::EnvironmentScope() {
 
 }
 
-EnvironmentScope::EnvironmentScope(Variables variables, std::unordered_map<std::string, Function> functions)
-	: mVariables(variables), mFunctions(functions) {
-
+EnvironmentScope::EnvironmentScope(Variables variables, std::vector<Function> functions)
+	: mVariables(variables) {
+	for (auto& func : functions) {
+		mFunctions.insert({ getFuncName(func.name(), func.numArgs()), func });
+	}
 }
 
 Variables& EnvironmentScope::variables() {
@@ -86,14 +108,26 @@ const Functions& Environment::functions() const {
 }
 
 void Environment::define(Function function) {
+	auto funcName = getFuncName(function.name(), (int)function.numArgs());
+
 	for (auto& current : mScopes) {
 		auto& scope = current.second;
-		if (scope.functions().count(function.name()) == 0) {
-			scope.functions().insert({ function.name(), function });
+		if (scope.functions().count(funcName) == 0) {
+			scope.functions().insert({ funcName, function });
 		} else {
-			scope.functions().at(function.name()) = function;
+			scope.functions().at(funcName) = function;
 		}
 	}
+}
+
+const Function& Environment::getFunction(std::string name, std::size_t numArgs) {
+	std::string funcName = getFuncName(name, numArgs);
+
+	if (functions().count(funcName) == 0) {
+		throw std::runtime_error("'" + funcName + "' is not a defined function.");
+	}
+
+	return functions().at(funcName);
 }
 
 ResultValueType Environment::evalMode() const {

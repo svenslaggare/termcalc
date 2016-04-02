@@ -29,7 +29,7 @@ private:
 	double mFloatValue;
 	Complex mComplexValue;
 public:
-	//Crate a none result value
+	//Create a none result value
 	ResultValue();
 
 	//Create a new value of the given type

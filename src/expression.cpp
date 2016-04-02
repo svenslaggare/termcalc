@@ -88,11 +88,7 @@ std::string FunctionCallExpression::toString() {
 
 void FunctionCallExpression::evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) {
 	//Find the function
-	if (env.functions().count(mName) == 0) {
-		throw std::runtime_error("'" + mName + "' is not a defined function.");
-	}
-
-	auto& func = env.functions().at(mName);
+	auto& func = env.getFunction(mName, mArguments.size());
 
 	if (mArguments.size() != func.numArgs()) {
 		throw std::runtime_error(

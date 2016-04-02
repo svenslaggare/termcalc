@@ -61,10 +61,10 @@ IntegerType::IntegerType(std::ostream& os) {
 	};
 
 	mEnvironment = EnvironmentScope(Variables({}), {
-		{ "xor", Function("xor", 2, [this](FnArgs args) {
+		Function("xor", 2, [this](FnArgs args) {
 			return ResultValue(args.at(0).intValue() ^ args.at(1).intValue());
-		}, "Bitwise XOR between x and y.") },
-		{ "mod", Function("mod", 2, [this](FnArgs args) {
+		}, "Bitwise XOR between x and y."),
+		Function("mod", 2, [this](FnArgs args) {
 			std::int64_t result = args.at(0).intValue() % args.at(1).intValue();
 
 			if (result < 0) {
@@ -72,8 +72,8 @@ IntegerType::IntegerType(std::ostream& os) {
 			}
 
 			return ResultValue(result);
-		}, "Computes x mod y.") },
-		{ "gcd", Function("gcd", 2, [this](FnArgs args) {
+		}, "Computes x mod y."),
+		Function("gcd", 2, [this](FnArgs args) {
 			auto x = args.at(0).intValue();
 			auto y = args.at(1).intValue();
 
@@ -86,16 +86,16 @@ IntegerType::IntegerType(std::ostream& os) {
 			}
 
 			return ResultValue(x);
-		}, "Computes the greatest common divisor between x and y.") },
-		{ "twocomp", Function("twocomp", 1, [this, &os](FnArgs args) {
+		}, "Computes the greatest common divisor between x and y."),
+		Function("twocomp", 1, [this, &os](FnArgs args) {
 			os << "0b" << NumberHelpers::toBaseBinary(args.at(0).intValue()) << std::endl;
 			return ResultValue();
-		}, "Prints the given value in two-complements form.") },
-		{ "twocompsize", Function("twocompsize", 2, [this, &os](FnArgs args) {
+		}, "Prints the given value in two-complements form."),
+		Function("twocomp", 2, [this, &os](FnArgs args) {
 			int size = (int)args.at(1).intValue();
 			os << "0b" << NumberHelpers::toBaseBinary(args.at(0).intValue(), size) << std::endl;
 			return ResultValue();
-		}, "Prints the x in two-complements form of size y.") },
+		}, "Prints the x in two-complements form of size y."),
 	});
 }
 
@@ -224,45 +224,45 @@ FloatType::FloatType() {
 		{ "pi", ResultValue(3.141592653589793238463) },
 		{ "e", ResultValue(2.718281828459045235360) },
 	}, {
-		{ "sin", Function("sin", 1, [this](FnArgs args) {
+		Function("sin", 1, [this](FnArgs args) {
 			return ResultValue(sin(args.at(0).floatValue()));
-		}, "Computes the sine of x.") },
-		{ "cos", Function("cos", 1, [this](FnArgs args) {
+		}, "Computes the sine of x."),
+		Function("cos", 1, [this](FnArgs args) {
 			return ResultValue(cos(args.at(0).floatValue()));
-		}, "Computes the cosine of x.") },
-		{ "tan", Function("tan", 1, [this](FnArgs args) {
+		}, "Computes the cosine of x."),
+		Function("tan", 1, [this](FnArgs args) {
 			return ResultValue(tan(args.at(0).floatValue()));
-		}, "Computes the tangent of x.") },
-		{ "sqrt", Function("sqrt", 1, [this](FnArgs args) {
+		}, "Computes the tangent of x."),
+		Function("sqrt", 1, [this](FnArgs args) {
 			return ResultValue(sqrt(args.at(0).floatValue()));
-		}, "Computes the square root of x.") },
-		{ "asin", Function("asin", 1, [this](FnArgs args) {
+		}, "Computes the square root of x."),
+		Function("asin", 1, [this](FnArgs args) {
 			return ResultValue(asin(args.at(0).floatValue()));
-		}, "Computes the inverse sine of x.") },
-		{ "acos", Function("acos", 1, [this](FnArgs args) {
+		}, "Computes the inverse sine of x."),
+		Function("acos", 1, [this](FnArgs args) {
 			return ResultValue(acos(args.at(0).floatValue()));
-		}, "Computes the inverse cosine of x.") },
-		{ "atan", Function("atan", 1, [this](FnArgs args) {
+		}, "Computes the inverse cosine of x."),
+		Function("atan", 1, [this](FnArgs args) {
 			return ResultValue(atan(args.at(0).floatValue()));
-		}, "Computes the inverse tangent of x.") },
-		{ "ln", Function("ln", 1, [this](FnArgs args) {
+		}, "Computes the inverse tangent of x."),
+		Function("ln", 1, [this](FnArgs args) {
 			return ResultValue(log(args.at(0).floatValue()));
-		}, "Computes the natural logarithm of x.") },
-		{ "log", Function("log", 1, [this](FnArgs args) {
+		}, "Computes the natural logarithm of x."),
+		Function("log", 1, [this](FnArgs args) {
 			return ResultValue(log10(args.at(0).floatValue()));
-		}, "Computes the 10-logarithm of x.") },
-		{ "logb", Function("logb", 2, [this](FnArgs args) {
+		}, "Computes the 10-logarithm of x."),
+		Function("logb", 2, [this](FnArgs args) {
 			return ResultValue(log(args.at(0).floatValue()) / log(args.at(1).floatValue()));
-		}, "Computes the y-logarithm of x.") },
-		{ "ceil", Function("ceil", 1, [this](FnArgs x) {
+		}, "Computes the y-logarithm of x."),
+		Function("ceil", 1, [this](FnArgs x) {
 			return ResultValue(ceil(x.at(0).floatValue()));
-		}, "Ceils x.") },
-		{ "floor", Function("floor", 1, [this](FnArgs x) {
+		}, "Ceils x."),
+		Function("floor", 1, [this](FnArgs x) {
 			return ResultValue(floor(x.at(0).floatValue()));
-		}, "Floors x.") },
-		{ "round", Function("round", 1, [this](FnArgs x) {
+		}, "Floors x."),
+		Function("round", 1, [this](FnArgs x) {
 			return ResultValue(round(x.at(0).floatValue()));
-		}, "Rounds x.") },
+		}, "Rounds x."),
 	});
 }
 
@@ -347,50 +347,50 @@ ComplexType::ComplexType() {
 		{ "pi", ResultValue(3.141592653589793238463) },
 		{ "e", ResultValue(2.718281828459045235360) },
 	}, {
-		{ "sin", Function("sin", 1, [this](FnArgs args) {
+		Function("sin", 1, [this](FnArgs args) {
 			return ResultValue(sin(args.at(0).complexValue()));
-		}, "Computes the sine of x.") },
-		{ "cos", Function("cos", 1, [this](FnArgs args) {
+		}, "Computes the sine of x."),
+		Function("cos", 1, [this](FnArgs args) {
 			return ResultValue(cos(args.at(0).complexValue()));
-		}, "Computes the cosine of x.") },
-		{ "tan", Function("tan", 1, [this](FnArgs args) {
+		}, "Computes the cosine of x."),
+		Function("tan", 1, [this](FnArgs args) {
 			return ResultValue(tan(args.at(0).complexValue()));
-		}, "Computes the tangent of x.") },
-		{ "sqrt", Function("sqrt", 1, [this](FnArgs args) {
+		}, "Computes the tangent of x."),
+		Function("sqrt", 1, [this](FnArgs args) {
 			return ResultValue(sqrt(args.at(0).complexValue()));
-		}, "Computes the square root of x.") },
-		{ "asin", Function("asin", 1, [this](FnArgs args) {
+		}, "Computes the square root of x."),
+		Function("asin", 1, [this](FnArgs args) {
 			return ResultValue(asin(args.at(0).complexValue()));
-		}, "Computes the inverse sine of x.") },
-		{ "acos", Function("acos", 1, [this](FnArgs args) {
+		}, "Computes the inverse sine of x."),
+		Function("acos", 1, [this](FnArgs args) {
 			return ResultValue(acos(args.at(0).complexValue()));
-		}, "Computes the inverse cosine of x.") },
-		{ "atan", Function("atan", 1, [this](FnArgs args) {
+		}, "Computes the inverse cosine of x."),
+		Function("atan", 1, [this](FnArgs args) {
 			return ResultValue(atan(args.at(0).complexValue()));
-		}, "Computes the inverse tangent of x.") },
-		{ "ln", Function("ln", 1, [this](FnArgs args) {
+		}, "Computes the inverse tangent of x."),
+		Function("ln", 1, [this](FnArgs args) {
 			return ResultValue(log(args.at(0).complexValue()));
-		}, "Computes the natural logarithm of x.") },
-		{ "real", Function("real", 1, [this](FnArgs args) {
+		}, "Computes the natural logarithm of x."),
+		Function("real", 1, [this](FnArgs args) {
 			return ResultValue(Complex(std::real(args.at(0).complexValue()), 0));
-		}, "Returns the real part of x.") },
-		{ "imag", Function("imag", 1, [this](FnArgs args) {
+		}, "Returns the real part of x."),
+		Function("imag", 1, [this](FnArgs args) {
 			return ResultValue(Complex(std::imag(args.at(0).complexValue()), 0));
-		}, "Returns the imaginary part of x.") },
-		{ "abs", Function("abs", 1, [this](FnArgs args) {
+		}, "Returns the imaginary part of x."),
+		Function("abs", 1, [this](FnArgs args) {
 			return ResultValue(Complex(std::abs(args.at(0).complexValue())));
-		}, "Computes absolute value (magnitude) of x.") },
-		{ "arg", Function("arg", 1, [this](FnArgs args) {
+		}, "Computes absolute value (magnitude) of x."),
+		Function("arg", 1, [this](FnArgs args) {
 			return ResultValue(Complex(std::arg(args.at(0).complexValue())));
-		}, "Computes argument of x.") },
-		{ "conj", Function("conj", 1, [this](FnArgs args) {
+		}, "Computes argument of x."),
+		Function("conj", 1, [this](FnArgs args) {
 			return ResultValue(std::conj(args.at(0).complexValue()));
-		}, "Computes the conjugate x.") },
-		{ "polar", Function("polar", 2, [this](FnArgs args) {
+		}, "Computes the conjugate x."),
+		Function("polar", 2, [this](FnArgs args) {
 			return ResultValue(std::polar(
 				args.at(0).floatValue(),
 				args.at(1).floatValue()));
-		}, "Create a complex from polar form (x*e^(y*i)).") },
+		}, "Create a complex from polar form (x*e^(y*i))."),
 	});
 }
 

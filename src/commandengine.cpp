@@ -130,12 +130,14 @@ CommandEngine::CommandEngine(std::ostream& os)
 }
 
 namespace {
+	const std::vector<std::string> subscripts {
+		"\xe2\x82\x80", "\xe2\x82\x81", "\xe2\x82\x82",
+		"\xe2\x82\x83", "\xe2\x82\x84", "\xe2\x82\x85",
+		"\xe2\x82\x86", "\xe2\x82\x87", "\xe2\x82\x88", "\xe2\x82\x89"
+	};
+
 	//Returns the given number as a subscript
 	std::string getSubscript(std::int64_t num) {
-		static const std::vector<std::string> subscripts { "\xe2\x82\x80", "\xe2\x82\x81", "\xe2\x82\x82",
-														  "\xe2\x82\x83", "\xe2\x82\x84", "\xe2\x82\x85", "\xe2\x82\x86",
-														  "\xe2\x82\x87", "\xe2\x82\x88", "\xe2\x82\x89"};
-
 		std::string str = std::to_string(num);
 		std::string substr;
 
@@ -214,7 +216,7 @@ bool CommandEngine::execute(std::string line, bool printResult) {
 							mOutStream << NumberHelpers::toBase(res.intValue(), 16, "0x") << std::endl;
 							break;
 						default:
-							std::string baseSubscript = "";
+							std::string baseSubscript = "_" + std::to_string(mPrintNumBase);
 
 							#ifdef __unix__
 							baseSubscript = getSubscript(mPrintNumBase);

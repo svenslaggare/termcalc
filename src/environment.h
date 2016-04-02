@@ -12,11 +12,11 @@ using Functions = std::unordered_map<std::string, Function>;
 class EnvironmentScope {
 private:
 	Variables mVariables;
-	std::unordered_map<std::string, Function> mFunctions;
+	Functions mFunctions;
 public:
 	//Creates a new scope
 	EnvironmentScope();
-	EnvironmentScope(Variables variables, Functions functions);
+	EnvironmentScope(Variables variables, std::vector<Function> functions);
 
 	//Returns the variables
 	Variables& variables();
@@ -63,6 +63,9 @@ public:
 
 	//Defines the given function
 	void define(Function function);
+
+	//Returns the given function
+	const Function& getFunction(std::string name, std::size_t numArgs);
 
 	//Returns the evaluation mode
 	ResultValueType evalMode() const;

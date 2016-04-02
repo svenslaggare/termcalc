@@ -28,7 +28,7 @@ namespace {
 		}
 
 		return negBin;
-		}
+	}
 }
 
 //Converts the given value into a string with the given base

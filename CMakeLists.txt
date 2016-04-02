@@ -25,7 +25,9 @@ set(SOURCE_FILES
     src/linenoise.cpp
     src/linenoise.h
     src/numbertype.cpp
-    src/numbertype.h)
+    src/numbertype.h
+    src/numberhelpers.cpp
+    src/numberhelpers.h)
 
 add_executable(termcalc ${SOURCE_FILES} src/termcalc.cpp)
 
