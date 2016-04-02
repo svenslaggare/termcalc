@@ -52,4 +52,7 @@ if(CXXTEST_FOUND)
 
     CXXTEST_ADD_TEST(tests-complex test-complex-runner.cpp ${TESTS_DIR}/complex.h)
     target_link_libraries(tests-complex TestLib)
+
+    CXXTEST_ADD_TEST(tests-commandengine test-commandengine-runner.cpp ${TESTS_DIR}/commandengine.h)
+    target_link_libraries(tests-commandengine TestLib)
 endif()

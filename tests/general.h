@@ -51,6 +51,16 @@ public:
         TS_ASSERT_EQUALS(engine.eval("f(4)", env), ResultValue(16L));
     }
 
+	void testDefineFunctionsOverload() {
+		CalcEngine engine;
+		Environment env;
+		engine.eval("f(x)=x^2", env);
+		engine.eval("f(x, y)=x / y", env);
+
+		TS_ASSERT_EQUALS(engine.eval("f(4)", env), ResultValue(16.0));
+		TS_ASSERT_EQUALS(engine.eval("f(2, 4)", env), ResultValue(2.0 / 4));
+	}
+
     void testInvalidEval() {
         CalcEngine engine;
         TS_ASSERT_THROWS(engine.eval("3 ++ 2"), std::runtime_error);

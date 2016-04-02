@@ -15,11 +15,12 @@ CommandEngine::CommandEngine(std::ostream& os)
 	mCommands = {
 		{ "help", [=](Args args) {
 			mOutStream << "Commands:" << std::endl;
-			mOutStream << leadingWhitespace << ":exit|:q|:quit Exits the program." << std::endl;
-			mOutStream << leadingWhitespace << ":mode          Sets the evaluation mode: float (default), int or complex." << std::endl;
-			mOutStream << leadingWhitespace << ":display       Sets to display the result in the given base." << std::endl;
-			mOutStream << leadingWhitespace << ":vars          Prints the defined variables." << std::endl;
-			mOutStream << leadingWhitespace << ":funcs         Prints the defined functions." << std::endl;
+			mOutStream << leadingWhitespace << ":exit|:q|:quit     Exits the program." << std::endl;
+			mOutStream << leadingWhitespace << ":mode              Sets the evaluation mode: float (default), int or complex." << std::endl;
+			mOutStream << leadingWhitespace << ":display           Sets to display the result in the given base." << std::endl;
+			mOutStream << leadingWhitespace << ":polar             Sets if complex numbers are printed in polar form." << std::endl;
+			mOutStream << leadingWhitespace << ":vars              Prints the defined variables." << std::endl;
+			mOutStream << leadingWhitespace << ":funcs             Prints the defined functions." << std::endl;
 			return false;
 		} },
 		{ "exit", [](Args args) {
@@ -27,19 +28,43 @@ CommandEngine::CommandEngine(std::ostream& os)
 		} },
 		{ "display", [&](Args args) {
 			if (args.size() == 1) {
-				try {
-					auto base = std::stoi(args[0]);
-					if (base >= 2 && base <= 36) {
-						mPrintNumBase = base;
-					} else {
-						mOutStream << "The base must be >= 2 and <= 36." << std::endl;
-					}
-				} catch (std::exception& e) {
-					mOutStream << "The base must be an integer." << std::endl;
-				}
+				setPrintNumBase(std::stoi(args[0]));
 			} else {
 				mOutStream << "Expected one argument (int >= 2)." << std::endl;
 			}
+			return false;
+		} },
+		{ "mode", [&](Args args) {
+			if (args.size() == 1) {
+				ResultValueType evalMode = ResultValueType::NONE;
+
+				if (args[0] == "float") {
+					evalMode = ResultValueType::FLOAT;
+				} else if (args[0] == "int") {
+					evalMode = ResultValueType::INTEGER;
+				} else if (args[0] == "complex") {
+					evalMode = ResultValueType::COMPLEX;
+				} else {
+					mOutStream << "'" << args[0] << "' is not a valid value. Valid values are: float, int and complex." << std::endl;
+				}
+
+				if (evalMode != ResultValueType::NONE) {
+					setEvalMode(evalMode);
+				}
+			} else {
+				mOutStream << "Expected one argument (float or int)." << std::endl;
+			}
+			return false;
+		} },
+		{ "polar", [&](Args args) {
+			if (args[0] == "true" || args[0] == "1") {
+				setPrintInPolar(true);
+			} else if (args[0] == "false" || args[0] == "0") {
+				setPrintInPolar(false);
+			} else {
+				mOutStream << "Invalid value. Valid values arer: true or false." << std::endl;
+			}
+
 			return false;
 		} },
 		{ "vars", [&](Args args) {
@@ -54,13 +79,13 @@ CommandEngine::CommandEngine(std::ostream& os)
 			std::vector<std::string> funcStrs;
 
 			for (auto& current : mEnv.functions()) {
-				std::stringstream strstream;
+				std::stringstream stream;
 				auto& func = current.second;
-				strstream << func;
-				funcStrs.push_back(strstream.str());
+				stream << func;
+				funcStrs.push_back(stream.str());
 
-				strstream.seekg(0, std::ios::end);
-				maxFuncLength = std::max(maxFuncLength, (int)strstream.tellg());
+				stream.seekg(0, std::ios::end);
+				maxFuncLength = std::max(maxFuncLength, (int)stream.tellg());
 			}	
 
 			maxFuncLength += 3;
@@ -102,25 +127,6 @@ CommandEngine::CommandEngine(std::ostream& os)
 
 			return false;
 		} },
-		{ "mode", [&](Args args) {
-			if (args.size() == 1) {
-				if (args[0] == "float") {
-					mEngine.setEvalMode(ResultValueType::FLOAT);
-					mEnv.setEvalMode(ResultValueType::FLOAT);
-				} else if (args[0] == "int") {
-					mEngine.setEvalMode(ResultValueType::INTEGER);
-					mEnv.setEvalMode(ResultValueType::INTEGER);
-				} else if (args[0] == "complex") {
-					mEngine.setEvalMode(ResultValueType::COMPLEX);
-					mEnv.setEvalMode(ResultValueType::COMPLEX);
-				} else {
-					mOutStream << "'" << args[0] << "' is not a valid value. Valid values are: float, int and complex." << std::endl;
-				}
-			} else {
-				mOutStream << "Expected one argument (float or int)." << std::endl;
-			}
-			return false;
-		} },
 	};
 
 	//Aliases
@@ -139,13 +145,13 @@ namespace {
 	//Returns the given number as a subscript
 	std::string getSubscript(std::int64_t num) {
 		std::string str = std::to_string(num);
-		std::string substr;
+		std::string subscriptStr;
 
 		for (std::size_t i = 0; i < str.length(); i++) {
-			substr += subscripts[str[i] - '0'];
+			subscriptStr += subscripts[str[i] - '0'];
 		}
 
-		return substr;
+		return subscriptStr;
 	}
 
 	//Splits the given string
@@ -163,6 +169,27 @@ namespace {
 		parts.push_back(str);
 		return parts;
 	}
+}
+
+void CommandEngine::setPrintNumBase(int base) {
+	try {
+		if (base >= 2 && base <= 36) {
+			mPrintNumBase = base;
+		} else {
+			mOutStream << "The base must be >= 2 and <= 36." << std::endl;
+		}
+	} catch (std::exception& e) {
+		mOutStream << "The base must be an integer." << std::endl;
+	}
+}
+
+void CommandEngine::setEvalMode(ResultValueType evalMode) {
+	mEngine.setEvalMode(evalMode);
+	mEnv.setEvalMode(evalMode);
+}
+
+void CommandEngine::setPrintInPolar(bool printInPolar) {
+	mPrintInPolar = printInPolar;
 }
 
 void CommandEngine::loadFile(std::string fileName, bool printIfNotFound) {
@@ -225,6 +252,8 @@ bool CommandEngine::execute(std::string line, bool printResult) {
 							mOutStream << NumberHelpers::toBase(res.intValue(), mPrintNumBase) << baseSubscript << std::endl;
 							break;
 					}
+				} else if (res.type() == ResultValueType::COMPLEX && mPrintInPolar) {
+					mOutStream << std::abs(res.complexValue()) << " * e^(" << std::arg(res.complexValue()) << "i)" << std::endl;
 				} else {
 					mOutStream << res << std::endl;
 				}
@@ -232,7 +261,7 @@ bool CommandEngine::execute(std::string line, bool printResult) {
 				mEnv.set("ans", res);
 			}
 		}
-	} catch (std::runtime_error& e) {
+	} catch (std::exception& e) {
 		mOutStream << "Error: " << e.what() << std::endl;
 	}
 

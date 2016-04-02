@@ -14,6 +14,7 @@ namespace {
 		#endif
 	}
 }
+
 IntegerType::IntegerType(std::ostream& os) {
 	mBinaryOperators = {
 		 { '^', Operator::binary('^', 6, OperatorAssociativity::RIGHT, [&](ResultValue lhs, ResultValue rhs) {
@@ -63,7 +64,7 @@ IntegerType::IntegerType(std::ostream& os) {
 	mEnvironment = EnvironmentScope(Variables({}), {
 		Function("xor", 2, [this](FnArgs args) {
 			return ResultValue(args.at(0).intValue() ^ args.at(1).intValue());
-		}, "Bitwise XOR between x and y."),
+		}, "Computes bitwise XOR between x and y."),
 		Function("mod", 2, [this](FnArgs args) {
 			std::int64_t result = args.at(0).intValue() % args.at(1).intValue();
 
@@ -73,20 +74,32 @@ IntegerType::IntegerType(std::ostream& os) {
 
 			return ResultValue(result);
 		}, "Computes x mod y."),
+		Function("powerMod", 3, [this](FnArgs args) {
+			return ResultValue(
+				powerMod(args.at(0).intValue(),
+						 args.at(1).intValue(),
+						 args.at(2).intValue()));
+		}, "Computes x^y mod z."),
 		Function("gcd", 2, [this](FnArgs args) {
-			auto x = args.at(0).intValue();
-			auto y = args.at(1).intValue();
-
-			std::int64_t reminder;
-
-			while (y != 0) {
-				reminder = x % y;
-				x = y;
-				y = reminder;
-			}
-
-			return ResultValue(x);
+			return ResultValue(gcd(args.at(0).intValue(), args.at(1).intValue()));
 		}, "Computes the greatest common divisor between x and y."),
+		Function("modInv", 2, [this](FnArgs args) {
+			if (gcd(args[0].intValue(), args[1].intValue()) == 1) {
+				return ResultValue(
+					modularMultInverse(
+						args.at(0).intValue(),
+						args.at(1).intValue()));
+			} else {
+				throw std::runtime_error(std::to_string(args[0].intValue()) + " is not invertible mod " + std::to_string(args[1].intValue()) + ".");
+			}
+		}, "Tries to find the multiplicative inverse of x mod y."),
+		Function("sqrt", 1, [this](FnArgs args) {
+			if (args[0].intValue() >= 0) {
+				return ResultValue(sqrt(args[0].intValue()));
+			} else {
+				throw std::runtime_error("The value must be >= 0.");
+			}
+		}, "Returns the integer part of the square root of x."),
 		Function("twocomp", 1, [this, &os](FnArgs args) {
 			os << "0b" << NumberHelpers::toBaseBinary(args.at(0).intValue()) << std::endl;
 			return ResultValue();
@@ -119,6 +132,84 @@ std::int64_t IntegerType::power(std::int64_t x, std::int64_t n) const {
 	}
 
 	return x * y;
+}
+
+std::int64_t IntegerType::powerMod(std::int64_t a, std::int64_t b, std::int64_t n) {
+	//From: https://en.wikipedia.org/wiki/Modular_exponentiation#Right-to-left_binary_method
+	std::int64_t res = 1;
+	std::int64_t base = a;
+
+	while (b > 0) {
+		if (b % 2 == 1) {
+			res = (res * base) % n;
+		}
+
+		b /= 2;
+		base = (base * base) % n;
+	}
+
+	return res;
+}
+
+std::int64_t IntegerType::modularMultInverse(std::int64_t x, std::int64_t n) {
+	//From http://www.geeksforgeeks.org/multiplicative-inverse-under-modulo-m/
+	std::int64_t t = 0;
+	std::int64_t newT = 1;
+	std::int64_t r = n;
+	std::int64_t newR = x;
+
+	while (newR != 0) {
+		auto q = r / newR;
+
+		auto tmp = t;
+		t = newT;
+		newT = tmp - q * newT;
+
+		tmp = r;
+		r = newR;
+		newR = tmp - q * newR;
+
+		t += n;
+	}
+
+	//To avoid a negative answer
+	return (t % n + n) % n;
+}
+
+std::int64_t IntegerType::gcd(std::int64_t x, std::int64_t y) {
+	//Using euclidean algorithm
+	std::int64_t reminder;
+
+	while (y != 0) {
+		reminder = x % y;
+		x = y;
+		y = reminder;
+	}
+
+	return x;
+}
+
+std::int64_t IntegerType::sqrt(std::int64_t x) {
+	//From: http://stackoverflow.com/questions/1100090/looking-for-an-efficient-integer-square-root-algorithm-for-arm-thumb2
+	std::uint64_t op = (uint64_t)x;
+	std::uint64_t res = 0;
+	std::uint64_t one = 1ULL << 62;
+
+	// "one" starts at the highest power of four <= than the argument.
+	while (one > op) {
+		one >>= 2;
+	}
+
+	while (one != 0) {
+		if (op >= res + one) {
+			op = op - (res + one);
+			res = res +  2 * one;
+		}
+		res >>= 1;
+		one >>= 2;
+	}
+
+	return res;
 }
 
 const BinaryOperators& IntegerType::binaryOperators() const {
@@ -188,7 +279,11 @@ Token IntegerType::parseNumber(std::string& str, char& current, std::size_t& ind
 		index = next;
 	}
 
-	return parseInt64(num, base);
+	try {
+		return parseInt64(num, base);
+	} catch (std::exception& e) {
+		throw std::out_of_range("The given number is to large.");
+	}
 }
 
 //Float type
@@ -391,11 +486,6 @@ ComplexType::ComplexType(std::ostream& os) {
 				args.at(0).floatValue(),
 				args.at(1).floatValue()));
 		}, "Creates a complex number from polar form (x*e^(y*i))."),
-		Function("printpolar", 1, [this, &os](FnArgs args) {
-			auto value = args.at(0).complexValue();
-			os << std::abs(value) << " * e^(" << std::arg(value) << "i)" << std::endl;
-			return ResultValue();
-		}, "Prints the given complex number in polar form"),
 	});
 }
 
