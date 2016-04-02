@@ -13,7 +13,7 @@ CalcEngine::CalcEngine(std::ostream& os)
 	: mEvalMode(ResultValueType::FLOAT) {
 	mNumberTypes.emplace(ResultValueType::FLOAT, std::unique_ptr<FloatType>(new FloatType));
 	mNumberTypes.emplace(ResultValueType::INTEGER, std::unique_ptr<IntegerType>(new IntegerType(os)));
-	mNumberTypes.emplace(ResultValueType::COMPLEX, std::unique_ptr<ComplexType>(new ComplexType));
+	mNumberTypes.emplace(ResultValueType::COMPLEX, std::unique_ptr<ComplexType>(new ComplexType(os)));
 }
 
 NumberType& CalcEngine::currentNumberType() const {

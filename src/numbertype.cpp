@@ -95,7 +95,7 @@ IntegerType::IntegerType(std::ostream& os) {
 			int size = (int)args.at(1).intValue();
 			os << "0b" << NumberHelpers::toBaseBinary(args.at(0).intValue(), size) << std::endl;
 			return ResultValue();
-		}, "Prints the x in two-complements form of size y."),
+		}, "Prints the value x in two-complements form of size y."),
 	});
 }
 
@@ -315,7 +315,7 @@ const EnvironmentScope& FloatType::environment() const {
 }
 
 //Complex type
-ComplexType::ComplexType() {
+ComplexType::ComplexType(std::ostream& os) {
 	mBinaryOperators = {
 		{ '^', Operator::binary('^', 6, OperatorAssociativity::RIGHT, [&](ResultValue lhs, ResultValue rhs) {
 			return pow(lhs.complexValue(), rhs.complexValue());
@@ -382,15 +382,20 @@ ComplexType::ComplexType() {
 		}, "Computes absolute value (magnitude) of x."),
 		Function("arg", 1, [this](FnArgs args) {
 			return ResultValue(Complex(std::arg(args.at(0).complexValue())));
-		}, "Computes argument of x."),
+		}, "Returns the argument of x."),
 		Function("conj", 1, [this](FnArgs args) {
 			return ResultValue(std::conj(args.at(0).complexValue()));
-		}, "Computes the conjugate x."),
+		}, "Returns the conjugate of x."),
 		Function("polar", 2, [this](FnArgs args) {
 			return ResultValue(std::polar(
 				args.at(0).floatValue(),
 				args.at(1).floatValue()));
-		}, "Create a complex from polar form (x*e^(y*i))."),
+		}, "Creates a complex number from polar form (x*e^(y*i))."),
+		Function("printpolar", 1, [this, &os](FnArgs args) {
+			auto value = args.at(0).complexValue();
+			os << std::abs(value) << " * e^(" << std::arg(value) << "i)" << std::endl;
+			return ResultValue();
+		}, "Prints the given complex number in polar form"),
 	});
 }
 

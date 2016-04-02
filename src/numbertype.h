@@ -76,7 +76,7 @@ private:
 	UnaryOperators mUnaryOperators;
 	EnvironmentScope mEnvironment;
 public:
-	ComplexType();
+	ComplexType(std::ostream& os = std::cout);
 
 	virtual const BinaryOperators& binaryOperators() const override;
 	virtual const UnaryOperators& unaryOperators() const override;
