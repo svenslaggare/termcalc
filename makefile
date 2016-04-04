@@ -70,10 +70,10 @@ run: $(OBJ_DIR) $(SOURCES) $(EXECUTABLE)
 
 ifeq ($(OS),Windows_NT)
 clean:
-	del /S /Q $(OBJ_DIR)
-	del /S /Q $(TEST_RUNNERS_DIR)
-	del $(EXECUTABLE)
-	del $(TEST_EXECUTABLE)
+#del /S /Q $(OBJ_DIR)
+#del /S /Q $(TEST_RUNNERS_DIR)
+#del /S /Q $(EXECUTABLE)
+#del /S /Q $(TEST_EXECUTABLE)
 else
 clean:
 	rm -rf $(OBJ_DIR)
