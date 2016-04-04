@@ -69,7 +69,7 @@ std::vector<Token> Tokenizer::tokenize(std::string str, NumberType& numberType) 
 		//Operator
 		if (tokens.size() > 0 && tokens.back().type() == TokenType::OPERATOR
 			&& twoCharOps.count(tokens.back().charValue()) > 0) {
-			//If the previous token is an operator and the current one is, upgrade to a two-op char 
+			//If the previous token is an operator and the current one is, upgrade to a two-op char
 			tokens.back() = { TokenType::TWO_CHAR_OPERATOR, tokens.back().charValue(), current };
 		} else {
 			tokens.push_back({ TokenType::OPERATOR, current });
@@ -206,7 +206,7 @@ std::unique_ptr<Expression> Parser::parsePrimaryExpression() {
 	default:
 		parseError("Expected an expression");
 		return nullptr;
-	}	
+	}
 }
 
 std::unique_ptr<Expression> Parser::parseBinaryOpRHS(int precedence, std::unique_ptr<Expression> lhs) {
@@ -232,8 +232,8 @@ std::unique_ptr<Expression> Parser::parseBinaryOpRHS(int precedence, std::unique
 		}
 
 		//Merge LHS and RHS
-		lhs = std::move(std::unique_ptr<BinaryOperatorExpression>(
-			new BinaryOperatorExpression(op, std::move(lhs), std::move(rhs))));
+		lhs = std::unique_ptr<BinaryOperatorExpression>(
+			new BinaryOperatorExpression(op, std::move(lhs), std::move(rhs)));
 	}
 }
 
@@ -256,14 +256,14 @@ std::unique_ptr<Expression> Parser::parseUnaryExpression() {
 
 		return std::unique_ptr<UnaryOperatorExpression>(
 			new UnaryOperatorExpression(op, std::move(operand)));
-	} 
+	}
 
 	return operand;
 }
 
 
 std::unique_ptr<Expression> Parser::parseExpression() {
-	return parseBinaryOpRHS(0, std::move(parseUnaryExpression()));
+	return parseBinaryOpRHS(0, parseUnaryExpression());
 }
 
 std::unique_ptr<Expression> Parser::parse() {
