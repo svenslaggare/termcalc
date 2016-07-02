@@ -2,12 +2,13 @@
 #include "numberhelpers.h"
 #include <cmath>
 #include <complex>
+#include <cctype>
 
 //Integer type
 namespace {
 	//Parses a 64 bits integer in the given base
 	std::int64_t parseInt64(std::string str, int base) {
-		#if defined(__MINGW32__)
+		#if defined(_WIN64) || defined(__MINGW32__)
 		return std::stoll(str, nullptr, base);
 		#else
 		return std::stol(str, nullptr, base);

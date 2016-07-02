@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.3)
 project(termcalc)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+endif()
 
 set(SOURCE_FILES
     src/calcengine.cpp
@@ -36,7 +38,7 @@ set(TESTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 
 find_package(CxxTest)
 if(CXXTEST_FOUND)
-    add_library(TestLib SHARED ${SOURCE_FILES})
+    add_library(TestLib STATIC ${SOURCE_FILES})
 
     include_directories(${CXXTEST_INCLUDE_DIR})
     enable_testing()

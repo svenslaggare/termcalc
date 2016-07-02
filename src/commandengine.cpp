@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream> 
+#include <algorithm>
 
 CommandEngine::CommandEngine(std::ostream& os)
 	: mOutStream(os), mEngine(os), mEnv(mEngine.defaultEnvironment()) {

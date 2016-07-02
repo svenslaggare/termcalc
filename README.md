@@ -24,6 +24,8 @@ The following commands are available:
 Variables and functions can be predefined by adding a file `default.termcalc` in your home folder.
 
 ## Build
+
+### Linux
 To build:
 ```
 make release
@@ -33,6 +35,21 @@ To run tests (requires [CXXTest](http://cxxtest.com/)):
 make test
 ```
 
-## Platforms
-* Linux
-* Windows (not tested with MSVC++)
+### Windows
+Requirements:
+* Visual Studio 2015.
+* CMake.
+* [CXXTest](http://cxxtest.com/) for tests.
+
+The following command installs CxxTest:
+```
+git clone -q --branch=master https://github.com/svenslaggare/CxxTest.git C:\CXXTest
+set PATH=%PATH%;C:\CXXTest\bin
+```
+
+To create the solution file run:
+```
+mkdir Windows
+cd Windows
+cmake -G "Visual Studio 14 2015 Win64" ..\
+```

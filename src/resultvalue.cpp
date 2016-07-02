@@ -24,8 +24,8 @@ ResultValue::ResultValue(ResultValueType type, std::int64_t intValue, double flo
 ResultValue::ResultValue(std::int64_t value)
 	: mType(ResultValueType::INTEGER),
 	  mIntValue(value),
-	  mFloatValue(value),
-	  mComplexValue(value) {
+	  mFloatValue((std::int64_t)value),
+	  mComplexValue((double)value) {
 
 }
 
@@ -83,6 +83,8 @@ bool ResultValue::operator==(const ResultValue& rhs) const {
 			case ResultValueType::COMPLEX:
 				return std::abs(mComplexValue.real() - rhs.mComplexValue.real()) <= EPSILON
 					&& std::abs(mComplexValue.imag() - rhs.mComplexValue.imag()) <= EPSILON;
+			default:
+				return false;
 		}
 	} else {
 		return false;

@@ -33,3 +33,5 @@ termcalc
 test
 bin
 tests/runners
+Windows
+termcalc.exe
