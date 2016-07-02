@@ -30,7 +30,7 @@ To build:
 ```
 make release
 ```
-To run tests (requires [CXXTest](http://cxxtest.com/)):
+To run tests (requires [CxxTest](http://cxxtest.com/)):
 ```
 make test
 ```
@@ -39,7 +39,7 @@ make test
 Requirements:
 * Visual Studio 2015.
 * CMake.
-* [CXXTest](http://cxxtest.com/) for tests.
+* [CxxTest](http://cxxtest.com/) for tests.
 
 The following command installs CxxTest:
 ```
