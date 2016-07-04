@@ -8,6 +8,14 @@
 #include <pwd.h>
 #endif
 
+#if defined(_WIN64) || defined(__MINGW32__)
+#include <windows.h>
+#include <KnownFolders.h>
+#include <ShlObj.h>
+#include <locale>
+#include <codecvt>
+#endif
+
 int main() {
 	CommandEngine engine;
 	std::string homeDir = "";
@@ -15,6 +23,16 @@ int main() {
 	#ifdef __unix__
 	struct passwd *pw = getpwuid(getuid());
 	homeDir = pw->pw_dir;
+	#endif
+
+	#if defined(_WIN64) || defined(__MINGW32__)
+	PWSTR path = nullptr;
+	if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Profile, 0, nullptr, &path))) {
+		using convert_typeX = std::codecvt_utf8<wchar_t>;
+		std::wstring_convert<convert_typeX, wchar_t> converterX;
+		homeDir = converterX.to_bytes(std::wstring(path));
+	}
+	CoTaskMemFree(path);
 	#endif
 
 	engine.loadFile(homeDir + "/default.termcalc", false);
