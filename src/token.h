@@ -4,7 +4,7 @@
 #include <complex>
 
 //The token types
-enum class TokenType {
+enum class TokenType : unsigned char {
 	NUMBER,
 	OPERATOR,
 	TWO_CHAR_OPERATOR,

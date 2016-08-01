@@ -27,7 +27,7 @@ public:
 
         TS_ASSERT_EQUALS(
             Tokenizer::tokenize("1 << 10", floatType),
-            Tokens({ Token(1LL), Token(TokenType::TWO_CHAR_OPERATOR, '<', '<'), Token(10LL) }));
+            Tokens({ Token((std::int64_t)1LL), Token(TokenType::TWO_CHAR_OPERATOR, '<', '<'), Token((std::int64_t)10LL) }));
     }
 
     void testEvalVariables() {
@@ -48,7 +48,7 @@ public:
         TS_ASSERT_EQUALS(engine.eval("f(4)", env), ResultValue(16.0));
 
         engine.setEvalMode(ResultValueType::INTEGER);
-        TS_ASSERT_EQUALS(engine.eval("f(4)", env), ResultValue(16LL));
+        TS_ASSERT_EQUALS(engine.eval("f(4)", env), ResultValue((std::int64_t)16LL));
     }
 
 	void testDefineFunctionsOverload() {
@@ -80,6 +80,6 @@ public:
         engine.eval("x=3.14", environment);
         engine.setEvalMode(ResultValueType::INTEGER);
 
-        TS_ASSERT_EQUALS(engine.eval("x+2", environment), ResultValue(5LL));
+        TS_ASSERT_EQUALS(engine.eval("x+2", environment), ResultValue((std::int64_t)5LL));
     }
 };
