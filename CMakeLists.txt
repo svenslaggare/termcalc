@@ -57,4 +57,7 @@ if(CXXTEST_FOUND)
 
     CXXTEST_ADD_TEST(tests-commandengine test-commandengine-runner.cpp ${TESTS_DIR}/commandengine.h)
     target_link_libraries(tests-commandengine TestLib)
+
+    CXXTEST_ADD_TEST(tests-numericconstant test-numericconstant-runner.cpp ${TESTS_DIR}/numericconstant.h)
+    target_link_libraries(tests-numericconstant TestLib)
 endif()

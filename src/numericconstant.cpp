@@ -87,6 +87,57 @@ const std::vector<NumericConstantChar>& NumericConstant::chars() const {
 	return mChars;
 }
 
+std::string NumericConstant::toString() const {
+	std::string str;
+	str.reserve(mChars.size());
+
+	for (auto c : mChars) {
+		switch (c) {
+			case NumericConstantChar::Zero:
+				str += '0';
+				break;
+			case NumericConstantChar::One:
+				str += '1';
+				break;
+			case NumericConstantChar::Two:
+				str += '2';
+				break;
+			case NumericConstantChar::Three:
+				str += '3';
+				break;
+			case NumericConstantChar::Four:
+				str += '4';
+				break;
+			case NumericConstantChar::Five:
+				str += '5';
+				break;
+			case NumericConstantChar::Six:
+				str += '6';
+				break;
+			case NumericConstantChar::Seven:
+				str += '7';
+				break;
+			case NumericConstantChar::Eight:
+				str += '8';
+				break;
+			case NumericConstantChar::Nine:
+				str += '9';
+				break;
+			case NumericConstantChar::MinusSign:
+				str += '-';
+				break;
+			case NumericConstantChar::DecimalPoint:
+				str += '.';
+				break;
+			case NumericConstantChar::ImaginaryUnit:
+				str += 'i';
+				break;
+		}
+	}
+
+	return str;
+}
+
 bool NumericConstant::operator==(const NumericConstant& rhs) const {
 	if (mChars.size() != rhs.mChars.size()) {
 		return false;

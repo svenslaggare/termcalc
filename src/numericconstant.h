@@ -39,6 +39,9 @@ public:
 	//Returns the character in the constant
 	const std::vector<NumericConstantChar>& chars() const;
 
+	//Returns a string representation
+	std::string toString() const;
+
 	bool operator==(const NumericConstant& rhs) const;
 	bool operator!=(const NumericConstant& rhs) const;
 };
