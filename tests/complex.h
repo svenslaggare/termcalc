@@ -14,31 +14,28 @@ public:
 	void testTokenize() {
 		ComplexType complexType;
 
-
 		TS_ASSERT_EQUALS(
 			Tokenizer::tokenize("2i", complexType),
-			Tokens({ Token(Complex(0, 2)) }));
+			Tokens({ Token(NumericConstant({ NumericConstantChar::Two, NumericConstantChar::ImaginaryUnit })) }));
 
 		TS_ASSERT_EQUALS(
 			Tokenizer::tokenize("i", complexType),
-			Tokens({ Token(Complex(0, 1)) }));
+			Tokens({ Token(NumericConstant({ NumericConstantChar::ImaginaryUnit })) }));
 
 		TS_ASSERT_EQUALS(
 			Tokenizer::tokenize("10", complexType),
-			Tokens({ Token(Complex(10, 0)) }));
-
-//		TS_ASSERT_EQUALS(
-//			Tokenizer::tokenize("0i", complexType),
-//			Tokens({ Token(Complex(0, 0)) }));
+			Tokens({ Token(NumericConstant({ NumericConstantChar::One, NumericConstantChar::Zero })) }));
 
 		TS_ASSERT_EQUALS(
 			Tokenizer::tokenize("0", complexType),
-			Tokens({ Token(Complex(0, 0)) }));
+			Tokens({ Token(NumericConstant({ NumericConstantChar::Zero })) }));
 	}
 
 	void testEval() {
 		CalcEngine engine;
 		engine.setEvalMode(ResultValueType::COMPLEX);
+		TS_ASSERT_EQUALS(engine.eval("i"), ResultValue(Complex(0, 1)));
+		TS_ASSERT_EQUALS(engine.eval("3i"), ResultValue(Complex(0, 3)));
 		TS_ASSERT_EQUALS(engine.eval("1+3i"), ResultValue(Complex(1, 3)));
 		TS_ASSERT_EQUALS(engine.eval("(2+3i)*(2+6i)"), ResultValue(Complex(-14, 18)));
 		TS_ASSERT_EQUALS(engine.eval("2-i"), ResultValue(Complex(2, -1)));

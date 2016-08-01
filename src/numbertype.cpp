@@ -586,12 +586,11 @@ const UnaryOperators& ComplexType::unaryOperators() const {
 
 Token ComplexType::parseNumber(std::string& str, char& current, std::size_t& index) const {
 	if (current == 'i') {
-		return NumericConstant({ NumericConstantChar::One, NumericConstantChar::ImaginaryUnit });
+		return NumericConstant({ NumericConstantChar::ImaginaryUnit });
 	}
 
-	std::string num { current };
+	std::vector<NumericConstantChar> chars({ NumericConstantChars::getChar(current) });
 	bool hasDecimalPoint = false;
-	bool hasImagUnit = false;
 
 	while (true) {
 		std::size_t next = index + 1;
@@ -609,8 +608,8 @@ Token ComplexType::parseNumber(std::string& str, char& current, std::size_t& ind
 				throw std::runtime_error("The token already contains a decimal point.");
 			}
 		} else if (current == 'i') {
-			hasImagUnit = true;
 			index = next;
+			chars.push_back(NumericConstantChar::ImaginaryUnit);
 			break;
 		} else {
 			if (!isdigit(current)) {
@@ -618,16 +617,11 @@ Token ComplexType::parseNumber(std::string& str, char& current, std::size_t& ind
 			}
 		}
 
-		num += current;
+		chars.push_back(NumericConstantChars::getChar(current));
 		index = next;
 	}
 
-	auto value = std::stod(num);
-	if (hasImagUnit) {
-		return NumericConstant(value).append(NumericConstantChar::ImaginaryUnit);
-	} else {
-		return NumericConstant(value);
-	}
+	return NumericConstant(chars);
 }
 
 bool ComplexType::isStartOfNumber(const std::string& str, char current, std::size_t index) const {
@@ -697,8 +691,10 @@ ResultValue ComplexType::toResultValue(const NumericConstant& numericConstant) c
 	if (isComplex) {
 		if (realPart != "") {
 			return Complex(std::stod(realPart), std::stod(imaginaryPart));
-		} else {
+		} else if (imaginaryPart != "") {
 			return Complex(0.0, std::stod(imaginaryPart));
+		} else {
+			return Complex(0.0, 1.0);
 		}
 	} else {
 		return Complex(std::stod(realPart), 0.0);
