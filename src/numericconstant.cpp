@@ -56,15 +56,27 @@ char NumericConstantChars::getChar(NumericConstantChar numChar) {
 		case NumericConstantChar::Six:
 			return '6';
 		case NumericConstantChar::Seven:
-			return'7';
+			return '7';
 		case NumericConstantChar::Eight:
 			return '8';
 		case NumericConstantChar::Nine:
 			return '9';
+		case NumericConstantChar::A:
+			return 'a';
+		case NumericConstantChar::B:
+			return 'b';
+		case NumericConstantChar::C:
+			return 'c';
+		case NumericConstantChar::D:
+			return 'd';
+		case NumericConstantChar::E:
+			return 'e';
+		case NumericConstantChar::F:
+			return 'f';
 		case NumericConstantChar::MinusSign:
 			return '-';
 		case NumericConstantChar::PlusSign:
-			return'+';
+			return '+';
 		case NumericConstantChar::DecimalPoint:
 			return '.';
 		case NumericConstantChar::ImaginaryUnit:
@@ -94,6 +106,18 @@ NumericConstantChar NumericConstantChars::getChar(char c) {
 			return NumericConstantChar::Eight;
 		case '9':
 			return NumericConstantChar::Nine;
+		case 'a':
+			return NumericConstantChar::A;
+		case 'b':
+			return NumericConstantChar::B;
+		case 'c':
+			return NumericConstantChar::C;
+		case 'd':
+			return NumericConstantChar::D;
+		case 'e':
+			return NumericConstantChar::E;
+		case 'f':
+			return NumericConstantChar::F;
 		case '-':
 			return NumericConstantChar::MinusSign;
 		case '+':
@@ -133,34 +157,16 @@ NumericConstant::NumericConstant(std::string str) {
 	for (auto c : str) {
 		switch (c) {
 			case '0':
-				mChars.push_back(NumericConstantChar::Zero);
-				break;
 			case '1':
-				mChars.push_back(NumericConstantChar::One);
-				break;
 			case '2':
-				mChars.push_back(NumericConstantChar::Two);
-				break;
 			case '3':
-				mChars.push_back(NumericConstantChar::Three);
-				break;
 			case '4':
-				mChars.push_back(NumericConstantChar::Four);
-				break;
 			case '5':
-				mChars.push_back(NumericConstantChar::Five);
-				break;
 			case '6':
-				mChars.push_back(NumericConstantChar::Six);
-				break;
 			case '7':
-				mChars.push_back(NumericConstantChar::Seven);
-				break;
 			case '8':
-				mChars.push_back(NumericConstantChar::Eight);
-				break;
 			case '9':
-				mChars.push_back(NumericConstantChar::Nine);
+				mChars.push_back(NumericConstantChars::getChar(c));
 				break;
 			case '-':
 				if (i > 0 && !isComplexMode) {

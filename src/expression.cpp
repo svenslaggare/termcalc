@@ -17,7 +17,6 @@ std::string NumberExpression::toString() {
 }
 
 void NumberExpression::evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) {
-//	evalStack.push(mValue);
 	evalStack.push(calcEngine.currentNumberType().toResultValue(mValue));
 }
 
@@ -70,19 +69,15 @@ std::string FunctionCallExpression::toString() {
 	std::ostringstream stream;
 
 	stream << mName << "(";
-
 	bool isFirst = true;
-
 	for (auto& arg : mArguments) {
 		if (!isFirst) {
 			stream << ", ";
 		}
 
 		stream << arg->toString();
-
 		isFirst = false;
 	}
-
 	stream << ")";
 
 	return stream.str();
@@ -94,8 +89,8 @@ void FunctionCallExpression::evaluate(CalcEngine& calcEngine, Environment& env, 
 
 	if (mArguments.size() != func.numArgs()) {
 		throw std::runtime_error(
-				"Expected " + std::to_string(func.numArgs())
-				+ " arguments but got " + std::to_string(mArguments.size()));
+			"Expected " + std::to_string(func.numArgs())
+			+ " arguments but got " + std::to_string(mArguments.size()) + ".");
 	}
 
 	for (auto& arg : mArguments) {
@@ -113,8 +108,12 @@ void FunctionCallExpression::evaluate(CalcEngine& calcEngine, Environment& env, 
 }
 
 //Binary operator expression
-BinaryOperatorExpression::BinaryOperatorExpression(OperatorChar op, std::unique_ptr<Expression> lhs, std::unique_ptr<Expression> rhs)
-	: mOp(op), mLHS(std::move(lhs)), mRHS(std::move(rhs)) {
+BinaryOperatorExpression::BinaryOperatorExpression(OperatorChar op,
+												   std::unique_ptr<Expression> lhs,
+												   std::unique_ptr<Expression> rhs)
+	: mOp(op),
+	  mLHS(std::move(lhs)),
+	  mRHS(std::move(rhs)) {
 
 }
 
@@ -131,7 +130,6 @@ void BinaryOperatorExpression::evaluate(CalcEngine& calcEngine, Environment& env
 			evalStack.pop();
 
 			env.set(var->name(), value);
-
 			evalStack.push(value);
 		} else if (auto func = dynamic_cast<FunctionCallExpression*>(mLHS.get())) {
 			//Check that the parameters are variables
@@ -151,7 +149,10 @@ void BinaryOperatorExpression::evaluate(CalcEngine& calcEngine, Environment& env
 				}
 			}
 
-			env.define(Function(func->name(), parameters.size(), std::make_shared<FunctionBody>(parameters, std::move(mRHS))));
+			env.define(Function(
+				func->name(),
+				parameters.size(),
+				std::make_shared<FunctionBody>(parameters, std::move(mRHS))));
 			evalStack.push(ResultValue());
 		} else {
 			throw std::runtime_error("The left hand side must be a variable or a function definition.");
@@ -162,8 +163,6 @@ void BinaryOperatorExpression::evaluate(CalcEngine& calcEngine, Environment& env
 			throw std::runtime_error("The current mode does not support the operator '" + mOp.toString() + "'.");
 		}
 
-		auto& op = calcEngine.binaryOperators().at(mOp);
-
 		mLHS->evaluate(calcEngine, env, evalStack);
 		mRHS->evaluate(calcEngine, env, evalStack);
 
@@ -173,6 +172,7 @@ void BinaryOperatorExpression::evaluate(CalcEngine& calcEngine, Environment& env
 		auto op1 = evalStack.top();
 		evalStack.pop();
 
+		auto& op = calcEngine.binaryOperators().at(mOp);
 		evalStack.push(op.apply(op1, op2));
 	}
 }
@@ -193,12 +193,11 @@ void UnaryOperatorExpression::evaluate(CalcEngine& calcEngine, Environment& env,
 		throw std::runtime_error("The current mode does not support the operator '" + mOp.toString() + "'.");
 	}
 
-	auto& op = calcEngine.unaryOperators().at(mOp);
-
 	mOperand->evaluate(calcEngine, env, evalStack);
 
 	auto operand = evalStack.top();
 	evalStack.pop();
 
+	auto& op = calcEngine.unaryOperators().at(mOp);
 	evalStack.push(op.apply(operand));
 }

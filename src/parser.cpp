@@ -6,6 +6,14 @@
 
 namespace {
 	std::unordered_set<char> twoCharOps = { '<', '>' };
+
+	OperatorChar tokenAsOperator(const Token& token) {
+		if (token.type() == TokenType::TWO_CHAR_OPERATOR) {
+			return OperatorChar(token.charValue(), token.charValue2());
+		} else {
+			return OperatorChar(token.charValue());
+		}
+	}
 }
 
 std::vector<Token> Tokenizer::tokenize(std::string str, NumberType& numberType) {
@@ -107,16 +115,6 @@ Token& Parser::peekToken(int delta) {
 	}
 
 	return mTokens[nextTokenIndex];
-}
-
-namespace {
-	OperatorChar tokenAsOperator(const Token& token) {
-		if (token.type() == TokenType::TWO_CHAR_OPERATOR) {
-			return OperatorChar(token.charValue(), token.charValue2());
-		} else {
-			return OperatorChar(token.charValue());
-		}
-	}
 }
 
 int Parser::getTokenPrecedence() {

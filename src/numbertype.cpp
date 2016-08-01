@@ -305,6 +305,12 @@ ResultValue IntegerType::toResultValue(const NumericConstant& numericConstant) c
 			case NumericConstantChar::Seven:
 			case NumericConstantChar::Eight:
 			case NumericConstantChar::Nine:
+			case NumericConstantChar::A:
+			case NumericConstantChar::B:
+			case NumericConstantChar::C:
+			case NumericConstantChar::D:
+			case NumericConstantChar::E:
+			case NumericConstantChar::F:
 				value += NumericConstantChars::getChar(c);
 				break;
 			case NumericConstantChar::MinusSign:
@@ -485,6 +491,8 @@ ResultValue FloatType::toResultValue(const NumericConstant& numericConstant) con
 				break;
 			case NumericConstantChar::ImaginaryUnit:
 				exit = true;
+				break;
+			default:
 				break;
 		}
 
@@ -684,6 +692,8 @@ ResultValue ComplexType::toResultValue(const NumericConstant& numericConstant) c
 				}
 
 				isComplex = true;
+				break;
+			default:
 				break;
 		}
 	}

@@ -16,10 +16,16 @@ enum class NumericConstantChar : unsigned char {
 	Seven,
 	Eight,
 	Nine,
+	A,
+	B,
+	C,
+	D,
+	E,
+	F,
 	MinusSign,
 	PlusSign,
 	DecimalPoint,
-	ImaginaryUnit
+	ImaginaryUnit,
 };
 
 namespace NumericConstantChars {
