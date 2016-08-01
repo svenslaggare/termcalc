@@ -65,8 +65,6 @@ public:
 	//Compare operators
 	bool operator==(const ResultValue& rhs) const;
 	bool operator!=(const ResultValue& rhs) const;
-
-	double operator+(double value) const;
 };
 
 namespace std {

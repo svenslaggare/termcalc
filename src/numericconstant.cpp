@@ -1,5 +1,16 @@
 #include "numericconstant.h"
 #include <stdexcept>
+#include <limits>
+#include <sstream>
+
+namespace {
+	std::string toStringFull(double value) {
+		std::stringstream stringstream;
+		stringstream.precision(std::numeric_limits<double>::max_digits10);
+		stringstream << value;
+		return stringstream.str();
+	}
+}
 
 NumericConstant::NumericConstant()
 	: mChars({ NumericConstantChar::Zero }) {
@@ -106,7 +117,7 @@ NumericConstant::NumericConstant(std::int64_t value)
 }
 
 NumericConstant::NumericConstant(double value)
-	: NumericConstant(std::to_string(value)){
+	: NumericConstant(toStringFull(value)){
 
 }
 

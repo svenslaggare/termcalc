@@ -95,10 +95,6 @@ bool ResultValue::operator!=(const ResultValue& rhs) const {
 	return !(*this == rhs);
 }
 
-double ResultValue::operator+(double value) const {
-	return mFloatValue + value;
-}
-
 std::ostream& operator<<(std::ostream& os, ResultValue value) {
 	switch (value.type()) {
 		case ResultValueType::NONE:

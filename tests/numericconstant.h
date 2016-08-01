@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <limits>
 #include <cxxtest/TestSuite.h>
 #include "../src/numericconstant.h"
 
@@ -114,7 +115,6 @@ public:
 				 NumericConstantChar::One, NumericConstantChar::Three, NumericConstantChar::Five,
 				 NumericConstantChar::DecimalPoint,
 				 NumericConstantChar::One, NumericConstantChar::Two, NumericConstantChar::Six,
-				 NumericConstantChar::Zero, NumericConstantChar::Zero, NumericConstantChar::Zero
 			}));
 
 		TS_ASSERT_EQUALS(
@@ -124,7 +124,6 @@ public:
 				 NumericConstantChar::One, NumericConstantChar::Three, NumericConstantChar::Five,
 				 NumericConstantChar::DecimalPoint,
 				 NumericConstantChar::One, NumericConstantChar::Two, NumericConstantChar::Six,
-				 NumericConstantChar::Zero, NumericConstantChar::Zero, NumericConstantChar::Zero
 			}));
 	}
 };
