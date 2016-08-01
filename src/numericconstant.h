@@ -34,12 +34,33 @@ namespace NumericConstantChars {
 
 	//Returns the numeric character for the given character. If invalid, zero is returned
 	NumericConstantChar getChar(char c);
+
+	const NumericConstantChar Zero = NumericConstantChar::Zero;
+	const NumericConstantChar One = NumericConstantChar::One;
+	const NumericConstantChar Two = NumericConstantChar::Two;
+	const NumericConstantChar Three = NumericConstantChar::Three;
+	const NumericConstantChar Four = NumericConstantChar::Four;
+	const NumericConstantChar Five = NumericConstantChar::Five;
+	const NumericConstantChar Six = NumericConstantChar::Six;
+	const NumericConstantChar Seven = NumericConstantChar::Seven;
+	const NumericConstantChar Eight = NumericConstantChar::Eight;
+	const NumericConstantChar Nine = NumericConstantChar::Nine;
+	const NumericConstantChar A = NumericConstantChar::A;
+	const NumericConstantChar B = NumericConstantChar::B;
+	const NumericConstantChar C = NumericConstantChar::C;
+	const NumericConstantChar D = NumericConstantChar::D;
+	const NumericConstantChar E = NumericConstantChar::E;
+	const NumericConstantChar F = NumericConstantChar::F;
 }
+
+//A vector of numeric characters
+using NumericChars = std::vector<NumericConstantChar>;
 
 //Represents a numeric constant
 class NumericConstant {
 private:
-	std::vector<NumericConstantChar> mChars;
+	NumericChars mChars;
+	unsigned char mBase = 10;
 public:
 	NumericConstant();
 
@@ -62,7 +83,13 @@ public:
 	NumericConstant(Complex value);
 
 	//Returns the character in the constant
-	const std::vector<NumericConstantChar>& chars() const;
+	const NumericChars& chars() const;
+
+	//Returns the base
+	unsigned char base() const;
+
+	//Sets the base
+	void base(unsigned char newBase);
 
 	//Appends the given character to the current constant
 	NumericConstant& append(NumericConstantChar numChar);

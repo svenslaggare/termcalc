@@ -29,6 +29,9 @@ public:
 	//Parses the given number
 	virtual	Token parseNumber(std::string& str, char& current, std::size_t& index) const = 0;
 
+	//Converts the given string to a numeric constant
+	NumericConstant toNumericConstant(std::string str) const;
+
 	//Converts the given numeric constant to result value
 	virtual ResultValue toResultValue(const NumericConstant& numericConstant) const = 0;
 };

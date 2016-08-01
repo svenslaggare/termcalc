@@ -4,6 +4,12 @@
 #include <complex>
 #include <cctype>
 
+NumericConstant NumberType::toNumericConstant(std::string str) const {
+	std::size_t i = 0;
+	char c = str[0];
+	return parseNumber(str, c, i).numericValue();
+}
+
 //Integer type
 namespace {
 	//Parses a 64 bits integer in the given base
@@ -230,8 +236,8 @@ bool IntegerType::isStartOfNumber(const std::string& str, char current, std::siz
 }
 
 Token IntegerType::parseNumber(std::string& str, char& current, std::size_t& index) const {
-	std::string num { current };
-	int base = 10;
+	NumericChars chars({ NumericConstantChars::getChar(current) });
+	unsigned char base = 10;
 
 	//Check which base the number is
 	if (current == '0' && (index + 1) < str.size()) {
@@ -239,11 +245,11 @@ Token IntegerType::parseNumber(std::string& str, char& current, std::size_t& ind
 
 		if (baseChar == 'b') {
 			base = 2;
-			num = "";
+			chars.clear();
 			index++;
 		} else if (baseChar == 'x') {
 			base = 16;
-			num = "";
+			chars.clear();
 			index++;
 		}
 	}
@@ -276,15 +282,13 @@ Token IntegerType::parseNumber(std::string& str, char& current, std::size_t& ind
 			}
 		}
 
-		num += current;
+		chars.push_back(NumericConstantChars::getChar(current));
 		index = next;
 	}
 
-	try {
-		return NumericConstant(parseInt64(num, base));
-	} catch (std::exception& e) {
-		throw std::out_of_range("The given number is too large.");
-	}
+	NumericConstant numConstant(chars);
+	numConstant.base(base);
+	return numConstant;
 }
 
 ResultValue IntegerType::toResultValue(const NumericConstant& numericConstant) const {
@@ -334,7 +338,12 @@ ResultValue IntegerType::toResultValue(const NumericConstant& numericConstant) c
 		}
 	}
 
-	return parseInt64(value, 10);
+//	return parseInt64(value, numericConstant.base());
+	try {
+		return parseInt64(value, numericConstant.base());
+	} catch (std::exception& e) {
+		throw std::out_of_range("The given number is too large.");
+	}
 }
 
 //Float type
@@ -421,7 +430,7 @@ const UnaryOperators& FloatType::unaryOperators() const {
 }
 
 Token FloatType::parseNumber(std::string& str, char& current, std::size_t& index) const {
-	std::vector<NumericConstantChar> chars({ NumericConstantChars::getChar(current) });
+	NumericChars chars({ NumericConstantChars::getChar(current) });
 	bool hasDecimalPoint = false;
 
 	while (true) {
@@ -597,7 +606,7 @@ Token ComplexType::parseNumber(std::string& str, char& current, std::size_t& ind
 		return NumericConstant({ NumericConstantChar::ImaginaryUnit });
 	}
 
-	std::vector<NumericConstantChar> chars({ NumericConstantChars::getChar(current) });
+	NumericChars chars({ NumericConstantChars::getChar(current) });
 	bool hasDecimalPoint = false;
 
 	while (true) {

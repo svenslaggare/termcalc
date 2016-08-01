@@ -11,16 +11,34 @@ using Tokens = std::vector<Token>;
 
 class IntTestSuite : public CxxTest::TestSuite {
 public:
+	NumericConstant constantInBase(NumericChars chars, unsigned char base = 10) {
+		NumericConstant numConstant(chars);
+		numConstant.base(base);
+		return numConstant;
+	}
+
 	void testDifferentBase() {
 		IntegerType integerType;
+		using namespace NumericConstantChars;
 
 		TS_ASSERT_EQUALS(
-			Tokenizer::tokenize("0x1337", integerType),
-			Tokens({ Token((std::int64_t)4919LL) }));
+			Tokenizer::tokenize("0x1337af", integerType),
+			Tokens({
+				Token(constantInBase(
+				{ One, Three, Three, Seven, A, F },
+			    16))
+			}));
 
 		TS_ASSERT_EQUALS(
 			Tokenizer::tokenize("0b1010100", integerType),
-			Tokens({ Token((std::int64_t)84LL) }));
+			Tokens({
+			   Token(constantInBase(
+			   { One, Zero, One, Zero, One, Zero, Zero },
+			   2))
+		    }));
+
+		TS_ASSERT_EQUALS(0x1337af, integerType.toResultValue(integerType.toNumericConstant("0x1337af")).intValue());
+		TS_ASSERT_EQUALS(0b1010100, integerType.toResultValue(integerType.toNumericConstant("0b1010100")).intValue());
 	}
 
 	void testLargeValues() {

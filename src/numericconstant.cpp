@@ -237,8 +237,16 @@ NumericConstant::NumericConstant(Complex value)
 
 }
 
-const std::vector<NumericConstantChar>& NumericConstant::chars() const {
+const NumericChars& NumericConstant::chars() const {
 	return mChars;
+}
+
+unsigned char NumericConstant::base() const {
+	return mBase;
+}
+
+void NumericConstant::base(unsigned char newBase) {
+	mBase = newBase;
 }
 
 NumericConstant& NumericConstant::append(NumericConstantChar numChar) {
@@ -258,6 +266,10 @@ std::string NumericConstant::toString() const {
 }
 
 bool NumericConstant::operator==(const NumericConstant& rhs) const {
+	if (mBase != rhs.mBase) {
+		return false;
+	}
+
 	if (mChars.size() != rhs.mChars.size()) {
 		return false;
 	}
