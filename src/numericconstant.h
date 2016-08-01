@@ -16,6 +16,7 @@ enum class NumericConstantChar : unsigned char {
 	Eight,
 	Nine,
 	MinusSign,
+	PlusSign,
 	DecimalPoint,
 	ImaginaryUnit
 };

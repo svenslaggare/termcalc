@@ -8,9 +8,12 @@ NumericConstant::NumericConstant()
 
 NumericConstant::NumericConstant(std::string str) {
 	bool hasMinusSign = false;
+	bool hasPlusSign = false;
 	bool hasDecimalPoint = false;
 	bool hasImaginaryUnit = false;
+	bool isComplexMode = false;
 
+	std::size_t i = 0;
 	for (auto c : str) {
 		switch (c) {
 			case '0':
@@ -44,12 +47,34 @@ NumericConstant::NumericConstant(std::string str) {
 				mChars.push_back(NumericConstantChar::Nine);
 				break;
 			case '-':
+				if (i > 0 && !isComplexMode) {
+					isComplexMode = true;
+					hasMinusSign = false;
+					hasPlusSign = false;
+					hasDecimalPoint = false;
+				}
+
 				if (hasMinusSign) {
 					throw std::runtime_error("The constant already has a minus sign.");
 				}
 
 				hasMinusSign = true;
 				mChars.push_back(NumericConstantChar::MinusSign);
+				break;
+			case '+':
+				if (i > 0 && !isComplexMode) {
+					isComplexMode = true;
+					hasMinusSign = false;
+					hasPlusSign = false;
+					hasDecimalPoint = false;
+				}
+
+				if (hasPlusSign) {
+					throw std::runtime_error("The constant already has a plus sign.");
+				}
+
+				hasPlusSign = true;
+				mChars.push_back(NumericConstantChar::PlusSign);
 				break;
 			case '.':
 				if (hasDecimalPoint) {
@@ -70,6 +95,8 @@ NumericConstant::NumericConstant(std::string str) {
 			default:
 				break;
 		}
+
+		i++;
 	}
 }
 
@@ -125,6 +152,9 @@ std::string NumericConstant::toString() const {
 				break;
 			case NumericConstantChar::MinusSign:
 				str += '-';
+				break;
+			case NumericConstantChar::PlusSign:
+				str += '+';
 				break;
 			case NumericConstantChar::DecimalPoint:
 				str += '.';

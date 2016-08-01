@@ -43,6 +43,51 @@ public:
 				 NumericConstantChar::Five,
 				 NumericConstantChar::ImaginaryUnit
 			}));
+
+		TS_ASSERT_EQUALS(
+			NumericConstant("121+135i").chars(),
+			std::vector<NumericConstantChar>({
+				 NumericConstantChar::One,
+				 NumericConstantChar::Two,
+				 NumericConstantChar::One,
+				 NumericConstantChar::PlusSign,
+				 NumericConstantChar::One,
+				 NumericConstantChar::Three,
+				 NumericConstantChar::Five,
+				 NumericConstantChar::ImaginaryUnit
+			 }));
+
+		TS_ASSERT_EQUALS(
+			NumericConstant("-121-135i").chars(),
+			std::vector<NumericConstantChar>({
+				 NumericConstantChar::MinusSign,
+				 NumericConstantChar::One,
+				 NumericConstantChar::Two,
+				 NumericConstantChar::One,
+				 NumericConstantChar::MinusSign,
+				 NumericConstantChar::One,
+				 NumericConstantChar::Three,
+				 NumericConstantChar::Five,
+				 NumericConstantChar::ImaginaryUnit
+			 }));
+
+		TS_ASSERT_EQUALS(
+			NumericConstant("-121.4-135.2i").chars(),
+			std::vector<NumericConstantChar>({
+				 NumericConstantChar::MinusSign,
+				 NumericConstantChar::One,
+				 NumericConstantChar::Two,
+				 NumericConstantChar::One,
+				 NumericConstantChar::DecimalPoint,
+				 NumericConstantChar::Four,
+				 NumericConstantChar::MinusSign,
+				 NumericConstantChar::One,
+				 NumericConstantChar::Three,
+				 NumericConstantChar::Five,
+				 NumericConstantChar::DecimalPoint,
+				 NumericConstantChar::Two,
+				 NumericConstantChar::ImaginaryUnit
+			}));
 	}
 
 	void testInt() {
