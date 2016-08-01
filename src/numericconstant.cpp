@@ -5,10 +5,20 @@
 
 namespace {
 	std::string toStringFull(double value) {
+		double fracPart;
+		double intPart;
+		fracPart = std::modf(value, &intPart);
+
 		std::stringstream stringstream;
 		stringstream.precision(std::numeric_limits<double>::max_digits10);
 		stringstream << value;
-		return stringstream.str();
+		auto str = stringstream.str();
+
+		if (fracPart == 0.0) {
+			str += ".0";
+		}
+
+		return str;
 	}
 
 	std::string toStringFull(Complex value) {
@@ -62,12 +72,52 @@ char NumericConstantChars::getChar(NumericConstantChar numChar) {
 	}
 }
 
+NumericConstantChar NumericConstantChars::getChar(char c) {
+	switch (c) {
+		case '0':
+			return NumericConstantChar::Zero;
+		case '1':
+			return NumericConstantChar::One;
+		case '2':
+			return NumericConstantChar::Two;
+		case '3':
+			return NumericConstantChar::Three;
+		case '4':
+			return NumericConstantChar::Four;
+		case '5':
+			return NumericConstantChar::Five;
+		case '6':
+			return NumericConstantChar::Six;
+		case '7':
+			return NumericConstantChar::Seven;
+		case '8':
+			return NumericConstantChar::Eight;
+		case '9':
+			return NumericConstantChar::Nine;
+		case '-':
+			return NumericConstantChar::MinusSign;
+		case '+':
+			return NumericConstantChar::PlusSign;
+		case '.':
+			return NumericConstantChar::DecimalPoint;
+		case 'i':
+			return NumericConstantChar::ImaginaryUnit;
+		default:
+			return NumericConstantChar::Zero;
+	}
+}
+
 NumericConstant::NumericConstant()
 	: mChars({ NumericConstantChar::Zero }) {
 
 }
 
 NumericConstant::NumericConstant(const std::initializer_list<NumericConstantChar>& chars)
+	: mChars(chars) {
+
+}
+
+NumericConstant::NumericConstant(const std::vector<NumericConstantChar>& chars)
 	: mChars(chars) {
 
 }

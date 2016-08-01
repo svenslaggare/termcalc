@@ -283,7 +283,7 @@ Token IntegerType::parseNumber(std::string& str, char& current, std::size_t& ind
 	try {
 		return NumericConstant(parseInt64(num, base));
 	} catch (std::exception& e) {
-		throw std::out_of_range("The given number is to large.");
+		throw std::out_of_range("The given number is too large.");
 	}
 }
 
@@ -415,7 +415,7 @@ const UnaryOperators& FloatType::unaryOperators() const {
 }
 
 Token FloatType::parseNumber(std::string& str, char& current, std::size_t& index) const {
-	std::string num { current };
+	std::vector<NumericConstantChar> chars({ NumericConstantChars::getChar(current) });
 	bool hasDecimalPoint = false;
 
 	while (true) {
@@ -439,11 +439,11 @@ Token FloatType::parseNumber(std::string& str, char& current, std::size_t& index
 			}
 		}
 
-		num += current;
+		chars.push_back(NumericConstantChars::getChar(current));
 		index = next;
 	}
 
-	return NumericConstant(std::stod(num));
+	return NumericConstant(chars);
 }
 
 bool FloatType::isStartOfNumber(const std::string& str, char current, std::size_t index) const {

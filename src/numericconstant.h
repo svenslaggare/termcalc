@@ -23,7 +23,11 @@ enum class NumericConstantChar : unsigned char {
 };
 
 namespace NumericConstantChars {
+	//Returns the character for the given numeric character
 	char getChar(NumericConstantChar numChar);
+
+	//Returns the numeric character for the given character. If invalid, zero is returned
+	NumericConstantChar getChar(char c);
 }
 
 //Represents a numeric constant
@@ -35,6 +39,9 @@ public:
 
 	//Creates a numeric constant from the given characters. No error checking is made.
 	NumericConstant(const std::initializer_list<NumericConstantChar>& chars);
+
+	//Creates a numeric constant from the given characters. No error checking is made.
+	NumericConstant(const std::vector<NumericConstantChar>& chars);
 
 	//Creates a new numeric constant from the given string
 	NumericConstant(std::string str);

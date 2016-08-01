@@ -26,7 +26,7 @@ public:
 		commandEngine.setEvalMode(ResultValueType::INTEGER);
 
 		commandEngine.execute("54645345364563453534654646");
-		TS_ASSERT_EQUALS(stream.str(), "Error: The given number is to large.\n");
+		TS_ASSERT_EQUALS(stream.str(), "Error: The given number is too large.\n");
 	}
 
 	void testPrintInPolar() {

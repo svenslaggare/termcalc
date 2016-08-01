@@ -15,11 +15,11 @@ public:
 		IntegerType integerType;
 
         TS_ASSERT_EQUALS(
-            Tokenizer::tokenize("2.0+5", floatType),
+            Tokenizer::tokenize("2.0+5.0", floatType),
             Tokens({ Token(2.0), Token(TokenType::OPERATOR, '+'), Token(5.0) }));
 
         TS_ASSERT_EQUALS(
-            Tokenizer::tokenize("(2.0+5) * 7.0", floatType),
+            Tokenizer::tokenize("(2.0+5.0) * 7.0", floatType),
             Tokens({ Token(TokenType::LEFT_PARENTHESIS),
                      Token(2.0), Token(TokenType::OPERATOR, '+'), Token(5.0),
                      Token(TokenType::RIGHT_PARENTHESIS),
