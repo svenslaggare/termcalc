@@ -135,12 +135,7 @@ int Parser::getTokenPrecedence() {
 }
 
 std::unique_ptr<Expression> Parser::parseNumberExpression() {
-	ResultValue value(
-		mCalcEngine.evalMode(),
-		mCurrentToken.int64Value(),
-		mCurrentToken.doubleValue(),
-		mCurrentToken.complexValue());
-
+	auto value = mCurrentToken.numericValue();
 	nextToken(); //Consume the number
 	return std::unique_ptr<NumberExpression>(new NumberExpression(value));
 }

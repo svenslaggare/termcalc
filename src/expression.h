@@ -2,6 +2,7 @@
 #include "operator.h"
 #include "function.h"
 #include "resultvalue.h"
+#include "numericconstant.h"
 #include <stack>
 #include <vector>
 #include <memory>
@@ -27,10 +28,10 @@ public:
 //Represents a number expression
 class NumberExpression : public Expression {
 private:
-	ResultValue mValue;
+	NumericConstant mValue;
 public:
 	//Creates a new number expression
-	NumberExpression(ResultValue value);
+	NumberExpression(NumericConstant value);
 
 	virtual std::string toString() override;
 	virtual void evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) override;

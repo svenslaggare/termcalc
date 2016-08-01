@@ -3,9 +3,7 @@
 
 Token::Token()
 	: mType(TokenType::NUMBER),
-	  mDoubleValue(0.0),
-	  mInt64Value(0),
-	  mComplexValue(0.0),
+	  mNumericValue(),
 	  mCharValue(0),
 	  mCharValue2(0) {
 
@@ -13,39 +11,15 @@ Token::Token()
 
 Token::Token(TokenType type)
 	: mType(type),
-	  mDoubleValue(0.0),
-	  mInt64Value(0),
-	  mComplexValue(0.0),
+	  mNumericValue(),
 	  mCharValue(0),
 	  mCharValue2(0) {
 
 }
 
-Token::Token(double value)
+Token::Token(NumericConstant value)
 	: mType(TokenType::NUMBER),
-	  mDoubleValue(value),
-	  mInt64Value((std::int64_t)value),
-	  mComplexValue(value),
-	  mCharValue(0),
-	  mCharValue2(0) {
-
-}
-
-Token::Token(std::int64_t value)
-	: mType(TokenType::NUMBER),
-	  mDoubleValue(value),
-	  mInt64Value(value),
-	  mComplexValue(value),
-	  mCharValue(0),
-	  mCharValue2(0) {
-
-}
-
-Token::Token(std::complex<double> value)
-	: mType(TokenType::NUMBER),
-	  mDoubleValue(value.real()),
-	  mInt64Value((std::int64_t)value.real()),
-	  mComplexValue(value),
+	  mNumericValue(value),
 	  mCharValue(0),
 	  mCharValue2(0) {
 
@@ -53,8 +27,7 @@ Token::Token(std::complex<double> value)
 
 Token::Token(TokenType type, char value)
 	: mType(type),
-	  mDoubleValue(0),
-	  mInt64Value(0),
+	  mNumericValue(),
 	  mCharValue(value),
 	  mCharValue2(0) {
 
@@ -62,8 +35,7 @@ Token::Token(TokenType type, char value)
 
 Token::Token(TokenType type, char value1, char value2)
 	: mType(type),
-	  mDoubleValue(0),
-	  mInt64Value(0),
+	  mNumericValue(),
 	  mCharValue(value1),
 	  mCharValue2(value1) {
 
@@ -71,8 +43,7 @@ Token::Token(TokenType type, char value1, char value2)
 
 Token::Token(std::string identifier)
 	: mType(TokenType::IDENTIFIER),
-	  mDoubleValue(0),
-	  mInt64Value(0),
+	  mNumericValue(),
 	  mCharValue(0),
 	  mCharValue2(0),
 	  mIdentifier(identifier) {
@@ -83,16 +54,8 @@ TokenType Token::type() const {
 	return mType;
 }
 
-double Token::doubleValue() const {
-	return mDoubleValue;
-}
-
-std::int64_t Token::int64Value() const {
-	return mInt64Value;
-}
-
-std::complex<double> Token::complexValue() const {
-	return mComplexValue;
+NumericConstant Token::numericValue() const {
+	return mNumericValue;
 }
 
 char Token::charValue() const {
@@ -112,7 +75,7 @@ bool Token::operator==(const Token& rhs) const {
 		return false;
 	}
 
-	if (std::abs(mDoubleValue - rhs.mDoubleValue) > 0.00000001) {
+	if (mNumericValue != rhs.numericValue()) {
 		return false;
 	}
 
@@ -124,14 +87,6 @@ bool Token::operator==(const Token& rhs) const {
 		return false;
 	}
 
-	if (mInt64Value != rhs.mInt64Value) {
-		return false;
-	}
-
-	if (mComplexValue != rhs.mComplexValue) {
-		return false;
-	}
-
 	if (mIdentifier != rhs.mIdentifier) {
 		return false;
 	}
@@ -139,10 +94,14 @@ bool Token::operator==(const Token& rhs) const {
 	return true;
 }
 
+bool Token::operator!=(const Token& rhs) const {
+	return !(*this == rhs);
+}
+
 std::ostream& operator<<(std::ostream& os, const Token& token) {
 	switch (token.type()) {
 		case TokenType::NUMBER:
-			os << token.doubleValue();
+			os << token.numericValue().toString();
 			break;
 		case TokenType::OPERATOR:
 			os << token.charValue();

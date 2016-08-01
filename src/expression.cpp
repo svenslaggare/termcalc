@@ -7,7 +7,8 @@
 #include <sstream>
 
 //Number expression
-NumberExpression::NumberExpression(ResultValue value): mValue(value) {
+NumberExpression::NumberExpression(NumericConstant value)
+	: mValue(value) {
 
 }
 
@@ -16,7 +17,8 @@ std::string NumberExpression::toString() {
 }
 
 void NumberExpression::evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) {
-	evalStack.push(mValue);
+//	evalStack.push(mValue);
+	evalStack.push(calcEngine.currentNumberType().toResultValue(mValue));
 }
 
 //Variable expression

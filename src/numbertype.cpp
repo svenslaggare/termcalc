@@ -281,10 +281,54 @@ Token IntegerType::parseNumber(std::string& str, char& current, std::size_t& ind
 	}
 
 	try {
-		return parseInt64(num, base);
+		return NumericConstant(parseInt64(num, base));
 	} catch (std::exception& e) {
 		throw std::out_of_range("The given number is to large.");
 	}
+}
+
+ResultValue IntegerType::toResultValue(const NumericConstant& numericConstant) const {
+	std::string value = "";
+
+	for (std::size_t i = 0; i < numericConstant.chars().size(); i++) {
+		auto c = numericConstant.chars()[i];
+		bool exit = false;
+
+		switch (c) {
+			case NumericConstantChar::Zero:
+			case NumericConstantChar::One:
+			case NumericConstantChar::Two:
+			case NumericConstantChar::Three:
+			case NumericConstantChar::Four:
+			case NumericConstantChar::Five:
+			case NumericConstantChar::Six:
+			case NumericConstantChar::Seven:
+			case NumericConstantChar::Eight:
+			case NumericConstantChar::Nine:
+				value += NumericConstantChars::getChar(c);
+				break;
+			case NumericConstantChar::MinusSign:
+			case NumericConstantChar::PlusSign:
+				if (i > 0) {
+					exit = true;
+				} else {
+					value += NumericConstantChars::getChar(c);
+				}
+				break;
+			case NumericConstantChar::DecimalPoint:
+				exit = true;
+				break;
+			case NumericConstantChar::ImaginaryUnit:
+				exit = true;
+				break;
+		}
+
+		if (exit) {
+			break;
+		}
+	}
+
+	return parseInt64(value, 10);
 }
 
 //Float type
@@ -399,7 +443,7 @@ Token FloatType::parseNumber(std::string& str, char& current, std::size_t& index
 		index = next;
 	}
 
-	return std::stod(num);
+	return NumericConstant(std::stod(num));
 }
 
 bool FloatType::isStartOfNumber(const std::string& str, char current, std::size_t index) const {
@@ -408,6 +452,48 @@ bool FloatType::isStartOfNumber(const std::string& str, char current, std::size_
 
 const EnvironmentScope& FloatType::environment() const {
 	return mEnvironment;
+}
+
+ResultValue FloatType::toResultValue(const NumericConstant& numericConstant) const {
+	std::string value = "";
+
+	for (std::size_t i = 0; i < numericConstant.chars().size(); i++) {
+		auto c = numericConstant.chars()[i];
+		bool exit = false;
+
+		switch (c) {
+			case NumericConstantChar::Zero:
+			case NumericConstantChar::One:
+			case NumericConstantChar::Two:
+			case NumericConstantChar::Three:
+			case NumericConstantChar::Four:
+			case NumericConstantChar::Five:
+			case NumericConstantChar::Six:
+			case NumericConstantChar::Seven:
+			case NumericConstantChar::Eight:
+			case NumericConstantChar::Nine:
+			case NumericConstantChar::DecimalPoint:
+				value += NumericConstantChars::getChar(c);
+				break;
+			case NumericConstantChar::MinusSign:
+			case NumericConstantChar::PlusSign:
+				if (i > 0) {
+					exit = true;
+				} else {
+					value += NumericConstantChars::getChar(c);
+				}
+				break;
+			case NumericConstantChar::ImaginaryUnit:
+				exit = true;
+				break;
+		}
+
+		if (exit) {
+			break;
+		}
+	}
+
+	return std::stod(value);
 }
 
 //Complex type
@@ -500,7 +586,7 @@ const UnaryOperators& ComplexType::unaryOperators() const {
 
 Token ComplexType::parseNumber(std::string& str, char& current, std::size_t& index) const {
 	if (current == 'i') {
-		return Complex(0, 1);
+		return NumericConstant({ NumericConstantChar::One, NumericConstantChar::ImaginaryUnit });
 	}
 
 	std::string num { current };
@@ -538,9 +624,9 @@ Token ComplexType::parseNumber(std::string& str, char& current, std::size_t& ind
 
 	auto value = std::stod(num);
 	if (hasImagUnit) {
-		return Complex(0, value);
+		return NumericConstant(value).append(NumericConstantChar::ImaginaryUnit);
 	} else {
-		return Complex(value, 0);
+		return NumericConstant(value);
 	}
 }
 
@@ -562,4 +648,59 @@ bool ComplexType::isStartOfNumber(const std::string& str, char current, std::siz
 
 const EnvironmentScope& ComplexType::environment() const {
 	return mEnvironment;
+}
+
+ResultValue ComplexType::toResultValue(const NumericConstant& numericConstant) const {
+	std::string realPart = "";
+	std::string imaginaryPart = "";
+	std::string& currentPart = realPart;
+	bool atRealPart = true;
+	bool isComplex = false;
+
+	for (std::size_t i = 0; i < numericConstant.chars().size(); i++) {
+		auto c = numericConstant.chars()[i];
+
+		switch (c) {
+			case NumericConstantChar::Zero:
+			case NumericConstantChar::One:
+			case NumericConstantChar::Two:
+			case NumericConstantChar::Three:
+			case NumericConstantChar::Four:
+			case NumericConstantChar::Five:
+			case NumericConstantChar::Six:
+			case NumericConstantChar::Seven:
+			case NumericConstantChar::Eight:
+			case NumericConstantChar::Nine:
+			case NumericConstantChar::DecimalPoint:
+				currentPart += NumericConstantChars::getChar(c);
+				break;
+			case NumericConstantChar::MinusSign:
+			case NumericConstantChar::PlusSign:
+				if (i > 0) {
+					currentPart = imaginaryPart;
+					atRealPart = false;
+				} else {
+					currentPart += NumericConstantChars::getChar(c);
+				}
+				break;
+			case NumericConstantChar::ImaginaryUnit:
+				if (atRealPart) {
+					imaginaryPart = realPart;
+					realPart = "";
+				}
+
+				isComplex = true;
+				break;
+		}
+	}
+
+	if (isComplex) {
+		if (realPart != "") {
+			return Complex(std::stod(realPart), std::stod(imaginaryPart));
+		} else {
+			return Complex(0.0, std::stod(imaginaryPart));
+		}
+	} else {
+		return Complex(std::stod(realPart), 0.0);
+	}
 }

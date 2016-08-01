@@ -10,10 +10,65 @@ namespace {
 		stringstream << value;
 		return stringstream.str();
 	}
+
+	std::string toStringFull(Complex value) {
+		std::string str = "";
+
+		if (value.imag() == 0.0) {
+			str = toStringFull(value.real());
+		} else if (value.real() == 0.0) {
+			str = toStringFull(value.imag()) + "i";
+		} else {
+			str += toStringFull(value.real());
+			if (value.imag() > 0) {
+				str += "+";
+			}
+			str += toStringFull(value.imag()) + "i";
+		}
+
+		return str;
+	}
+}
+char NumericConstantChars::getChar(NumericConstantChar numChar) {
+	switch (numChar) {
+		case NumericConstantChar::Zero:
+			return '0';
+		case NumericConstantChar::One:
+			return '1';
+		case NumericConstantChar::Two:
+			return '2';
+		case NumericConstantChar::Three:
+			return '3';
+		case NumericConstantChar::Four:
+			return '4';
+		case NumericConstantChar::Five:
+			return '5';
+		case NumericConstantChar::Six:
+			return '6';
+		case NumericConstantChar::Seven:
+			return'7';
+		case NumericConstantChar::Eight:
+			return '8';
+		case NumericConstantChar::Nine:
+			return '9';
+		case NumericConstantChar::MinusSign:
+			return '-';
+		case NumericConstantChar::PlusSign:
+			return'+';
+		case NumericConstantChar::DecimalPoint:
+			return '.';
+		case NumericConstantChar::ImaginaryUnit:
+			return 'i';
+	}
 }
 
 NumericConstant::NumericConstant()
 	: mChars({ NumericConstantChar::Zero }) {
+
+}
+
+NumericConstant::NumericConstant(const std::initializer_list<NumericConstantChar>& chars)
+	: mChars(chars) {
 
 }
 
@@ -121,8 +176,18 @@ NumericConstant::NumericConstant(double value)
 
 }
 
+NumericConstant::NumericConstant(Complex value)
+	: NumericConstant(toStringFull(value)) {
+
+}
+
 const std::vector<NumericConstantChar>& NumericConstant::chars() const {
 	return mChars;
+}
+
+NumericConstant& NumericConstant::append(NumericConstantChar numChar) {
+	mChars.push_back(numChar);
+	return *this;
 }
 
 std::string NumericConstant::toString() const {
@@ -130,50 +195,7 @@ std::string NumericConstant::toString() const {
 	str.reserve(mChars.size());
 
 	for (auto c : mChars) {
-		switch (c) {
-			case NumericConstantChar::Zero:
-				str += '0';
-				break;
-			case NumericConstantChar::One:
-				str += '1';
-				break;
-			case NumericConstantChar::Two:
-				str += '2';
-				break;
-			case NumericConstantChar::Three:
-				str += '3';
-				break;
-			case NumericConstantChar::Four:
-				str += '4';
-				break;
-			case NumericConstantChar::Five:
-				str += '5';
-				break;
-			case NumericConstantChar::Six:
-				str += '6';
-				break;
-			case NumericConstantChar::Seven:
-				str += '7';
-				break;
-			case NumericConstantChar::Eight:
-				str += '8';
-				break;
-			case NumericConstantChar::Nine:
-				str += '9';
-				break;
-			case NumericConstantChar::MinusSign:
-				str += '-';
-				break;
-			case NumericConstantChar::PlusSign:
-				str += '+';
-				break;
-			case NumericConstantChar::DecimalPoint:
-				str += '.';
-				break;
-			case NumericConstantChar::ImaginaryUnit:
-				str += 'i';
-				break;
-		}
+		str += NumericConstantChars::getChar(c);
 	}
 
 	return str;

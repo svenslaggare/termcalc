@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include <vector>
-#include <complex>
+#include "termcalc.h"
 
 //The type of the result value
 enum class ResultValueType {
@@ -19,8 +19,6 @@ namespace ResultValueTypes {
 		ResultValueType::COMPLEX
 	};
 }
-
-using Complex = std::complex<double>;
 
 class ResultValue {
 private:
