@@ -54,7 +54,7 @@ TokenType Token::type() const {
 	return mType;
 }
 
-NumericConstant Token::numericValue() const {
+const NumericConstant& Token::numericValue() const {
 	return mNumericValue;
 }
 

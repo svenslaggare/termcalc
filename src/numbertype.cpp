@@ -103,7 +103,8 @@ IntegerType::IntegerType(std::ostream& os) {
 						args.at(0).intValue(),
 						args.at(1).intValue()));
 			} else {
-				throw std::runtime_error(std::to_string(args[0].intValue()) + " is not invertible mod " + std::to_string(args[1].intValue()) + ".");
+				throw std::runtime_error(
+					std::to_string(args[0].intValue()) + " is not invertible mod " + std::to_string(args[1].intValue()) + ".");
 			}
 		}, "Tries to find the multiplicative inverse of x mod y."),
 		Function("sqrt", 1, [this](FnArgs args) {
@@ -204,7 +205,7 @@ std::int64_t IntegerType::gcd(std::int64_t x, std::int64_t y) {
 
 std::int64_t IntegerType::sqrt(std::int64_t x) {
 	//From: http://stackoverflow.com/questions/1100090/looking-for-an-efficient-integer-square-root-algorithm-for-arm-thumb2
-	std::uint64_t op = (uint64_t)x;
+	std::uint64_t op = (std::uint64_t)x;
 	std::uint64_t res = 0;
 	std::uint64_t one = 1ULL << 62;
 
@@ -552,28 +553,28 @@ ComplexType::ComplexType(std::ostream& os) {
 		{ "e", ResultValue(2.718281828459045235360) },
 	}, {
 		Function("sin", 1, [this](FnArgs args) {
-			return ResultValue(sin(args.at(0).complexValue()));
+			return ResultValue(std::sin(args.at(0).complexValue()));
 		}, "Computes the sine of x."),
 		Function("cos", 1, [this](FnArgs args) {
-			return ResultValue(cos(args.at(0).complexValue()));
+			return ResultValue(std::cos(args.at(0).complexValue()));
 		}, "Computes the cosine of x."),
 		Function("tan", 1, [this](FnArgs args) {
-			return ResultValue(tan(args.at(0).complexValue()));
+			return ResultValue(std::tan(args.at(0).complexValue()));
 		}, "Computes the tangent of x."),
 		Function("sqrt", 1, [this](FnArgs args) {
-			return ResultValue(sqrt(args.at(0).complexValue()));
+			return ResultValue(std::sqrt(args.at(0).complexValue()));
 		}, "Computes the square root of x."),
 		Function("asin", 1, [this](FnArgs args) {
-			return ResultValue(asin(args.at(0).complexValue()));
+			return ResultValue(std::asin(args.at(0).complexValue()));
 		}, "Computes the inverse sine of x."),
 		Function("acos", 1, [this](FnArgs args) {
-			return ResultValue(acos(args.at(0).complexValue()));
+			return ResultValue(std::acos(args.at(0).complexValue()));
 		}, "Computes the inverse cosine of x."),
 		Function("atan", 1, [this](FnArgs args) {
-			return ResultValue(atan(args.at(0).complexValue()));
+			return ResultValue(std::atan(args.at(0).complexValue()));
 		}, "Computes the inverse tangent of x."),
 		Function("ln", 1, [this](FnArgs args) {
-			return ResultValue(log(args.at(0).complexValue()));
+			return ResultValue(std::log(args.at(0).complexValue()));
 		}, "Computes the natural logarithm of x."),
 		Function("real", 1, [this](FnArgs args) {
 			return ResultValue(Complex(std::real(args.at(0).complexValue()), 0));
@@ -604,6 +605,22 @@ const BinaryOperators& ComplexType::binaryOperators() const {
 
 const UnaryOperators& ComplexType::unaryOperators() const {
 	return mUnaryOperators;
+}
+
+bool ComplexType::isStartOfNumber(const std::string& str, char current, std::size_t index) const {
+	if (isdigit(current)) {
+		return true;
+	} else if (current == 'i') {
+		//We only want if 'i' is separate, not part of identifier such as 'imag'.
+		auto next = index + 1;
+		if (next < str.length()) {
+			return !isalpha(str[next]);
+		} else {
+			return true;
+		}
+	} else {
+		return false;
+	}
 }
 
 Token ComplexType::parseNumber(std::string& str, char& current, std::size_t& index) const {
@@ -644,22 +661,6 @@ Token ComplexType::parseNumber(std::string& str, char& current, std::size_t& ind
 	}
 
 	return NumericConstant(chars);
-}
-
-bool ComplexType::isStartOfNumber(const std::string& str, char current, std::size_t index) const {
-	if (isdigit(current)) {
-		return true;
-	} else if (current == 'i') {
-		//We only want if 'i' is separate, not part of identifier such as 'imag'.
-		auto next = index + 1;
-		if (next < str.length()) {
-			return !isalpha(str[next]);
-		} else {
-			return true;
-		}
- 	} else {
-		return false;
-	}
 }
 
 const EnvironmentScope& ComplexType::environment() const {

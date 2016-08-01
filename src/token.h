@@ -46,7 +46,7 @@ public:
 	TokenType type() const;
 
 	//Returns the numeric value
-	NumericConstant numericValue() const;
+	const NumericConstant& numericValue() const;
 
 	//Returns the char value
 	char charValue() const;
