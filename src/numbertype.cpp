@@ -69,7 +69,13 @@ IntegerType::IntegerType(std::ostream& os) {
 	};
 
 	mEnvironment = EnvironmentScope(Variables({}), {
-		Function("xor", 2, [this](FnArgs args) {
+		Function("bitand", 2, [this](FnArgs args) {
+			return ResultValue(args.at(0).intValue() ^ args.at(1).intValue());
+		}, "Computes bitwise AND between x and y."),
+		Function("bitor", 2, [this](FnArgs args) {
+			return ResultValue(args.at(0).intValue() | args.at(1).intValue());
+		}, "Computes bitwise OR between x and y."),
+		Function("bitxor", 2, [this](FnArgs args) {
 			return ResultValue(args.at(0).intValue() ^ args.at(1).intValue());
 		}, "Computes bitwise XOR between x and y."),
 		Function("mod", 2, [this](FnArgs args) {
@@ -338,7 +344,6 @@ ResultValue IntegerType::toResultValue(const NumericConstant& numericConstant) c
 		}
 	}
 
-//	return parseInt64(value, numericConstant.base());
 	try {
 		return parseInt64(value, numericConstant.base());
 	} catch (std::exception& e) {

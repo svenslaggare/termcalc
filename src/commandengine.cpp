@@ -93,7 +93,7 @@ CommandEngine::CommandEngine(std::ostream& os)
 
 			std::size_t i = 0;
 			bool anyUserDefined = false;
-			mOutStream << "Builtin:" << std::endl;
+			mOutStream << "Built-in:" << std::endl;
 
 			for (auto& current : mEnv.functions()) {
 				auto& func = current.second;
