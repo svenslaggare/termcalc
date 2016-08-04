@@ -3,9 +3,9 @@ A terminal based calculator written in C++.
 
 ## Usage
 Works like a normal calculator. The calculator can be in the following modes:
-* float: arithemtic done in 64-bits floating point (default).
-* int: aithemtic done in 64-bits integer.
-* complex: for each component, the arithemtic is done in 64-bits floating point.
+* float: arithmetic done in 64-bits floating point (default).
+* int: arithmetic done in 64-bits integer.
+* complex: for each component, the arithmetic is done in 64-bits floating point.
 
 Each mode has different predefined functions and constants.
 
