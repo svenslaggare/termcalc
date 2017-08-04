@@ -36,7 +36,7 @@ release-flags:
 release: release-flags clean all
 
 install: release
-	sudo cp termcalc /opt/util
+	sudo cp termcalc /opt/utils
 
 ifeq ($(OS), Windows_NT)
 $(OBJ_DIR):

@@ -126,7 +126,7 @@ void BinaryOperatorExpression::evaluate(CalcEngine& calcEngine, Environment& env
 		if (auto var = dynamic_cast<VariableExpression*>(mLHS.get())) {
 			mRHS->evaluate(calcEngine, env, evalStack);
 
-			auto value = evalStack.top().floatValue();
+			auto value = evalStack.top();
 			evalStack.pop();
 
 			env.set(var->name(), value);
