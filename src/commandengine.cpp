@@ -33,6 +33,7 @@ CommandEngine::CommandEngine(std::ostream& os)
 			} else {
 				mOutStream << "Expected one argument (int >= 2)." << std::endl;
 			}
+
 			return false;
 		} },
 		{ "mode", [&](Args args) {
@@ -55,15 +56,20 @@ CommandEngine::CommandEngine(std::ostream& os)
 			} else {
 				mOutStream << "Expected one argument (float or int)." << std::endl;
 			}
+
 			return false;
 		} },
 		{ "polar", [&](Args args) {
-			if (args[0] == "true" || args[0] == "1") {
-				setPrintInPolar(true);
-			} else if (args[0] == "false" || args[0] == "0") {
-				setPrintInPolar(false);
+			if (args.size() == 1) {
+				if (args[0] == "true" || args[0] == "1") {
+					setPrintInPolar(true);
+				} else if (args[0] == "false" || args[0] == "0") {
+					setPrintInPolar(false);
+				} else {
+					mOutStream << "Invalid value. Valid values are: true or false." << std::endl;
+				}
 			} else {
-				mOutStream << "Invalid value. Valid values arer: true or false." << std::endl;
+				mOutStream << "Expected one argument (true or false)." << std::endl;
 			}
 
 			return false;
@@ -72,6 +78,7 @@ CommandEngine::CommandEngine(std::ostream& os)
 			for (auto var : mEnv.variables()) {
 				mOutStream << var.first << ": " << var.second << std::endl;
 			}
+			
 			return false;
 		} },
 		{ "funcs", [this, leadingWhitespace](Args args) {
@@ -138,9 +145,16 @@ CommandEngine::CommandEngine(std::ostream& os)
 
 namespace {
 	const std::vector<std::string> subscripts {
-		"\xe2\x82\x80", "\xe2\x82\x81", "\xe2\x82\x82",
-		"\xe2\x82\x83", "\xe2\x82\x84", "\xe2\x82\x85",
-		"\xe2\x82\x86", "\xe2\x82\x87", "\xe2\x82\x88", "\xe2\x82\x89"
+		"\xe2\x82\x80",
+        "\xe2\x82\x81",
+        "\xe2\x82\x82",
+		"\xe2\x82\x83",
+        "\xe2\x82\x84",
+        "\xe2\x82\x85",
+		"\xe2\x82\x86",
+        "\xe2\x82\x87",
+        "\xe2\x82\x88",
+        "\xe2\x82\x89"
 	};
 
 	//Returns the given number as a subscript
@@ -148,15 +162,15 @@ namespace {
 		std::string str = std::to_string(num);
 		std::string subscriptStr;
 
-		for (std::size_t i = 0; i < str.length(); i++) {
-			subscriptStr += subscripts[str[i] - '0'];
-		}
+        for (char c : str) {
+            subscriptStr += subscripts[c - '0'];
+        }
 
 		return subscriptStr;
 	}
 
 	//Splits the given string
-	std::vector<std::string> splitString(std::string str, std::string delimiter) {
+	std::vector<std::string> splitString(std::string str, const std::string& delimiter) {
 		std::vector<std::string> parts;
 
 		std::size_t pos = 0;
@@ -209,7 +223,7 @@ void CommandEngine::loadFile(std::string fileName, bool printIfNotFound) {
 }
 
 bool CommandEngine::execute(std::string line, bool printResult) {
-	if (line[0] == ':' && line.size() > 1) {
+	if (line.size() > 1 && line[0] == ':') {
 		auto parts = splitString(line.substr(1), " ");
 		std::string cmd = parts[0];
 
@@ -223,7 +237,7 @@ bool CommandEngine::execute(std::string line, bool printResult) {
 		return false;
 	}
 
-	if (line == "") {
+	if (line.empty()) {
 		return false;
 	}
 

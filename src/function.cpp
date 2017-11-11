@@ -93,7 +93,7 @@ std::string Function::infoText() const {
 }
 
 namespace {
-	std::unordered_map<int, std::string> argNameTable = {
+	const std::unordered_map<int, std::string> argNameTable = {
 		{ 0, "x" },
 		{ 1, "y" },
 		{ 2, "z" },
@@ -113,7 +113,7 @@ std::ostream& operator<<(std::ostream& os, const Function& func) {
 			}
 
 			if (argNameTable.count(i) > 0) {
-				os << argNameTable[i];
+				os << argNameTable.at(i);
 			} else {
 				os << "x" << i;
 			}

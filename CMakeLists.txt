@@ -29,7 +29,10 @@ set(SOURCE_FILES
     src/numbertype.cpp
     src/numbertype.h
     src/numberhelpers.cpp
-    src/numberhelpers.h src/numericconstant.cpp src/numericconstant.h src/termcalc.h)
+    src/numberhelpers.h
+    src/numericconstant.cpp
+    src/numericconstant.h
+    src/termcalc.h)
 
 add_executable(termcalc ${SOURCE_FILES} src/termcalc.cpp)
 
