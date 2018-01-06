@@ -9,6 +9,13 @@ private:
 	CalcEngine& mCalcEngine;
 	EvalStack mEvaluationStack;
 	Environment& mEnvironment;
+
+	/**
+	 * Evaluates the given user defined function
+	 * @param userFunction The body of the function
+	 * @param args The arguments
+	 */
+	ResultValue evaluateUserFunction(UserFunction* userFunction, const FunctionArguments& args);
 public:
 	/**
 	 * Creates a new calculation visitor

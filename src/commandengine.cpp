@@ -129,7 +129,8 @@ CommandEngine::CommandEngine(std::ostream& os)
 					if (func.isUserDefined()) {
 						auto funcStr = funcStrs[i];
 //						mOutStream << leadingWhitespace << funcStr << " = " << func.body()->toString() << std::endl;
-						mOutStream << leadingWhitespace << funcStr << " = " << PrintVisitor::toString(mEngine, func.body()->body()) << std::endl;
+						mOutStream << leadingWhitespace << funcStr << " = " << PrintVisitor::toString(mEngine,
+																									  func.userFunction()->body()) << std::endl;
 					}
 
 					i++;

@@ -26,6 +26,41 @@ void CalculationVisitor::visit(Expression* parent, VariableExpression* expressio
 	}
 }
 
+ResultValue CalculationVisitor::evaluateUserFunction(UserFunction* userFunction, const FunctionArguments& args) {
+	//First, save the environment values
+	std::unordered_map<std::string, ResultValue> savedValues;
+	for (auto param : userFunction->parameters()) {
+		if (mEnvironment.variables().count(param) > 0) {
+			savedValues.insert({ param, mEnvironment.variables().at(param) });
+		}
+	}
+
+	//Set the parameter values
+	std::size_t i = 0;
+	for (auto param : userFunction->parameters()) {
+		mEnvironment.set(param, args[i]);
+		i++;
+	}
+
+	//Apply the function
+	userFunction->body()->accept(*this, nullptr);
+
+	if (mEvaluationStack.size() != 1) {
+		throw std::runtime_error("Expected result.");
+	}
+
+	//Restore environment values
+	for (auto param : userFunction->parameters()) {
+		mEnvironment.unset(param);
+
+		if (savedValues.count(param) > 0) {
+			mEnvironment.set(param, savedValues[param]);
+		}
+	}
+
+	return mEvaluationStack.top();
+}
+
 void CalculationVisitor::visit(Expression* parent, FunctionCallExpression* expression) {
 	//Find the function
 	auto& func = mEnvironment.getFunction(expression->name(), expression->numArguments());
@@ -38,14 +73,18 @@ void CalculationVisitor::visit(Expression* parent, FunctionCallExpression* expre
 
 	DfsVisitor::visit(parent, expression);
 
-	FnArgs args;
+	FunctionArguments args;
 	for (std::size_t i = 0; i < func.numArgs(); i++) {
 		auto arg = mEvaluationStack.top();
 		mEvaluationStack.pop();
 		args.insert(args.begin(), arg);
 	}
 
-	mEvaluationStack.push(func.apply(mCalcEngine, mEnvironment, args));
+	if (!func.isUserDefined()) {
+		mEvaluationStack.push(func.externalFunction()(args));
+	} else {
+		mEvaluationStack.push(evaluateUserFunction(func.userFunction().get(), args));
+	}
 }
 
 void CalculationVisitor::visit(Expression* parent, BinaryOperatorExpression* expression) {
@@ -80,7 +119,7 @@ void CalculationVisitor::visit(Expression* parent, BinaryOperatorExpression* exp
 			mEnvironment.define(Function(
 				func->name(),
 				parameters.size(),
-				std::make_shared<FunctionBody>(parameters, std::unique_ptr<Expression>(rhs))));
+				std::make_shared<UserFunction>(parameters, std::unique_ptr<Expression>(rhs))));
 			mEvaluationStack.push(ResultValue());
 		} else {
 			throw std::runtime_error("The left hand side must be a variable or a function definition.");

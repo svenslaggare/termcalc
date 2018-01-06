@@ -19,12 +19,6 @@ public:
 	Expression() {}
 	virtual ~Expression() {}
 
-	//Returns the current expression as a string
-	virtual std::string toString() = 0;
-
-	//Evaluates the current expression
-	virtual void evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) = 0;
-
 	//Accepts the given visitor
 	virtual void accept(Visitor& visitor, Expression* parent) = 0;
 };
@@ -40,8 +34,6 @@ public:
 	//Returns the value of the expression
 	const NumericConstant& value() const;
 
-	virtual std::string toString() override;
-	virtual void evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) override;
 	virtual void accept(Visitor& visitor, Expression* parent) override;
 };
 
@@ -56,8 +48,6 @@ public:
 	//Returns the name of the variable
 	std::string name() const;
 
-	virtual std::string toString() override;
-	virtual void evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) override;
 	virtual void accept(Visitor& visitor, Expression* parent) override;
 };
 
@@ -79,8 +69,6 @@ public:
 	//Returns the given argument
 	Expression* getArgument(std::size_t index) const;
 
-	virtual std::string toString() override;
-	virtual void evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) override;
 	virtual void accept(Visitor& visitor, Expression* parent) override;
 };
 
@@ -106,8 +94,6 @@ public:
 	//Releases ownershop hold of the right hand side
 	Expression* releaseRightHandSide();
 
-	virtual std::string toString() override;
-	virtual void evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) override;
 	virtual void accept(Visitor& visitor, Expression* parent) override;
 };
 
@@ -126,7 +112,5 @@ public:
 	//Returns the operand
 	Expression* operand() const;
 
-	virtual std::string toString() override;
-	virtual void evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) override;
 	virtual void accept(Visitor& visitor, Expression* parent) override;
 };

@@ -69,16 +69,16 @@ IntegerType::IntegerType(std::ostream& os) {
 	};
 
 	mEnvironment = EnvironmentScope(Variables({}), {
-		Function("bitand", 2, [this](FnArgs args) {
+		Function("bitand", 2, [this](FunctionArguments args) {
 			return ResultValue(args.at(0).intValue() ^ args.at(1).intValue());
 		}, "Computes bitwise AND between x and y."),
-		Function("bitor", 2, [this](FnArgs args) {
+		Function("bitor", 2, [this](FunctionArguments args) {
 			return ResultValue(args.at(0).intValue() | args.at(1).intValue());
 		}, "Computes bitwise OR between x and y."),
-		Function("bitxor", 2, [this](FnArgs args) {
+		Function("bitxor", 2, [this](FunctionArguments args) {
 			return ResultValue(args.at(0).intValue() ^ args.at(1).intValue());
 		}, "Computes bitwise XOR between x and y."),
-		Function("mod", 2, [this](FnArgs args) {
+		Function("mod", 2, [this](FunctionArguments args) {
 			std::int64_t result = args.at(0).intValue() % args.at(1).intValue();
 
 			if (result < 0) {
@@ -87,16 +87,16 @@ IntegerType::IntegerType(std::ostream& os) {
 
 			return ResultValue(result);
 		}, "Computes x mod y."),
-		Function("powerMod", 3, [this](FnArgs args) {
+		Function("powerMod", 3, [this](FunctionArguments args) {
 			return ResultValue(
 				powerMod(args.at(0).intValue(),
 						 args.at(1).intValue(),
 						 args.at(2).intValue()));
 		}, "Computes x^y mod z."),
-		Function("gcd", 2, [this](FnArgs args) {
+		Function("gcd", 2, [this](FunctionArguments args) {
 			return ResultValue(gcd(args.at(0).intValue(), args.at(1).intValue()));
 		}, "Computes the greatest common divisor between x and y."),
-		Function("modInv", 2, [this](FnArgs args) {
+		Function("modInv", 2, [this](FunctionArguments args) {
 			if (gcd(args[0].intValue(), args[1].intValue()) == 1) {
 				return ResultValue(
 					modularMultInverse(
@@ -107,18 +107,18 @@ IntegerType::IntegerType(std::ostream& os) {
 					std::to_string(args[0].intValue()) + " is not invertible mod " + std::to_string(args[1].intValue()) + ".");
 			}
 		}, "Tries to find the multiplicative inverse of x mod y."),
-		Function("sqrt", 1, [this](FnArgs args) {
+		Function("sqrt", 1, [this](FunctionArguments args) {
 			if (args[0].intValue() >= 0) {
 				return ResultValue(sqrt(args[0].intValue()));
 			} else {
 				throw std::runtime_error("The value must be >= 0.");
 			}
 		}, "Returns the integer part of the square root of x."),
-		Function("twocomp", 1, [this, &os](FnArgs args) {
+		Function("twocomp", 1, [this, &os](FunctionArguments args) {
 			os << "0b" << NumberHelpers::toBaseBinary(args.at(0).intValue()) << std::endl;
 			return ResultValue();
 		}, "Prints the given value in two-complements form."),
-		Function("twocomp", 2, [this, &os](FnArgs args) {
+		Function("twocomp", 2, [this, &os](FunctionArguments args) {
 			int size = (int)args.at(1).intValue();
 			os << "0b" << NumberHelpers::toBaseBinary(args.at(0).intValue(), size) << std::endl;
 			return ResultValue();
@@ -385,43 +385,43 @@ FloatType::FloatType() {
 		{ "pi", ResultValue(3.141592653589793238463) },
 		{ "e", ResultValue(2.718281828459045235360) },
 	}, {
-		Function("sin", 1, [this](FnArgs args) {
+		Function("sin", 1, [this](FunctionArguments args) {
 			return ResultValue(sin(args.at(0).floatValue()));
 		}, "Computes the sine of x."),
-		Function("cos", 1, [this](FnArgs args) {
+		Function("cos", 1, [this](FunctionArguments args) {
 			return ResultValue(cos(args.at(0).floatValue()));
 		}, "Computes the cosine of x."),
-		Function("tan", 1, [this](FnArgs args) {
+		Function("tan", 1, [this](FunctionArguments args) {
 			return ResultValue(tan(args.at(0).floatValue()));
 		}, "Computes the tangent of x."),
-		Function("sqrt", 1, [this](FnArgs args) {
+		Function("sqrt", 1, [this](FunctionArguments args) {
 			return ResultValue(sqrt(args.at(0).floatValue()));
 		}, "Computes the square root of x."),
-		Function("asin", 1, [this](FnArgs args) {
+		Function("asin", 1, [this](FunctionArguments args) {
 			return ResultValue(asin(args.at(0).floatValue()));
 		}, "Computes the inverse sine of x."),
-		Function("acos", 1, [this](FnArgs args) {
+		Function("acos", 1, [this](FunctionArguments args) {
 			return ResultValue(acos(args.at(0).floatValue()));
 		}, "Computes the inverse cosine of x."),
-		Function("atan", 1, [this](FnArgs args) {
+		Function("atan", 1, [this](FunctionArguments args) {
 			return ResultValue(atan(args.at(0).floatValue()));
 		}, "Computes the inverse tangent of x."),
-		Function("ln", 1, [this](FnArgs args) {
+		Function("ln", 1, [this](FunctionArguments args) {
 			return ResultValue(log(args.at(0).floatValue()));
 		}, "Computes the natural logarithm of x."),
-		Function("log", 1, [this](FnArgs args) {
+		Function("log", 1, [this](FunctionArguments args) {
 			return ResultValue(log10(args.at(0).floatValue()));
 		}, "Computes the 10-logarithm of x."),
-		Function("logb", 2, [this](FnArgs args) {
+		Function("logb", 2, [this](FunctionArguments args) {
 			return ResultValue(log(args.at(0).floatValue()) / log(args.at(1).floatValue()));
 		}, "Computes the y-logarithm of x."),
-		Function("ceil", 1, [this](FnArgs x) {
+		Function("ceil", 1, [this](FunctionArguments x) {
 			return ResultValue(ceil(x.at(0).floatValue()));
 		}, "Ceils x."),
-		Function("floor", 1, [this](FnArgs x) {
+		Function("floor", 1, [this](FunctionArguments x) {
 			return ResultValue(floor(x.at(0).floatValue()));
 		}, "Floors x."),
-		Function("round", 1, [this](FnArgs x) {
+		Function("round", 1, [this](FunctionArguments x) {
 			return ResultValue(round(x.at(0).floatValue()));
 		}, "Rounds x."),
 	});
@@ -552,46 +552,46 @@ ComplexType::ComplexType(std::ostream& os) {
 		{ "pi", ResultValue(3.141592653589793238463) },
 		{ "e", ResultValue(2.718281828459045235360) },
 	}, {
-		Function("sin", 1, [this](FnArgs args) {
+		Function("sin", 1, [this](FunctionArguments args) {
 			return ResultValue(std::sin(args.at(0).complexValue()));
 		}, "Computes the sine of x."),
-		Function("cos", 1, [this](FnArgs args) {
+		Function("cos", 1, [this](FunctionArguments args) {
 			return ResultValue(std::cos(args.at(0).complexValue()));
 		}, "Computes the cosine of x."),
-		Function("tan", 1, [this](FnArgs args) {
+		Function("tan", 1, [this](FunctionArguments args) {
 			return ResultValue(std::tan(args.at(0).complexValue()));
 		}, "Computes the tangent of x."),
-		Function("sqrt", 1, [this](FnArgs args) {
+		Function("sqrt", 1, [this](FunctionArguments args) {
 			return ResultValue(std::sqrt(args.at(0).complexValue()));
 		}, "Computes the square root of x."),
-		Function("asin", 1, [this](FnArgs args) {
+		Function("asin", 1, [this](FunctionArguments args) {
 			return ResultValue(std::asin(args.at(0).complexValue()));
 		}, "Computes the inverse sine of x."),
-		Function("acos", 1, [this](FnArgs args) {
+		Function("acos", 1, [this](FunctionArguments args) {
 			return ResultValue(std::acos(args.at(0).complexValue()));
 		}, "Computes the inverse cosine of x."),
-		Function("atan", 1, [this](FnArgs args) {
+		Function("atan", 1, [this](FunctionArguments args) {
 			return ResultValue(std::atan(args.at(0).complexValue()));
 		}, "Computes the inverse tangent of x."),
-		Function("ln", 1, [this](FnArgs args) {
+		Function("ln", 1, [this](FunctionArguments args) {
 			return ResultValue(std::log(args.at(0).complexValue()));
 		}, "Computes the natural logarithm of x."),
-		Function("real", 1, [this](FnArgs args) {
+		Function("real", 1, [this](FunctionArguments args) {
 			return ResultValue(Complex(std::real(args.at(0).complexValue()), 0));
 		}, "Returns the real part of x."),
-		Function("imag", 1, [this](FnArgs args) {
+		Function("imag", 1, [this](FunctionArguments args) {
 			return ResultValue(Complex(std::imag(args.at(0).complexValue()), 0));
 		}, "Returns the imaginary part of x."),
-		Function("abs", 1, [this](FnArgs args) {
+		Function("abs", 1, [this](FunctionArguments args) {
 			return ResultValue(Complex(std::abs(args.at(0).complexValue())));
 		}, "Computes absolute value (magnitude) of x."),
-		Function("arg", 1, [this](FnArgs args) {
+		Function("arg", 1, [this](FunctionArguments args) {
 			return ResultValue(Complex(std::arg(args.at(0).complexValue())));
 		}, "Returns the argument of x."),
-		Function("conj", 1, [this](FnArgs args) {
+		Function("conj", 1, [this](FunctionArguments args) {
 			return ResultValue(std::conj(args.at(0).complexValue()));
 		}, "Returns the conjugate of x."),
-		Function("polar", 2, [this](FnArgs args) {
+		Function("polar", 2, [this](FunctionArguments args) {
 			return ResultValue(std::polar(
 				args.at(0).floatValue(),
 				args.at(1).floatValue()));

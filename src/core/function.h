@@ -6,31 +6,27 @@
 #include <iostream>
 #include <memory>
 
-using FnArgs = std::vector<ResultValue>;
-using ApplyFunction = std::function<ResultValue(FnArgs)>;
+using FunctionArguments = std::vector<ResultValue>;
+using ExternalFunction = std::function<ResultValue (FunctionArguments)>;
+
 class Environment;
 class CalcEngine;
 class Expression;
 	
-//Represents a function body for an user defined function
-class FunctionBody {
+//Represents an user defined function
+class UserFunction {
 private:
 	std::vector<std::string> mParameters;
 	std::unique_ptr<Expression> mBody;
 public:
-	//Creates a new function body
-	FunctionBody(std::vector<std::string> parameters, std::unique_ptr<Expression> body);
+	//Creates a new user defined function
+	UserFunction(std::vector<std::string> parameters, std::unique_ptr<Expression> body);
 
 	//Returns the parameters
 	const std::vector<std::string>& parameters() const;
 
 	//Returns the body
 	Expression* body() const;
-
-	std::string toString() const;
-
-	//Applies the function to the given arguments
-	ResultValue apply(CalcEngine& calcEngine, Environment& environment, FnArgs args) const;
 };
 
 //Represents a function
@@ -40,16 +36,16 @@ private:
 	std::size_t mNumArgs;
 
 	bool mIsUserDefined;
-	ApplyFunction mFunc;
-	std::shared_ptr<FunctionBody> mUserBody;
+	ExternalFunction mExternalFunction;
+	std::shared_ptr<UserFunction> mUserFunction;
 
 	std::string mInfoText;
 public:
-	//Creates a new function
-	Function(std::string name, std::size_t numArgs, ApplyFunction func, std::string infoText = "");
+	//Creates a new external function
+	Function(std::string name, std::size_t numArgs, ExternalFunction func, std::string infoText = "");
 
 	//Creates a new user function
-	Function(std::string name, std::size_t numArgs, std::shared_ptr<FunctionBody> body, std::string infoText = "");
+	Function(std::string name, std::size_t numArgs, std::shared_ptr<UserFunction> body, std::string infoText = "");
 
 	//Returns the name of the function
 	std::string name() const;
@@ -63,11 +59,11 @@ public:
 	//Indicates if the function is user defined
 	bool isUserDefined() const;
 
-	//Returns the body (if user defined)
-	std::shared_ptr<FunctionBody> body() const;
+	//Returns the external function (if not user defined)
+	ExternalFunction externalFunction() const;
 
-	//Applies the function to the given arguments
-	ResultValue apply(CalcEngine& calcEngine, Environment& environment, FnArgs args) const;
+	//Returns the body (if user defined)
+	std::shared_ptr<UserFunction> userFunction() const;
 };
 
 std::ostream& operator<<(std::ostream& os, const Function& func);
