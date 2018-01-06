@@ -1,7 +1,8 @@
 #pragma once
-#include "core/resultvalue.h"
-#include "core/operator.h"
-#include "core/numbertype.h"
+#include "../core/resultvalue.h"
+#include "../core/operator.h"
+#include "numbertypes/numbertypes.h"
+
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -10,13 +11,13 @@
 class Environment;
 
 //Represents the calculation engine
-class CalcEngine {
+class CalculationEngine {
 private:
 	ResultValueType mEvalMode;
 	std::unordered_map<ResultValueType, std::unique_ptr<NumberType>> mNumberTypes;
 public:
 	//Creates a new calc engine
-	CalcEngine(std::ostream& os = std::cout);
+	CalculationEngine(std::ostream& os = std::cout);
 
 	//Returns the binary operators
 	const BinaryOperators& binaryOperators() const;
@@ -40,6 +41,6 @@ public:
 	NumberType& currentNumberType() const;
 
 	//Evaluates the given expression
-	ResultValue eval(std::string expressionString);
-	ResultValue eval(std::string expressionString, Environment& env);
+	ResultValue evaluate(const std::string& expressionString);
+	ResultValue evaluate(const std::string& expressionString, Environment& environment);
 };

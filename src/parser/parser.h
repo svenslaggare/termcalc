@@ -6,7 +6,7 @@
 
 class Token;
 class Expression;
-class CalcEngine;
+class CalculationEngine;
 class NumberType;
 
 //Represents a tokenizer
@@ -18,7 +18,7 @@ namespace Tokenizer {
 //Represents a parser
 class Parser {
 private:
-	const CalcEngine& mCalcEngine;
+	const CalculationEngine& mCalcEngine;
 
 	std::vector<Token> mTokens;
 	Token mCurrentToken;
@@ -58,7 +58,7 @@ private:
 	std::unique_ptr<Expression> parseExpression();
 public:
 	//Creates a new parser
-	Parser(std::vector<Token> tokens, const CalcEngine& calcEngine);
+	Parser(std::vector<Token> tokens, const CalculationEngine& calcEngine);
 
 	//Parses the tokens
 	std::unique_ptr<Expression> parse();

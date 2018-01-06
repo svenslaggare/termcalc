@@ -12,16 +12,16 @@ set(CMAKE_CXX_FLAGS_RELEASE "-Wall -O2 -std=c++11")
 set(CMAKE_CXX_FLAGS_DEBUG "-Wall -g -std=c++11")
 
 set(SOURCE_FILES
-        src/calcengine.cpp
-        src/calcengine.h
+        src/calculation/calcengine.cpp
+        src/calculation/calcengine.h
         src/commandengine.cpp
         src/commandengine.h
-        src/core/environment.cpp
-        src/core/environment.h
+        src/calculation/environment.cpp
+        src/calculation/environment.h
         src/expressions/expression.cpp
         src/expressions/expression.h
-        src/core/function.cpp
-        src/core/function.h
+        src/calculation/function.cpp
+        src/calculation/function.h
         src/core/operator.cpp
         src/core/operator.h
         src/parser/parser.cpp
@@ -32,10 +32,10 @@ set(SOURCE_FILES
         src/parser/token.h
         src/linenoise.cpp
         src/linenoise.h
-        src/core/numbertype.cpp
-        src/core/numbertype.h
-        src/core/numberhelpers.cpp
-        src/core/numberhelpers.h
+        src/calculation/numbertypes/numbertype.cpp
+        src/calculation/numbertypes/numbertype.h
+        src/calculation/numberhelpers.cpp
+        src/calculation/numberhelpers.h
         src/core/numericconstant.cpp
         src/core/numericconstant.h
         src/termcalc.h
@@ -43,14 +43,14 @@ set(SOURCE_FILES
         src/visitors/visitor.h
         src/visitors/dfsvisitor.cpp
         src/visitors/dfsvisitor.h
-        src/visitors/calculationvisitor.cpp
-        src/visitors/calculationvisitor.h
+        src/calculation/calculationvisitor.cpp
+        src/calculation/calculationvisitor.h
         src/visitors/printvisitor.cpp
         src/visitors/printvisitor.h
         src/visitors/predicatevisitor.cpp
         src/visitors/predicatevisitor.h
         src/visitors/printvisitor.cpp
-        src/visitors/printvisitor.h)
+        src/visitors/printvisitor.h src/calculation/numbertypes/inttype.cpp src/calculation/numbertypes/inttype.h src/calculation/numbertypes/floattype.cpp src/calculation/numbertypes/floattype.h src/calculation/numbertypes/complextype.cpp src/calculation/numbertypes/complextype.h src/calculation/numbertypes/numbertypes.h)
 
 add_executable(termcalc ${SOURCE_FILES} src/termcalc.cpp)
 

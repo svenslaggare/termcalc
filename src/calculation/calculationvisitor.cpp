@@ -1,10 +1,10 @@
 #include "calculationvisitor.h"
-#include "../calcengine.h"
-#include "../core/environment.h"
+#include "calcengine.h"
+#include "environment.h"
 
 #include <unordered_set>
 
-CalculationVisitor::CalculationVisitor(CalcEngine& calcEngine, Environment& environment)
+CalculationVisitor::CalculationVisitor(CalculationEngine& calcEngine, Environment& environment)
 	: mCalcEngine(calcEngine), mEnvironment(environment) {
 
 }

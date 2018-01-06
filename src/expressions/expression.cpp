@@ -1,7 +1,7 @@
 #include "expression.h"
-#include "../calcengine.h"
-#include "../core/environment.h"
-#include "../core/function.h"
+#include "../calculation/calcengine.h"
+#include "../calculation/environment.h"
+#include "../calculation/function.h"
 #include "../visitors/visitor.h"
 
 #include <cmath>

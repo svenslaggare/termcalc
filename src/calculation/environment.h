@@ -1,6 +1,6 @@
 #pragma once
-#include "resultvalue.h"
-#include "operator.h"
+#include "../core/resultvalue.h"
+#include "../core/operator.h"
 #include "function.h"
 #include <string>
 #include <unordered_map>

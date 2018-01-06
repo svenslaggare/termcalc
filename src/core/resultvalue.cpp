@@ -66,9 +66,9 @@ ResultValue ResultValue::convertTo(ResultValueType type) const {
 }
 
 std::string ResultValue::toString() {
-	std::stringstream strstream;
-	strstream << *this;
-	return strstream.str();
+	std::stringstream stream;
+	stream << *this;
+	return stream.str();
 }
 
 bool ResultValue::operator==(const ResultValue& rhs) const {

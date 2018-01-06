@@ -2,10 +2,10 @@
 #include <vector>
 #include <cxxtest/TestSuite.h>
 #include "../src/commandengine.h"
-#include "../src/calcengine.h"
-#include "../src/core/environment.h"
+#include "../src/calculation/calcengine.h"
+#include "../src/calculation/environment.h"
 #include "../src/parser/parser.h"
-#include "../src/core/numbertype.h"
+#include "../src/calculation/numbertypes/numbertype.h"
 
 using Tokens = std::vector<Token>;
 
@@ -50,25 +50,25 @@ public:
 	}
 
 	void testEval() {
-		CalcEngine engine;
+		CalculationEngine engine;
 		engine.setEvalMode(ResultValueType::INTEGER);
 
-		TS_ASSERT_EQUALS(engine.eval("3+2"), ResultValue((std::int64_t)5LL));
-		TS_ASSERT_EQUALS(engine.eval("(2 + 5) * 3"), ResultValue((std::int64_t)21LL));
-		TS_ASSERT_EQUALS(engine.eval("5 - 3"), ResultValue((std::int64_t)2LL));
-		TS_ASSERT_EQUALS(engine.eval("2^3"), ResultValue((std::int64_t)8LL));
-		TS_ASSERT_EQUALS(engine.eval("-3"), ResultValue((std::int64_t)-3LL));
-		TS_ASSERT_EQUALS(engine.eval("2^30"), ResultValue((std::int64_t)(1LL << 30LL)));
+		TS_ASSERT_EQUALS(engine.evaluate("3+2"), ResultValue((std::int64_t)5LL));
+		TS_ASSERT_EQUALS(engine.evaluate("(2 + 5) * 3"), ResultValue((std::int64_t)21LL));
+		TS_ASSERT_EQUALS(engine.evaluate("5 - 3"), ResultValue((std::int64_t)2LL));
+		TS_ASSERT_EQUALS(engine.evaluate("2^3"), ResultValue((std::int64_t)8LL));
+		TS_ASSERT_EQUALS(engine.evaluate("-3"), ResultValue((std::int64_t)-3LL));
+		TS_ASSERT_EQUALS(engine.evaluate("2^30"), ResultValue((std::int64_t)(1LL << 30LL)));
 
-		TS_ASSERT_EQUALS(engine.eval("1 << 30"), ResultValue((std::int64_t)(1LL << 30LL)));
-		TS_ASSERT_EQUALS(engine.eval("24 >> 2"), ResultValue((std::int64_t)(24LL >> 2LL)));
+		TS_ASSERT_EQUALS(engine.evaluate("1 << 30"), ResultValue((std::int64_t)(1LL << 30LL)));
+		TS_ASSERT_EQUALS(engine.evaluate("24 >> 2"), ResultValue((std::int64_t)(24LL >> 2LL)));
 	}
 
 	void testDefineFunctions() {
-		CalcEngine engine;
+		CalculationEngine engine;
 		engine.setEvalMode(ResultValueType::INTEGER);
 		Environment env;
-		engine.eval("f(x)=x^2", env);
-		TS_ASSERT_EQUALS(engine.eval("f(4)", env), ResultValue((std::int64_t)16LL));
+		engine.evaluate("f(x)=x^2", env);
+		TS_ASSERT_EQUALS(engine.evaluate("f(4)", env), ResultValue((std::int64_t)16LL));
 	}
 };

@@ -1,6 +1,6 @@
 #include "parser.h"
 #include "../expressions/expression.h"
-#include "../calcengine.h"
+#include "../calculation/calcengine.h"
 #include <cmath>
 #include <unordered_set>
 
@@ -87,7 +87,7 @@ std::vector<Token> Tokenizer::tokenize(std::string str, NumberType& numberType) 
 	return tokens;
 }
 
-Parser::Parser(std::vector<Token> tokens, const CalcEngine& calcEngine)
+Parser::Parser(std::vector<Token> tokens, const CalculationEngine& calcEngine)
 	:  mCalcEngine(calcEngine), mTokens(tokens), mTokenIndex(-1) {
 
 }

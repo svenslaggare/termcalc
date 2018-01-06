@@ -1,5 +1,5 @@
 #include "commandengine.h"
-#include "core/numberhelpers.h"
+#include "calculation/numberhelpers.h"
 #include "visitors/printvisitor.h"
 
 #include <cmath>
@@ -211,7 +211,7 @@ void CommandEngine::setPrintInPolar(bool printInPolar) {
 	mPrintInPolar = printInPolar;
 }
 
-void CommandEngine::loadFile(std::string fileName, bool printIfNotFound) {
+void CommandEngine::loadFile(const std::string& fileName, bool printIfNotFound) {
 	std::ifstream stream(fileName);
 
 	if (stream.is_open()) {
@@ -226,7 +226,7 @@ void CommandEngine::loadFile(std::string fileName, bool printIfNotFound) {
 	}
 }
 
-bool CommandEngine::execute(std::string line, bool printResult) {
+bool CommandEngine::execute(const std::string& line, bool printResult) {
 	if (line.size() > 1 && line[0] == ':') {
 		auto parts = splitString(line.substr(1), " ");
 		std::string cmd = parts[0];
@@ -246,7 +246,7 @@ bool CommandEngine::execute(std::string line, bool printResult) {
 	}
 
 	try {
-		auto res = mEngine.eval(line, mEnv);
+		auto res = mEngine.evaluate(line, mEnv);
 
 		if (res.type() != ResultValueType::NONE) {
 			if (printResult) {

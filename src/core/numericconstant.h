@@ -71,7 +71,7 @@ public:
 	NumericConstant(const std::vector<NumericConstantChar>& chars);
 
 	//Creates a new numeric constant from the given string
-	NumericConstant(std::string str);
+	NumericConstant(const std::string& str);
 
 	//Creates a new numeric constant from the given 64-bits integer
 	NumericConstant(std::int64_t value);

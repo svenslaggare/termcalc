@@ -1,6 +1,6 @@
 #pragma once
 #include "../core/operator.h"
-#include "../core/function.h"
+#include "../calculation/function.h"
 #include "../core/resultvalue.h"
 #include "../core/numericconstant.h"
 #include <stack>
@@ -9,7 +9,7 @@
 #include <string>
 
 class Environment;
-class CalcEngine;
+class CalculationEngine;
 class Visitor;
 
 //Represents an expression

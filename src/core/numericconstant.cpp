@@ -146,7 +146,7 @@ NumericConstant::NumericConstant(const std::vector<NumericConstantChar>& chars)
 
 }
 
-NumericConstant::NumericConstant(std::string str) {
+NumericConstant::NumericConstant(const std::string& str) {
 	bool hasMinusSign = false;
 	bool hasPlusSign = false;
 	bool hasDecimalPoint = false;

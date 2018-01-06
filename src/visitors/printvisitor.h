@@ -6,7 +6,7 @@
  */
 class PrintVisitor : public Visitor {
 private:
-	CalcEngine& mCalcEngine;
+	CalculationEngine& mCalcEngine;
 	std::ostream& mStream;
 
 	/**
@@ -21,14 +21,14 @@ public:
 	 * @param calcEngine The calc engine
 	 * @param stream The stream to print to
 	 */
-	PrintVisitor(CalcEngine& calcEngine, std::ostream& stream);
+	PrintVisitor(CalculationEngine& calcEngine, std::ostream& stream);
 
 	/**
 	 * Converts the given expression to a string
 	 * @param calcEngine The calc engine
 	 * @param expression The expression
 	 */
-	static std::string toString(CalcEngine& calcEngine, Expression* expression);
+	static std::string toString(CalculationEngine& calcEngine, Expression* expression);
 
 	void visit(Expression* parent, NumberExpression* expression) override;
 	void visit(Expression* parent, VariableExpression* expression) override;

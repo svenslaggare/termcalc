@@ -1,10 +1,10 @@
 #include <string>
 #include <vector>
 #include <cxxtest/TestSuite.h>
-#include "../src/calcengine.h"
-#include "../src/core/environment.h"
+#include "../src/calculation/calcengine.h"
+#include "../src/calculation/environment.h"
 #include "../src/parser/parser.h"
-#include "../src/core/numbertype.h"
+#include "../src/calculation/numbertypes/numbertype.h"
 
 using Tokens = std::vector<Token>;
 
@@ -31,55 +31,55 @@ public:
     }
 
     void testEvalVariables() {
-        CalcEngine engine;
-        TS_ASSERT_DELTA(engine.eval("2 * pi").floatValue(), ResultValue(6.28).floatValue(), 0.01);
+        CalculationEngine engine;
+        TS_ASSERT_DELTA(engine.evaluate("2 * pi").floatValue(), ResultValue(6.28).floatValue(), 0.01);
 
         Environment env;
         env.set("e", 2.718281828);
-        TS_ASSERT_DELTA(engine.eval("e^2", env).floatValue(), ResultValue(7.38905609893).floatValue(), 0.01);
+        TS_ASSERT_DELTA(engine.evaluate("e^2", env).floatValue(), ResultValue(7.38905609893).floatValue(), 0.01);
 
-        TS_ASSERT_THROWS(engine.eval("2 * x").floatValue(), std::runtime_error);
+        TS_ASSERT_THROWS(engine.evaluate("2 * x").floatValue(), std::runtime_error);
     }
 
     void testDefineFunctions() {
-        CalcEngine engine;
+        CalculationEngine engine;
         Environment env;
-        engine.eval("f(x)=x^2", env);
-        TS_ASSERT_EQUALS(engine.eval("f(4)", env), ResultValue(16.0));
+		engine.evaluate("f(x)=x^2", env);
+        TS_ASSERT_EQUALS(engine.evaluate("f(4)", env), ResultValue(16.0));
 
         engine.setEvalMode(ResultValueType::INTEGER);
-        TS_ASSERT_EQUALS(engine.eval("f(4)", env), ResultValue((std::int64_t)16LL));
+        TS_ASSERT_EQUALS(engine.evaluate("f(4)", env), ResultValue((std::int64_t)16LL));
     }
 
 	void testDefineFunctionsOverload() {
-		CalcEngine engine;
+		CalculationEngine engine;
 		Environment env;
-		engine.eval("f(x)=x^2", env);
-		engine.eval("f(x, y)=x / y", env);
+		engine.evaluate("f(x)=x^2", env);
+		engine.evaluate("f(x, y)=x / y", env);
 
-		TS_ASSERT_EQUALS(engine.eval("f(4)", env), ResultValue(16.0));
-		TS_ASSERT_EQUALS(engine.eval("f(2, 4)", env), ResultValue(2.0 / 4));
+		TS_ASSERT_EQUALS(engine.evaluate("f(4)", env), ResultValue(16.0));
+		TS_ASSERT_EQUALS(engine.evaluate("f(2, 4)", env), ResultValue(2.0 / 4));
 	}
 
     void testInvalidEval() {
-        CalcEngine engine;
-        TS_ASSERT_THROWS(engine.eval("3 ++ 2"), std::runtime_error);
-        TS_ASSERT_THROWS(engine.eval("3+"), std::runtime_error);
+        CalculationEngine engine;
+        TS_ASSERT_THROWS(engine.evaluate("3 ++ 2"), std::runtime_error);
+        TS_ASSERT_THROWS(engine.evaluate("3+"), std::runtime_error);
     }
 
     void testAssignment() {
-        CalcEngine engine;
+        CalculationEngine engine;
         Environment env;
-        TS_ASSERT_EQUALS(engine.eval("x = 2 * 5", env), ResultValue(10.0));
+        TS_ASSERT_EQUALS(engine.evaluate("x = 2 * 5", env), ResultValue(10.0));
         TS_ASSERT_EQUALS(env.valueOf("x"), ResultValue(10.0));
     }
 
     void testConvert() {
-        CalcEngine engine;
+        CalculationEngine engine;
 		Environment environment;
-        engine.eval("x=3.14", environment);
+		engine.evaluate("x=3.14", environment);
         engine.setEvalMode(ResultValueType::INTEGER);
 
-        TS_ASSERT_EQUALS(engine.eval("x+2", environment), ResultValue((std::int64_t)5LL));
+        TS_ASSERT_EQUALS(engine.evaluate("x+2", environment), ResultValue((std::int64_t)5LL));
     }
 };

@@ -20,6 +20,9 @@ namespace ResultValueTypes {
 	};
 }
 
+/**
+ * Represents a result value
+ */
 class ResultValue {
 private:
 	ResultValueType mType;

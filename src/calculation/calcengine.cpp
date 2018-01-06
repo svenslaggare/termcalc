@@ -1,31 +1,32 @@
 #include "calcengine.h"
-#include "parser/parser.h"
-#include "expressions/expression.h"
-#include "core/operator.h"
-#include "core/environment.h"
-#include "visitors/calculationvisitor.h"
+#include "../parser/parser.h"
+#include "../expressions/expression.h"
+#include "../core/operator.h"
+#include "environment.h"
+#include "calculationvisitor.h"
+
 #include <stdexcept>
 #include <queue>
 #include <stack>
 #include <cmath>
 
 //Calc engine
-CalcEngine::CalcEngine(std::ostream& os)
+CalculationEngine::CalculationEngine(std::ostream& os)
 	: mEvalMode(ResultValueType::FLOAT) {
 	mNumberTypes.emplace(ResultValueType::FLOAT, std::unique_ptr<FloatType>(new FloatType));
 	mNumberTypes.emplace(ResultValueType::INTEGER, std::unique_ptr<IntegerType>(new IntegerType(os)));
 	mNumberTypes.emplace(ResultValueType::COMPLEX, std::unique_ptr<ComplexType>(new ComplexType(os)));
 }
 
-NumberType& CalcEngine::currentNumberType() const {
+NumberType& CalculationEngine::currentNumberType() const {
 	return *mNumberTypes.at(mEvalMode).get();
 }
 
-const BinaryOperators& CalcEngine::binaryOperators() const {
+const BinaryOperators& CalculationEngine::binaryOperators() const {
 	return currentNumberType().binaryOperators();
 }
 
-bool CalcEngine::getBinaryOperator(OperatorChar opChar, Operator& op) const {
+bool CalculationEngine::getBinaryOperator(OperatorChar opChar, Operator& op) const {
 	auto operatorIterator = binaryOperators().find(opChar);
 	if (operatorIterator != binaryOperators().end()) {
 		op = operatorIterator->second;
@@ -35,11 +36,11 @@ bool CalcEngine::getBinaryOperator(OperatorChar opChar, Operator& op) const {
 	return false;
 }
 
-const UnaryOperators& CalcEngine::unaryOperators() const {
+const UnaryOperators& CalculationEngine::unaryOperators() const {
 	return currentNumberType().unaryOperators();
 }
 
-Environment CalcEngine::defaultEnvironment() const {
+Environment CalculationEngine::defaultEnvironment() const {
 	std::unordered_map<ResultValueType, EnvironmentScope> scopes;
 	for (auto& numberType : mNumberTypes) {
 		scopes.insert({ numberType.first, numberType.second->environment() });
@@ -48,21 +49,21 @@ Environment CalcEngine::defaultEnvironment() const {
 	return Environment(scopes);
 }
 
-ResultValueType CalcEngine::evalMode() const {
+ResultValueType CalculationEngine::evalMode() const {
 	return mEvalMode;
 }
 
-void CalcEngine::setEvalMode(ResultValueType evalMode) {
+void CalculationEngine::setEvalMode(ResultValueType evalMode) {
 	mEvalMode = evalMode;
 }
 
-ResultValue CalcEngine::eval(std::string expressionString) {
-	auto env = defaultEnvironment();
-	return eval(expressionString, env);
+ResultValue CalculationEngine::evaluate(const std::string& expressionString) {
+	auto environment = defaultEnvironment();
+	return evaluate(expressionString, environment);
 }
 
-ResultValue CalcEngine::eval(std::string expressionString, Environment& env) {
-	env.setEvalMode(mEvalMode);
+ResultValue CalculationEngine::evaluate(const std::string& expressionString, Environment& environment) {
+	environment.setEvalMode(mEvalMode);
 
 	//Tokenize
 	auto tokens = Tokenizer::tokenize(expressionString, currentNumberType());
@@ -73,14 +74,13 @@ ResultValue CalcEngine::eval(std::string expressionString, Environment& env) {
 	auto expression = parser.parse();
 
 	//Evaluate
-	CalculationVisitor calculationVisitor(*this, env);
+	CalculationVisitor calculationVisitor(*this, environment);
 	expression->accept(calculationVisitor, nullptr);
 
-	auto& evalStack = calculationVisitor.evaluationStack();
-
-	if (evalStack.empty()) {
+	auto& evaluationStack = calculationVisitor.evaluationStack();
+	if (evaluationStack.empty()) {
 		throw std::runtime_error("Expected result.");
 	}
 
-	return evalStack.top();
+	return evaluationStack.top();
 }

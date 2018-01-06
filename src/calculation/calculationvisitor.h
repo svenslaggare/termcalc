@@ -1,5 +1,5 @@
 #pragma once
-#include "dfsvisitor.h"
+#include "../visitors/dfsvisitor.h"
 
 using EvaluationStack = std::stack<ResultValue>;
 
@@ -8,7 +8,7 @@ using EvaluationStack = std::stack<ResultValue>;
  */
 class CalculationVisitor : public DfsVisitor {
 private:
-	CalcEngine& mCalcEngine;
+	CalculationEngine& mCalcEngine;
 	EvaluationStack mEvaluationStack;
 	Environment& mEnvironment;
 
@@ -43,7 +43,7 @@ public:
 	 * @param calcEngine The calculation engine
 	 * @param environment The environment
 	 */
-	CalculationVisitor(CalcEngine& calcEngine, Environment& environment);
+	CalculationVisitor(CalculationEngine& calcEngine, Environment& environment);
 
 	/**
 	 * Returns the evaluation stack

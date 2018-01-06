@@ -1,5 +1,5 @@
 #pragma once
-#include "resultvalue.h"
+#include "../core/resultvalue.h"
 #include <string>
 #include <functional>
 #include <vector>
@@ -10,7 +10,7 @@ using FunctionArguments = std::vector<ResultValue>;
 using ExternalFunction = std::function<ResultValue (FunctionArguments)>;
 
 class Environment;
-class CalcEngine;
+class CalculationEngine;
 class Expression;
 	
 //Represents an user defined function

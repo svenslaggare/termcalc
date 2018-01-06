@@ -1,6 +1,6 @@
 #pragma once
-#include "calcengine.h"
-#include "core/environment.h"
+#include "calculation/calcengine.h"
+#include "calculation/environment.h"
 #include <unordered_map>
 #include <functional>
 #include <vector>
@@ -11,7 +11,7 @@ using Args = std::vector<std::string>;
 class CommandEngine {
 private:
 	std::ostream& mOutStream;
-	CalcEngine mEngine;
+	CalculationEngine mEngine;
 	Environment mEnv;
 	int mPrintNumBase = 10;
 	bool mPrintInPolar = false;
@@ -30,8 +30,8 @@ public:
 	void setPrintInPolar(bool printInPolar);
 
 	//Loads the given file
-	void loadFile(std::string fileName, bool printIfNotFound = true);
+	void loadFile(const std::string& fileName, bool printIfNotFound = true);
 
 	//Executes the given line
-	bool execute(std::string line, bool printResult = true);
+	bool execute(const std::string& line, bool printResult = true);
 };

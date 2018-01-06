@@ -1,13 +1,13 @@
 #include "printvisitor.h"
 #include "predicatevisitor.h"
-#include "../calcengine.h"
+#include "../calculation/calcengine.h"
 
-PrintVisitor::PrintVisitor(CalcEngine& calcEngine, std::ostream& stream)
+PrintVisitor::PrintVisitor(CalculationEngine& calcEngine, std::ostream& stream)
 	: mCalcEngine(calcEngine), mStream(stream) {
 
 }
 
-std::string PrintVisitor::toString(CalcEngine& calcEngine, Expression* expression) {
+std::string PrintVisitor::toString(CalculationEngine& calcEngine, Expression* expression) {
 	std::stringstream stream;
 	PrintVisitor printVisitor(calcEngine, stream);
 	expression->accept(printVisitor, expression);
