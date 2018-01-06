@@ -2,10 +2,10 @@
 #include <vector>
 #include <cxxtest/TestSuite.h>
 #include "../src/calcengine.h"
-#include "../src/environment.h"
-#include "../src/parser.h"
-#include "../src/numbertype.h"
-#include "../src/resultvalue.h"
+#include "../src/core/environment.h"
+#include "../src/parser/parser.h"
+#include "../src/core/numbertype.h"
+#include "../src/core/resultvalue.h"
 
 using Tokens = std::vector<Token>;
 

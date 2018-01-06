@@ -1,7 +1,9 @@
 #include "expression.h"
-#include "calcengine.h"
-#include "environment.h"
-#include "function.h"
+#include "../calcengine.h"
+#include "../core/environment.h"
+#include "../core/function.h"
+#include "../visitors/visitor.h"
+
 #include <cmath>
 #include <unordered_set>
 #include <sstream>
@@ -12,12 +14,20 @@ NumberExpression::NumberExpression(NumericConstant value)
 
 }
 
+const NumericConstant& NumberExpression::value() const {
+	return mValue;
+}
+
 std::string NumberExpression::toString() {
 	return mValue.toString();
 }
 
 void NumberExpression::evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) {
 	evalStack.push(calcEngine.currentNumberType().toResultValue(mValue));
+}
+
+void NumberExpression::accept(Visitor& visitor, Expression* parent) {
+	visitor.visit(parent, this);
 }
 
 //Variable expression
@@ -41,6 +51,10 @@ void VariableExpression::evaluate(CalcEngine& calcEngine, Environment& env, Eval
 	} else {
 		throw std::runtime_error("'" + mName + "' is not a defined variable. Type ':help' for a list of commands.");
 	}
+}
+
+void VariableExpression::accept(Visitor& visitor, Expression* parent) {
+	visitor.visit(parent, this);
 }
 
 //Function call
@@ -107,6 +121,10 @@ void FunctionCallExpression::evaluate(CalcEngine& calcEngine, Environment& env, 
 	evalStack.push(func.apply(calcEngine, env, args));
 }
 
+void FunctionCallExpression::accept(Visitor& visitor, Expression* parent) {
+	visitor.visit(parent, this);
+}
+
 //Binary operator expression
 BinaryOperatorExpression::BinaryOperatorExpression(OperatorChar op,
 												   std::unique_ptr<Expression> lhs,
@@ -115,6 +133,22 @@ BinaryOperatorExpression::BinaryOperatorExpression(OperatorChar op,
 	  mLHS(std::move(lhs)),
 	  mRHS(std::move(rhs)) {
 
+}
+
+OperatorChar BinaryOperatorExpression::op() const {
+	return mOp;
+}
+
+Expression* BinaryOperatorExpression::leftHandSide() const {
+	return mLHS.get();
+}
+
+Expression* BinaryOperatorExpression::rightHandSide() const {
+	return mRHS.get();
+}
+
+Expression* BinaryOperatorExpression::releaseRightHandSide() {
+	return mRHS.release();
 }
 
 std::string BinaryOperatorExpression::toString() {
@@ -177,10 +211,22 @@ void BinaryOperatorExpression::evaluate(CalcEngine& calcEngine, Environment& env
 	}
 }
 
+void BinaryOperatorExpression::accept(Visitor& visitor, Expression* parent) {
+	visitor.visit(parent, this);
+}
+
 //Unary expression
 UnaryOperatorExpression::UnaryOperatorExpression(OperatorChar op, std::unique_ptr<Expression> operand)
 	: mOp(op), mOperand(std::move(operand)) {
 
+}
+
+OperatorChar UnaryOperatorExpression::op() const {
+	return mOp;
+}
+
+Expression* UnaryOperatorExpression::operand() const {
+	return mOperand.get();
 }
 
 std::string UnaryOperatorExpression::toString() {
@@ -200,4 +246,8 @@ void UnaryOperatorExpression::evaluate(CalcEngine& calcEngine, Environment& env,
 
 	auto& op = calcEngine.unaryOperators().at(mOp);
 	evalStack.push(op.apply(operand));
+}
+
+void UnaryOperatorExpression::accept(Visitor& visitor, Expression* parent) {
+	visitor.visit(parent, this);
 }

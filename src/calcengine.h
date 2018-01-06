@@ -1,7 +1,7 @@
 #pragma once
-#include "resultvalue.h"
-#include "operator.h"
-#include "numbertype.h"
+#include "core/resultvalue.h"
+#include "core/operator.h"
+#include "core/numbertype.h"
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -20,6 +20,9 @@ public:
 
 	//Returns the binary operators
 	const BinaryOperators& binaryOperators() const;
+
+	//Tries to get the given binary operator
+	bool getBinaryOperator(OperatorChar opChar, Operator& op) const;
 
 	//Returns the unary operators
 	const UnaryOperators& unaryOperators() const;

@@ -3,9 +3,9 @@
 #include <cxxtest/TestSuite.h>
 #include "../src/commandengine.h"
 #include "../src/calcengine.h"
-#include "../src/environment.h"
-#include "../src/parser.h"
-#include "../src/numbertype.h"
+#include "../src/core/environment.h"
+#include "../src/parser/parser.h"
+#include "../src/core/numbertype.h"
 
 using Tokens = std::vector<Token>;
 

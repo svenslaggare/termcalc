@@ -24,6 +24,9 @@ public:
 	//Returns the parameters
 	const std::vector<std::string>& parameters() const;
 
+	//Returns the body
+	Expression* body() const;
+
 	std::string toString() const;
 
 	//Applies the function to the given arguments

@@ -1,8 +1,9 @@
 #include "calcengine.h"
-#include "parser.h"
-#include "expression.h"
-#include "operator.h"
-#include "environment.h"
+#include "parser/parser.h"
+#include "expressions/expression.h"
+#include "core/operator.h"
+#include "core/environment.h"
+#include "visitors/calculationvisitor.h"
 #include <stdexcept>
 #include <queue>
 #include <stack>
@@ -22,6 +23,16 @@ NumberType& CalcEngine::currentNumberType() const {
 
 const BinaryOperators& CalcEngine::binaryOperators() const {
 	return currentNumberType().binaryOperators();
+}
+
+bool CalcEngine::getBinaryOperator(OperatorChar opChar, Operator& op) const {
+	auto operatorIterator = binaryOperators().find(opChar);
+	if (operatorIterator != binaryOperators().end()) {
+		op = operatorIterator->second;
+		return true;
+	}
+
+	return false;
 }
 
 const UnaryOperators& CalcEngine::unaryOperators() const {
@@ -60,10 +71,14 @@ ResultValue CalcEngine::eval(std::string expressionString, Environment& env) {
 	//Parse
 	Parser parser(tokens, *this);
 	auto expression = parser.parse();
-	EvalStack evalStack;
 
 	//Evaluate
-	expression->evaluate(*this, env, evalStack);
+//	EvalStack evalStack;
+//	expression->evaluate(*this, env, evalStack);
+	CalculationVisitor calculationVisitor(*this, env);
+	expression->accept(calculationVisitor, nullptr);
+
+	auto& evalStack = calculationVisitor.evaluationStack();
 
 	if (evalStack.empty()) {
 		throw std::runtime_error("Expected result.");

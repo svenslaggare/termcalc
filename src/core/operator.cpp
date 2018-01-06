@@ -45,6 +45,11 @@ Operator::Operator(OperatorChar op, int precedence, OperatorAssociativity associ
 
 }
 
+Operator::Operator()
+	: mOp(0), mPrecedence(0), mIsUnary(false) {
+
+}
+
 Operator Operator::binary(OperatorChar op, int precedence, OperatorAssociativity associativity, BinaryOperatorFn applyFn) {
 	return Operator(op, precedence, associativity, false, applyFn, {});
 }

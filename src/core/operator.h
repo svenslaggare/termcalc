@@ -63,6 +63,9 @@ private:
 	//Creates a new operator
 	Operator(OperatorChar op, int precedence, OperatorAssociativity associativity, bool isUnary, BinaryOperatorFn binaryFn, UnaryOperatorFn unaryFn);
 public:
+	//Creates an empty operator
+	Operator();
+
 	//Creates a new binary operator
 	static Operator binary(OperatorChar op, int precedence, OperatorAssociativity associativity, BinaryOperatorFn applyFn);
 

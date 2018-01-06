@@ -2,7 +2,7 @@
 #include <vector>
 #include <cstdint>
 #include <string>
-#include "termcalc.h"
+#include "../termcalc.h"
 
 //Represents a character in a numeric constant
 enum class NumericConstantChar : unsigned char {

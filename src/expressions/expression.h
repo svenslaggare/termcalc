@@ -1,8 +1,8 @@
 #pragma once
-#include "operator.h"
-#include "function.h"
-#include "resultvalue.h"
-#include "numericconstant.h"
+#include "../core/operator.h"
+#include "../core/function.h"
+#include "../core/resultvalue.h"
+#include "../core/numericconstant.h"
 #include <stack>
 #include <vector>
 #include <memory>
@@ -11,6 +11,7 @@
 using EvalStack = std::stack<ResultValue>;
 class Environment;
 class CalcEngine;
+class Visitor;
 
 //Represents an expression
 class Expression {
@@ -23,6 +24,9 @@ public:
 
 	//Evaluates the current expression
 	virtual void evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) = 0;
+
+	//Accepts the given visitor
+	virtual void accept(Visitor& visitor, Expression* parent) = 0;
 };
 
 //Represents a number expression
@@ -33,8 +37,12 @@ public:
 	//Creates a new number expression
 	NumberExpression(NumericConstant value);
 
+	//Returns the value of the expression
+	const NumericConstant& value() const;
+
 	virtual std::string toString() override;
 	virtual void evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) override;
+	virtual void accept(Visitor& visitor, Expression* parent) override;
 };
 
 //Represents a variable expression
@@ -50,6 +58,7 @@ public:
 
 	virtual std::string toString() override;
 	virtual void evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) override;
+	virtual void accept(Visitor& visitor, Expression* parent) override;
 };
 
 //Represents a function call expression
@@ -72,6 +81,7 @@ public:
 
 	virtual std::string toString() override;
 	virtual void evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) override;
+	virtual void accept(Visitor& visitor, Expression* parent) override;
 };
 
 //Represents a binary operator expression
@@ -84,8 +94,21 @@ public:
 	//Creates a new binary operator expression
 	BinaryOperatorExpression(OperatorChar op, std::unique_ptr<Expression> lhs, std::unique_ptr<Expression> rhs);
 
+	//Returns the operator
+	OperatorChar op() const;
+
+	//Returns the left hand side
+	Expression* leftHandSide() const;
+
+	//Returns the right hand side
+	Expression* rightHandSide() const;
+
+	//Releases ownershop hold of the right hand side
+	Expression* releaseRightHandSide();
+
 	virtual std::string toString() override;
 	virtual void evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) override;
+	virtual void accept(Visitor& visitor, Expression* parent) override;
 };
 
 //Represents a unary operator expression
@@ -97,6 +120,13 @@ public:
 	//Creates a new binary operator expression
 	UnaryOperatorExpression(OperatorChar op, std::unique_ptr<Expression> operand);
 
+	//Returns the operator
+	OperatorChar op() const;
+
+	//Returns the operand
+	Expression* operand() const;
+
 	virtual std::string toString() override;
 	virtual void evaluate(CalcEngine& calcEngine, Environment& env, EvalStack& evalStack) override;
+	virtual void accept(Visitor& visitor, Expression* parent) override;
 };

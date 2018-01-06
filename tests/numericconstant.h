@@ -2,7 +2,7 @@
 #include <vector>
 #include <limits>
 #include <cxxtest/TestSuite.h>
-#include "../src/numericconstant.h"
+#include "../src/core/numericconstant.h"
 
 class NumericConstantTestSuite : public CxxTest::TestSuite {
 public:

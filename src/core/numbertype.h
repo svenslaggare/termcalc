@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include "resultvalue.h"
 #include "operator.h"
-#include "token.h"
+#include "../parser/token.h"
 #include "environment.h"
 
 using BinaryOperators = std::unordered_map<OperatorChar, Operator>;

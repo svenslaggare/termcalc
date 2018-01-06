@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include <vector>
-#include "termcalc.h"
+#include "../termcalc.h"
 
 //The type of the result value
 enum class ResultValueType {

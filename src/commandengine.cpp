@@ -1,5 +1,7 @@
 #include "commandengine.h"
-#include "numberhelpers.h"
+#include "core/numberhelpers.h"
+#include "visitors/printvisitor.h"
+
 #include <cmath>
 #include <iostream>
 #include <fstream>
@@ -78,7 +80,7 @@ CommandEngine::CommandEngine(std::ostream& os)
 			for (auto var : mEnv.variables()) {
 				mOutStream << var.first << ": " << var.second << std::endl;
 			}
-			
+
 			return false;
 		} },
 		{ "funcs", [this, leadingWhitespace](Args args) {
@@ -126,7 +128,8 @@ CommandEngine::CommandEngine(std::ostream& os)
 
 					if (func.isUserDefined()) {
 						auto funcStr = funcStrs[i];
-						mOutStream << leadingWhitespace << funcStr << " = " << func.body()->toString() << std::endl;
+//						mOutStream << leadingWhitespace << funcStr << " = " << func.body()->toString() << std::endl;
+						mOutStream << leadingWhitespace << funcStr << " = " << PrintVisitor::toString(mEngine, func.body()->body()) << std::endl;
 					}
 
 					i++;

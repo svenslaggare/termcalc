@@ -1,6 +1,6 @@
 #include "parser.h"
-#include "expression.h"
-#include "calcengine.h"
+#include "../expressions/expression.h"
+#include "../calcengine.h"
 #include <cmath>
 #include <unordered_set>
 
@@ -99,7 +99,7 @@ void Parser::parseError(std::string message) {
 Token& Parser::nextToken() {
 	mTokenIndex++;
 
-	if (mTokenIndex >= mTokens.size()) {
+	if ((std::size_t)mTokenIndex >= mTokens.size()) {
 		parseError("Reached end of tokens.");
 	}
 
@@ -110,7 +110,7 @@ Token& Parser::nextToken() {
 Token& Parser::peekToken(int delta) {
 	int nextTokenIndex = mTokenIndex + delta;
 
-	if (nextTokenIndex >= mTokens.size()) {
+	if ((std::size_t)nextTokenIndex >= mTokens.size()) {
 		parseError("Reached end of tokens.");
 	}
 

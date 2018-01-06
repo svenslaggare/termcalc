@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <iostream>
-#include "numericconstant.h"
+#include "../core/numericconstant.h"
 
 //The token types
 enum class TokenType : unsigned char {

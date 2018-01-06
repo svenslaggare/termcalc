@@ -1,5 +1,5 @@
 #include "function.h"
-#include "expression.h"
+#include "../expressions/expression.h"
 #include "environment.h"
 #include <unordered_map>
 
@@ -11,6 +11,10 @@ FunctionBody::FunctionBody(std::vector<std::string> parameters, std::unique_ptr<
 
 const std::vector<std::string>& FunctionBody::parameters() const {
 	return mParameters;
+}
+
+Expression* FunctionBody::body() const {
+	return mBody.get();
 }
 
 std::string FunctionBody::toString() const {
@@ -107,7 +111,7 @@ std::ostream& operator<<(std::ostream& os, const Function& func) {
 	os << "(";
 
 	if (!func.isUserDefined()) {
-		for (int i = 0; i < func.numArgs(); i++) {
+		for (std::size_t i = 0; i < func.numArgs(); i++) {
 			if (i != 0) {
 				os << ", ";
 			}

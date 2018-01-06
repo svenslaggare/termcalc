@@ -7,7 +7,7 @@ namespace {
 		std::stringstream stream;
 
 		stream << name << "(";
-		for (int i = 0; i < numArgs; i++) {
+		for (std::size_t i = 0; i < numArgs; i++) {
 			if (i != 0) {
 				stream << ", ";
 			}
