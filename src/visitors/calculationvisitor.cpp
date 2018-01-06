@@ -48,7 +48,7 @@ ResultValue CalculationVisitor::evaluateUserFunction(UserFunction* userFunction,
 		i++;
 	}
 
-	//Apply the function
+	//Evaluate the function body
 	userFunction->body()->accept(*this, nullptr);
 
 	if (mEvaluationStack.size() != 1) {

@@ -28,12 +28,14 @@ Variables and functions can be predefined by adding a file `default.termcalc` in
 ### Linux
 To build:
 ```
-make release
+./build.sh
 ```
 To run tests (requires [CxxTest](http://cxxtest.com/)):
 ```
-make test
+./test.sh
 ```
+
+The compiled program is located at `Build/Release/termcalc`.
 
 ### Windows
 Requirements:
