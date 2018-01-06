@@ -1,14 +1,21 @@
 #pragma once
 #include "dfsvisitor.h"
 
+using EvaluationStack = std::stack<ResultValue>;
+
 /**
  * Represents a calculation visitor
  */
 class CalculationVisitor : public DfsVisitor {
 private:
 	CalcEngine& mCalcEngine;
-	EvalStack mEvaluationStack;
+	EvaluationStack mEvaluationStack;
 	Environment& mEnvironment;
+
+	/**
+	 * Pops the from the evaluation stack
+	 */
+	ResultValue popStack();
 
 	/**
 	 * Evaluates the given user defined function
@@ -16,6 +23,20 @@ private:
 	 * @param args The arguments
 	 */
 	ResultValue evaluateUserFunction(UserFunction* userFunction, const FunctionArguments& args);
+
+	/**
+	 * Defines a variable
+	 * @param expression The expression
+	 * @param variable The variable name
+	 */
+	void defineVariable(BinaryOperatorExpression* expression, VariableExpression* variable);
+
+	/**
+	 * Defines an user function
+	 * @param expression The expression
+	 * @param func The function prototype
+	 */
+	void defineUserFunction(BinaryOperatorExpression* expression, FunctionCallExpression* func);
 public:
 	/**
 	 * Creates a new calculation visitor
@@ -27,7 +48,7 @@ public:
 	/**
 	 * Returns the evaluation stack
 	 */
-	const EvalStack& evaluationStack() const;
+	const EvaluationStack& evaluationStack() const;
 
 	void visit(Expression* parent, NumberExpression* expression) override;
 	void visit(Expression* parent, VariableExpression* expression) override;

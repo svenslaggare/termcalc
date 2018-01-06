@@ -70,7 +70,17 @@ void PrintVisitor::visit(Expression* parent, BinaryOperatorExpression* expressio
 		mStream << ")";
 	}
 
+	bool addSpaces = expression->op() != OperatorChar('^');
+
+	if (addSpaces) {
+		mStream << " ";
+	}
+
 	mStream << expression->op().toString();
+
+	if (addSpaces) {
+		mStream << " ";
+	}
 
 	if (needRightSideParentheses) {
 		mStream << "(";

@@ -9,8 +9,14 @@ CalculationVisitor::CalculationVisitor(CalcEngine& calcEngine, Environment& envi
 
 }
 
-const EvalStack& CalculationVisitor::evaluationStack() const {
+const EvaluationStack& CalculationVisitor::evaluationStack() const {
 	return mEvaluationStack;
+}
+
+ResultValue CalculationVisitor::popStack() {
+	auto value = mEvaluationStack.top();
+	mEvaluationStack.pop();
+	return value;
 }
 
 void CalculationVisitor::visit(Expression* parent, NumberExpression* expression) {
@@ -29,16 +35,16 @@ void CalculationVisitor::visit(Expression* parent, VariableExpression* expressio
 ResultValue CalculationVisitor::evaluateUserFunction(UserFunction* userFunction, const FunctionArguments& args) {
 	//First, save the environment values
 	std::unordered_map<std::string, ResultValue> savedValues;
-	for (auto param : userFunction->parameters()) {
-		if (mEnvironment.variables().count(param) > 0) {
-			savedValues.insert({ param, mEnvironment.variables().at(param) });
+	for (auto parameter : userFunction->parameters()) {
+		if (mEnvironment.variables().count(parameter) > 0) {
+			savedValues.insert({ parameter, mEnvironment.variables().at(parameter) });
 		}
 	}
 
 	//Set the parameter values
 	std::size_t i = 0;
-	for (auto param : userFunction->parameters()) {
-		mEnvironment.set(param, args[i]);
+	for (auto parameter : userFunction->parameters()) {
+		mEnvironment.set(parameter, args[i]);
 		i++;
 	}
 
@@ -50,15 +56,15 @@ ResultValue CalculationVisitor::evaluateUserFunction(UserFunction* userFunction,
 	}
 
 	//Restore environment values
-	for (auto param : userFunction->parameters()) {
-		mEnvironment.unset(param);
+	for (auto parameter : userFunction->parameters()) {
+		mEnvironment.unset(parameter);
 
-		if (savedValues.count(param) > 0) {
-			mEnvironment.set(param, savedValues[param]);
+		if (savedValues.count(parameter) > 0) {
+			mEnvironment.set(parameter, savedValues[parameter]);
 		}
 	}
 
-	return mEvaluationStack.top();
+	return popStack();
 }
 
 void CalculationVisitor::visit(Expression* parent, FunctionCallExpression* expression) {
@@ -75,9 +81,7 @@ void CalculationVisitor::visit(Expression* parent, FunctionCallExpression* expre
 
 	FunctionArguments args;
 	for (std::size_t i = 0; i < func.numArgs(); i++) {
-		auto arg = mEvaluationStack.top();
-		mEvaluationStack.pop();
-		args.insert(args.begin(), arg);
+		args.insert(args.begin(), popStack());
 	}
 
 	if (!func.isUserDefined()) {
@@ -87,40 +91,46 @@ void CalculationVisitor::visit(Expression* parent, FunctionCallExpression* expre
 	}
 }
 
+void CalculationVisitor::defineVariable(BinaryOperatorExpression* expression, VariableExpression* variable) {
+	expression->rightHandSide()->accept(*this, expression);
+
+	auto value = popStack();
+	mEnvironment.set(variable->name(), value);
+	mEvaluationStack.push(value);
+}
+
+void CalculationVisitor::defineUserFunction(BinaryOperatorExpression* expression, FunctionCallExpression* func) {
+	//Check that the parameters are variables
+	std::unordered_set<std::string> usedParameterNames;
+	std::vector<std::string> parameters;
+
+	for (std::size_t i = 0; i < func->numArguments(); i++) {
+		if (auto parameter = dynamic_cast<VariableExpression*>(func->getArgument(i))) {
+			if (usedParameterNames.count(parameter->name()) == 0) {
+				usedParameterNames.insert(parameter->name());
+				parameters.push_back(parameter->name());
+			} else {
+				throw std::runtime_error("The parameter '" + parameter->name() + "' is already used.");
+			}
+		} else {
+			throw std::runtime_error("Parameter number " + std::to_string(i) + " is not a variable.");
+		}
+	}
+
+	auto rhs = expression->releaseRightHandSide();
+	mEnvironment.define(Function(
+		func->name(),
+		parameters.size(),
+		std::make_shared<UserFunction>(parameters, std::unique_ptr<Expression>(rhs))));
+	mEvaluationStack.push(ResultValue());
+}
+
 void CalculationVisitor::visit(Expression* parent, BinaryOperatorExpression* expression) {
 	if (expression->op() == '=') {
 		if (auto var = dynamic_cast<VariableExpression*>(expression->leftHandSide())) {
-			expression->rightHandSide()->accept(*this, expression);
-
-			auto value = mEvaluationStack.top();
-			mEvaluationStack.pop();
-
-			mEnvironment.set(var->name(), value);
-			mEvaluationStack.push(value);
+			defineVariable(expression, var);
 		} else if (auto func = dynamic_cast<FunctionCallExpression*>(expression->leftHandSide())) {
-			//Check that the parameters are variables
-			std::unordered_set<std::string> usedParameterNames;
-			std::vector<std::string> parameters;
-
-			for (std::size_t i = 0; i < func->numArguments(); i++) {
-				if (auto param = dynamic_cast<VariableExpression*>(func->getArgument(i))) {
-					if (usedParameterNames.count(param->name()) == 0) {
-						usedParameterNames.insert(param->name());
-						parameters.push_back(param->name());
-					} else {
-						throw std::runtime_error("The parameter '" + param->name() + "' is already used.");
-					}
-				} else {
-					throw std::runtime_error("Parameter number " + std::to_string(i) + " is not a variable.");
-				}
-			}
-
-			auto rhs = expression->releaseRightHandSide();
-			mEnvironment.define(Function(
-				func->name(),
-				parameters.size(),
-				std::make_shared<UserFunction>(parameters, std::unique_ptr<Expression>(rhs))));
-			mEvaluationStack.push(ResultValue());
+			defineUserFunction(expression, func);
 		} else {
 			throw std::runtime_error("The left hand side must be a variable or a function definition.");
 		}
@@ -132,11 +142,8 @@ void CalculationVisitor::visit(Expression* parent, BinaryOperatorExpression* exp
 
 		DfsVisitor::visit(parent, expression);
 
-		auto op2 = mEvaluationStack.top();
-		mEvaluationStack.pop();
-
-		auto op1 = mEvaluationStack.top();
-		mEvaluationStack.pop();
+		auto op2 = popStack();
+		auto op1 = popStack();
 
 		auto& op = mCalcEngine.binaryOperators().at(expression->op());
 		mEvaluationStack.push(op.apply(op1, op2));
@@ -151,8 +158,7 @@ void CalculationVisitor::visit(Expression* parent, UnaryOperatorExpression* expr
 
 	DfsVisitor::visit(parent, expression);
 
-	auto operand = mEvaluationStack.top();
-	mEvaluationStack.pop();
+	auto operand = popStack();
 
 	auto& op = mCalcEngine.unaryOperators().at(expression->op());
 	mEvaluationStack.push(op.apply(operand));

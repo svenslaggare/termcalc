@@ -48,9 +48,11 @@ set(SOURCE_FILES
         src/visitors/printvisitor.cpp
         src/visitors/printvisitor.h
         src/visitors/predicatevisitor.cpp
-        src/visitors/predicatevisitor.h)
+        src/visitors/predicatevisitor.h
+        src/visitors/printvisitor.cpp
+        src/visitors/printvisitor.h)
 
-add_executable(termcalc ${SOURCE_FILES} src/termcalc.cpp src/visitors/printvisitor.cpp src/visitors/printvisitor.h)
+add_executable(termcalc ${SOURCE_FILES} src/termcalc.cpp)
 
 # Tests
 set(TESTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tests)

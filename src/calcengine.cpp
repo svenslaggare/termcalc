@@ -73,8 +73,6 @@ ResultValue CalcEngine::eval(std::string expressionString, Environment& env) {
 	auto expression = parser.parse();
 
 	//Evaluate
-//	EvalStack evalStack;
-//	expression->evaluate(*this, env, evalStack);
 	CalculationVisitor calculationVisitor(*this, env);
 	expression->accept(calculationVisitor, nullptr);
 

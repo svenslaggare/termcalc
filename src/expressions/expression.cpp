@@ -67,8 +67,8 @@ BinaryOperatorExpression::BinaryOperatorExpression(OperatorChar op,
 												   std::unique_ptr<Expression> lhs,
 												   std::unique_ptr<Expression> rhs)
 	: mOp(op),
-	  mLHS(std::move(lhs)),
-	  mRHS(std::move(rhs)) {
+	  mLeftHandSide(std::move(lhs)),
+	  mRightHandSide(std::move(rhs)) {
 
 }
 
@@ -77,15 +77,15 @@ OperatorChar BinaryOperatorExpression::op() const {
 }
 
 Expression* BinaryOperatorExpression::leftHandSide() const {
-	return mLHS.get();
+	return mLeftHandSide.get();
 }
 
 Expression* BinaryOperatorExpression::rightHandSide() const {
-	return mRHS.get();
+	return mRightHandSide.get();
 }
 
 Expression* BinaryOperatorExpression::releaseRightHandSide() {
-	return mRHS.release();
+	return mRightHandSide.release();
 }
 
 void BinaryOperatorExpression::accept(Visitor& visitor, Expression* parent) {

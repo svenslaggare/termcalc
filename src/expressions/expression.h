@@ -8,7 +8,6 @@
 #include <memory>
 #include <string>
 
-using EvalStack = std::stack<ResultValue>;
 class Environment;
 class CalcEngine;
 class Visitor;
@@ -76,8 +75,8 @@ public:
 class BinaryOperatorExpression : public Expression {
 private:
 	OperatorChar mOp;
-	std::unique_ptr<Expression> mLHS;
-	std::unique_ptr<Expression> mRHS;
+	std::unique_ptr<Expression> mLeftHandSide;
+	std::unique_ptr<Expression> mRightHandSide;
 public:
 	//Creates a new binary operator expression
 	BinaryOperatorExpression(OperatorChar op, std::unique_ptr<Expression> lhs, std::unique_ptr<Expression> rhs);
@@ -91,7 +90,7 @@ public:
 	//Returns the right hand side
 	Expression* rightHandSide() const;
 
-	//Releases ownershop hold of the right hand side
+	//Releases ownership of the right hand side
 	Expression* releaseRightHandSide();
 
 	virtual void accept(Visitor& visitor, Expression* parent) override;
