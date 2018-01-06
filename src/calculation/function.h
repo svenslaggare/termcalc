@@ -42,16 +42,16 @@ private:
 	std::string mInfoText;
 public:
 	//Creates a new external function
-	Function(std::string name, std::size_t numArgs, ExternalFunction func, std::string infoText = "");
+	Function(std::string name, std::size_t numParameters, ExternalFunction func, std::string infoText = "");
 
 	//Creates a new user function
-	Function(std::string name, std::size_t numArgs, std::shared_ptr<UserFunction> body, std::string infoText = "");
+	Function(std::string name, std::size_t numParameters, std::shared_ptr<UserFunction> body, std::string infoText = "");
 
 	//Returns the name of the function
 	std::string name() const;
 
-	//Returns the number of arguments
-	std::size_t numArgs() const;
+	//Returns the number of parameters
+	std::size_t numParameters() const;
 
 	//Returns the info text
 	std::string infoText() const;

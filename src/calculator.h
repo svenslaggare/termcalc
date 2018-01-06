@@ -1,5 +1,5 @@
 #pragma once
-#include "calculation/calcengine.h"
+#include "calculation/calculationengine.h"
 #include "calculation/environment.h"
 #include <unordered_map>
 #include <functional>
@@ -8,15 +8,18 @@
 using Args = std::vector<std::string>;
 
 /**
- * Represents the calculator
+ * Represents the main calculator
  */
 class Calculator {
 private:
-	std::ostream& mOutStream;
+	std::ostream& mOutputStream;
+
 	CalculationEngine mEngine;
-	Environment mEnv;
+	Environment mEnvironment;
+
 	int mPrintNumBase = 10;
 	bool mPrintInPolar = false;
+
 	std::unordered_map<std::string, std::function<bool(Args)>> mCommands;
 public:
 	//Creates a new command engine

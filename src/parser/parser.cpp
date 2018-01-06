@@ -1,6 +1,6 @@
 #include "parser.h"
 #include "../expressions/expression.h"
-#include "../calculation/calcengine.h"
+#include "../calculation/calculationengine.h"
 #include <cmath>
 #include <unordered_set>
 
@@ -77,7 +77,7 @@ std::vector<Token> Tokenizer::tokenize(std::string str, NumberType& numberType) 
 		//Operator
 		if (tokens.size() > 0 && tokens.back().type() == TokenType::OPERATOR
 			&& twoCharOps.count(tokens.back().charValue()) > 0) {
-			//If the previous token is an operator and the current one is, upgrade to a two-op char
+			//If the previous token is an operator and the current one also is, upgrade to a two-op char
 			tokens.back() = { TokenType::TWO_CHAR_OPERATOR, tokens.back().charValue(), current };
 		} else {
 			tokens.push_back({ TokenType::OPERATOR, current });

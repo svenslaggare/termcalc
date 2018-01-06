@@ -1,6 +1,6 @@
 #include "printvisitor.h"
 #include "predicatevisitor.h"
-#include "../calculation/calcengine.h"
+#include "../calculation/calculationengine.h"
 
 PrintVisitor::PrintVisitor(CalculationEngine& calcEngine, std::ostream& stream)
 	: mCalcEngine(calcEngine), mStream(stream) {

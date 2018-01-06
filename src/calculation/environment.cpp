@@ -28,7 +28,7 @@ EnvironmentScope::EnvironmentScope() {
 EnvironmentScope::EnvironmentScope(Variables variables, std::vector<Function> functions)
 	: mVariables(variables) {
 	for (auto& func : functions) {
-		mFunctions.insert({ getFuncName(func.name(), func.numArgs()), func });
+		mFunctions.insert({ getFuncName(func.name(), func.numParameters()), func });
 	}
 }
 
@@ -108,7 +108,7 @@ const Functions& Environment::functions() const {
 }
 
 void Environment::define(Function function) {
-	auto funcName = getFuncName(function.name(), (int)function.numArgs());
+	auto funcName = getFuncName(function.name(), (int) function.numParameters());
 
 	for (auto& current : mScopes) {
 		auto& scope = current.second;

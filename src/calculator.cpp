@@ -9,21 +9,21 @@
 #include <algorithm>
 
 Calculator::Calculator(std::ostream& os)
-	: mOutStream(os), mEngine(os), mEnv(mEngine.defaultEnvironment()) {
+	: mOutputStream(os), mEngine(os), mEnvironment(mEngine.defaultEnvironment()) {
 	std::string leadingWhitespace = "   ";
 
 	mEngine.setEvalMode(ResultValueType::FLOAT);
-	mEnv.setEvalMode(mEngine.evalMode());
+	mEnvironment.setEvalMode(mEngine.evalMode());
 
 	mCommands = {
 		{ "help", [=](Args args) {
-			mOutStream << "Commands:" << std::endl;
-			mOutStream << leadingWhitespace << ":exit|:q|:quit     Exits the program." << std::endl;
-			mOutStream << leadingWhitespace << ":mode              Sets the evaluation mode: float (default), int or complex." << std::endl;
-			mOutStream << leadingWhitespace << ":display           Sets to display the result in the given base." << std::endl;
-			mOutStream << leadingWhitespace << ":polar             Sets if complex numbers are printed in polar form." << std::endl;
-			mOutStream << leadingWhitespace << ":vars              Prints the defined variables." << std::endl;
-			mOutStream << leadingWhitespace << ":funcs             Prints the defined functions." << std::endl;
+			mOutputStream << "Commands:" << std::endl;
+			mOutputStream << leadingWhitespace << ":exit|:q|:quit     Exits the program." << std::endl;
+			mOutputStream << leadingWhitespace << ":mode              Sets the evaluation mode: float (default), int or complex." << std::endl;
+			mOutputStream << leadingWhitespace << ":display           Sets to display the result in the given base." << std::endl;
+			mOutputStream << leadingWhitespace << ":polar             Sets if complex numbers are printed in polar form." << std::endl;
+			mOutputStream << leadingWhitespace << ":vars              Prints the defined variables." << std::endl;
+			mOutputStream << leadingWhitespace << ":funcs             Prints the defined functions." << std::endl;
 			return false;
 		} },
 		{ "exit", [](Args args) {
@@ -33,7 +33,7 @@ Calculator::Calculator(std::ostream& os)
 			if (args.size() == 1) {
 				setPrintNumBase(std::stoi(args[0]));
 			} else {
-				mOutStream << "Expected one argument (int >= 2)." << std::endl;
+				mOutputStream << "Expected one argument (int >= 2)." << std::endl;
 			}
 
 			return false;
@@ -49,14 +49,14 @@ Calculator::Calculator(std::ostream& os)
 				} else if (args[0] == "complex") {
 					evalMode = ResultValueType::COMPLEX;
 				} else {
-					mOutStream << "'" << args[0] << "' is not a valid value. Valid values are: float, int and complex." << std::endl;
+					mOutputStream << "'" << args[0] << "' is not a valid value. Valid values are: float, int and complex." << std::endl;
 				}
 
 				if (evalMode != ResultValueType::NONE) {
 					setEvalMode(evalMode);
 				}
 			} else {
-				mOutStream << "Expected one argument (float or int)." << std::endl;
+				mOutputStream << "Expected one argument (float or int)." << std::endl;
 			}
 
 			return false;
@@ -68,17 +68,17 @@ Calculator::Calculator(std::ostream& os)
 				} else if (args[0] == "false" || args[0] == "0") {
 					setPrintInPolar(false);
 				} else {
-					mOutStream << "Invalid value. Valid values are: true or false." << std::endl;
+					mOutputStream << "Invalid value. Valid values are: true or false." << std::endl;
 				}
 			} else {
-				mOutStream << "Expected one argument (true or false)." << std::endl;
+				mOutputStream << "Expected one argument (true or false)." << std::endl;
 			}
 
 			return false;
 		} },
 		{ "vars", [&](Args args) {
-			for (auto var : mEnv.variables()) {
-				mOutStream << var.first << ": " << var.second << std::endl;
+			for (auto var : mEnvironment.variables()) {
+				mOutputStream << var.first << ": " << var.second << std::endl;
 			}
 
 			return false;
@@ -88,7 +88,7 @@ Calculator::Calculator(std::ostream& os)
 			int maxFuncLength = 0;
 			std::vector<std::string> funcStrs;
 
-			for (auto& current : mEnv.functions()) {
+			for (auto& current : mEnvironment.functions()) {
 				std::stringstream stream;
 				auto& func = current.second;
 				stream << func;
@@ -102,15 +102,15 @@ Calculator::Calculator(std::ostream& os)
 
 			std::size_t i = 0;
 			bool anyUserDefined = false;
-			mOutStream << "Built-in:" << std::endl;
+			mOutputStream << "Built-in:" << std::endl;
 
-			for (auto& current : mEnv.functions()) {
+			for (auto& current : mEnvironment.functions()) {
 				auto& func = current.second;
 
 				if (!func.isUserDefined()) {
 					auto funcStr = funcStrs[i];
 					std::string spaceStr(maxFuncLength - funcStr.length(), ' ');
-					mOutStream << leadingWhitespace << funcStr << spaceStr << func.infoText() << std::endl;
+					mOutputStream << leadingWhitespace << funcStr << spaceStr << func.infoText() << std::endl;
 				} else {
 					anyUserDefined = true;
 				}
@@ -120,16 +120,16 @@ Calculator::Calculator(std::ostream& os)
 
 			//Check if any user defined functions
 			if (anyUserDefined) {
-				mOutStream << "User defined:" << std::endl;
+				mOutputStream << "User defined:" << std::endl;
 
 				i = 0;
-				for (auto& current : mEnv.functions()) {
+				for (auto& current : mEnvironment.functions()) {
 					auto& func = current.second;
 
 					if (func.isUserDefined()) {
 						auto funcStr = funcStrs[i];
 //						mOutStream << leadingWhitespace << funcStr << " = " << func.body()->toString() << std::endl;
-						mOutStream << leadingWhitespace << funcStr << " = " << PrintVisitor::toString(mEngine,
+						mOutputStream << leadingWhitespace << funcStr << " = " << PrintVisitor::toString(mEngine,
 																									  func.userFunction()->body()) << std::endl;
 					}
 
@@ -195,16 +195,16 @@ void Calculator::setPrintNumBase(int base) {
 		if (base >= 2 && base <= 36) {
 			mPrintNumBase = base;
 		} else {
-			mOutStream << "The base must be >= 2 and <= 36." << std::endl;
+			mOutputStream << "The base must be >= 2 and <= 36." << std::endl;
 		}
 	} catch (std::exception& e) {
-		mOutStream << "The base must be an integer." << std::endl;
+		mOutputStream << "The base must be an integer." << std::endl;
 	}
 }
 
 void Calculator::setEvalMode(ResultValueType evalMode) {
 	mEngine.setEvalMode(evalMode);
-	mEnv.setEvalMode(evalMode);
+	mEnvironment.setEvalMode(evalMode);
 }
 
 void Calculator::setPrintInPolar(bool printInPolar) {
@@ -222,7 +222,7 @@ void Calculator::loadFile(const std::string& fileName, bool printIfNotFound) {
 			execute(line, false);
 		}
 	} else if (printIfNotFound) {
-		mOutStream << "Could not open the file '" << fileName << "'." << std::endl;
+		mOutputStream << "Could not open the file '" << fileName << "'." << std::endl;
 	}
 }
 
@@ -235,7 +235,7 @@ bool Calculator::execute(const std::string& line, bool printResult) {
 			parts.erase(parts.begin());
 			return mCommands[cmd](parts);
 		} else {
-			mOutStream << "There exists no command called '" + cmd + "'. Type ':help' for a list of commands." << std::endl;
+			mOutputStream << "There exists no command called '" + cmd + "'. Type ':help' for a list of commands." << std::endl;
 		}
 
 		return false;
@@ -246,20 +246,20 @@ bool Calculator::execute(const std::string& line, bool printResult) {
 	}
 
 	try {
-		auto res = mEngine.evaluate(line, mEnv);
+		auto res = mEngine.evaluate(line, mEnvironment);
 
 		if (res.type() != ResultValueType::NONE) {
 			if (printResult) {
 				if (res.type() == ResultValueType::INTEGER) {
 					switch (mPrintNumBase) {
 						case 2:
-							mOutStream << NumberHelpers::toBase(res.intValue(), 2, "0b") << std::endl;
+							mOutputStream << NumberHelpers::toBase(res.intValue(), 2, "0b") << std::endl;
 							break;
 						case 10:
-							mOutStream << res.intValue() << std::endl;
+							mOutputStream << res.intValue() << std::endl;
 							break;
 						case 16:
-							mOutStream << NumberHelpers::toBase(res.intValue(), 16, "0x") << std::endl;
+							mOutputStream << NumberHelpers::toBase(res.intValue(), 16, "0x") << std::endl;
 							break;
 						default:
 							std::string baseSubscript = "_" + std::to_string(mPrintNumBase);
@@ -268,20 +268,20 @@ bool Calculator::execute(const std::string& line, bool printResult) {
 							baseSubscript = getSubscript(mPrintNumBase);
 							#endif
 
-							mOutStream << NumberHelpers::toBase(res.intValue(), mPrintNumBase) << baseSubscript << std::endl;
+							mOutputStream << NumberHelpers::toBase(res.intValue(), mPrintNumBase) << baseSubscript << std::endl;
 							break;
 					}
 				} else if (res.type() == ResultValueType::COMPLEX && mPrintInPolar) {
-					mOutStream << std::abs(res.complexValue()) << " * e^(" << std::arg(res.complexValue()) << "i)" << std::endl;
+					mOutputStream << std::abs(res.complexValue()) << " * e^(" << std::arg(res.complexValue()) << "i)" << std::endl;
 				} else {
-					mOutStream << res << std::endl;
+					mOutputStream << res << std::endl;
 				}
 
-				mEnv.set("ans", res);
+				mEnvironment.set("ans", res);
 			}
 		}
 	} catch (std::exception& e) {
-		mOutStream << "Error: " << e.what() << std::endl;
+		mOutputStream << "Error: " << e.what() << std::endl;
 	}
 
 	return false;

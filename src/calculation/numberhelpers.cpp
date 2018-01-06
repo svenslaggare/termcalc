@@ -1,7 +1,7 @@
 #include "numberhelpers.h"
 
 namespace {
-	const std::string alphanum = "0123456789abcdefghijklmnopqrstuvwxyz";
+	const std::string alphaNumeric = "0123456789abcdefghijklmnopqrstuvwxyz";
 
 	//Calculates the negated binary string
 	std::string getBinaryNegated(std::string binStr, int size) {
@@ -37,7 +37,7 @@ std::string NumberHelpers::toBase(std::int64_t value, int base, std::string pref
 	bool isNegative = value < 0;
 	value = std::abs(value);
 	while (value > 0) {
-		res += alphanum[value % base];
+		res += alphaNumeric[value % base];
 		value /= base;
 	}
 

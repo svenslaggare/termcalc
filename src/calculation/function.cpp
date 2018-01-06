@@ -18,13 +18,13 @@ Expression* UserFunction::body() const {
 }
 
 //Function
-Function::Function(std::string name, std::size_t numArgs, ExternalFunction func, std::string infoText)
-	: mName(name), mNumArgs(numArgs), mIsUserDefined(false), mExternalFunction(func), mInfoText(infoText) {
+Function::Function(std::string name, std::size_t numParameters, ExternalFunction func, std::string infoText)
+	: mName(name), mNumArgs(numParameters), mIsUserDefined(false), mExternalFunction(func), mInfoText(infoText) {
 
 }
 
-Function::Function(std::string name, std::size_t numArgs, std::shared_ptr<UserFunction> body, std::string infoText)
-	: mName(name), mNumArgs(numArgs), mIsUserDefined(true), mUserFunction(body), mInfoText(infoText) {
+Function::Function(std::string name, std::size_t numParameters, std::shared_ptr<UserFunction> body, std::string infoText)
+	: mName(name), mNumArgs(numParameters), mIsUserDefined(true), mUserFunction(body), mInfoText(infoText) {
 
 }
 
@@ -32,7 +32,7 @@ std::string Function::name() const {
 	return mName;
 }
 
-std::size_t Function::numArgs() const {
+std::size_t Function::numParameters() const {
 	return mNumArgs;
 }
 
@@ -67,7 +67,7 @@ std::ostream& operator<<(std::ostream& os, const Function& func) {
 	os << "(";
 
 	if (!func.isUserDefined()) {
-		for (std::size_t i = 0; i < func.numArgs(); i++) {
+		for (std::size_t i = 0; i < func.numParameters(); i++) {
 			if (i != 0) {
 				os << ", ";
 			}

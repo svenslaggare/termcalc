@@ -1,5 +1,5 @@
 #include "calculationvisitor.h"
-#include "calcengine.h"
+#include "calculationengine.h"
 #include "environment.h"
 
 #include <unordered_set>
@@ -71,16 +71,16 @@ void CalculationVisitor::visit(Expression* parent, FunctionCallExpression* expre
 	//Find the function
 	auto& func = mEnvironment.getFunction(expression->name(), expression->numArguments());
 
-	if (expression->numArguments() != func.numArgs()) {
+	if (expression->numArguments() != func.numParameters()) {
 		throw std::runtime_error(
-			"Expected " + std::to_string(func.numArgs())
+			"Expected " + std::to_string(func.numParameters())
 			+ " arguments but got " + std::to_string(expression->numArguments()) + ".");
 	}
 
 	DfsVisitor::visit(parent, expression);
 
 	FunctionArguments args;
-	for (std::size_t i = 0; i < func.numArgs(); i++) {
+	for (std::size_t i = 0; i < func.numParameters(); i++) {
 		args.insert(args.begin(), popStack());
 	}
 

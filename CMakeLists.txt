@@ -12,8 +12,8 @@ set(CMAKE_CXX_FLAGS_RELEASE "-Wall -O2 -std=c++11")
 set(CMAKE_CXX_FLAGS_DEBUG "-Wall -g -std=c++11")
 
 set(SOURCE_FILES
-        src/calculation/calcengine.cpp
-        src/calculation/calcengine.h
+        src/calculation/calculationengine.cpp
+        src/calculation/calculationengine.h
         src/calculator.cpp
         src/calculator.h
         src/calculation/environment.cpp

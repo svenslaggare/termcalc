@@ -1,4 +1,4 @@
-#include "calcengine.h"
+#include "calculationengine.h"
 #include "../parser/parser.h"
 #include "../expressions/expression.h"
 #include "../core/operator.h"
