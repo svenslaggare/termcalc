@@ -1,4 +1,4 @@
-#include "commandengine.h"
+#include "calculator.h"
 #include "calculation/numberhelpers.h"
 #include "visitors/printvisitor.h"
 
@@ -8,7 +8,7 @@
 #include <sstream> 
 #include <algorithm>
 
-CommandEngine::CommandEngine(std::ostream& os)
+Calculator::Calculator(std::ostream& os)
 	: mOutStream(os), mEngine(os), mEnv(mEngine.defaultEnvironment()) {
 	std::string leadingWhitespace = "   ";
 
@@ -190,7 +190,7 @@ namespace {
 	}
 }
 
-void CommandEngine::setPrintNumBase(int base) {
+void Calculator::setPrintNumBase(int base) {
 	try {
 		if (base >= 2 && base <= 36) {
 			mPrintNumBase = base;
@@ -202,16 +202,16 @@ void CommandEngine::setPrintNumBase(int base) {
 	}
 }
 
-void CommandEngine::setEvalMode(ResultValueType evalMode) {
+void Calculator::setEvalMode(ResultValueType evalMode) {
 	mEngine.setEvalMode(evalMode);
 	mEnv.setEvalMode(evalMode);
 }
 
-void CommandEngine::setPrintInPolar(bool printInPolar) {
+void Calculator::setPrintInPolar(bool printInPolar) {
 	mPrintInPolar = printInPolar;
 }
 
-void CommandEngine::loadFile(const std::string& fileName, bool printIfNotFound) {
+void Calculator::loadFile(const std::string& fileName, bool printIfNotFound) {
 	std::ifstream stream(fileName);
 
 	if (stream.is_open()) {
@@ -226,7 +226,7 @@ void CommandEngine::loadFile(const std::string& fileName, bool printIfNotFound) 
 	}
 }
 
-bool CommandEngine::execute(const std::string& line, bool printResult) {
+bool Calculator::execute(const std::string& line, bool printResult) {
 	if (line.size() > 1 && line[0] == ':') {
 		auto parts = splitString(line.substr(1), " ");
 		std::string cmd = parts[0];

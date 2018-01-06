@@ -29,10 +29,7 @@
 *.exe
 *.out
 *.app
-termcalc
-test
-bin
-tests/runners
+
+clion-cmake
 Windows
-termcalc.exe
 Build

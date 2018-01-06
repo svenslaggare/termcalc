@@ -14,8 +14,8 @@ set(CMAKE_CXX_FLAGS_DEBUG "-Wall -g -std=c++11")
 set(SOURCE_FILES
         src/calculation/calcengine.cpp
         src/calculation/calcengine.h
-        src/commandengine.cpp
-        src/commandengine.h
+        src/calculator.cpp
+        src/calculator.h
         src/calculation/environment.cpp
         src/calculation/environment.h
         src/expressions/expression.cpp
@@ -50,7 +50,14 @@ set(SOURCE_FILES
         src/visitors/predicatevisitor.cpp
         src/visitors/predicatevisitor.h
         src/visitors/printvisitor.cpp
-        src/visitors/printvisitor.h src/calculation/numbertypes/inttype.cpp src/calculation/numbertypes/inttype.h src/calculation/numbertypes/floattype.cpp src/calculation/numbertypes/floattype.h src/calculation/numbertypes/complextype.cpp src/calculation/numbertypes/complextype.h src/calculation/numbertypes/numbertypes.h)
+        src/visitors/printvisitor.h
+        src/calculation/numbertypes/inttype.cpp
+        src/calculation/numbertypes/inttype.h
+        src/calculation/numbertypes/floattype.cpp
+        src/calculation/numbertypes/floattype.h
+        src/calculation/numbertypes/complextype.cpp
+        src/calculation/numbertypes/complextype.h
+        src/calculation/numbertypes/numbertypes.h)
 
 add_executable(termcalc ${SOURCE_FILES} src/termcalc.cpp)
 
@@ -83,8 +90,8 @@ if(CXXTEST_FOUND)
     CXXTEST_ADD_TEST(tests-complex test-complex-runner.cpp ${TESTS_DIR}/complex.h)
     target_link_libraries(tests-complex TestLib)
 
-    CXXTEST_ADD_TEST(tests-commandengine test-commandengine-runner.cpp ${TESTS_DIR}/commandengine.h)
-    target_link_libraries(tests-commandengine TestLib)
+    CXXTEST_ADD_TEST(tests-calculator test-calculator-runner.cpp ${TESTS_DIR}/calculator.h)
+    target_link_libraries(tests-calculator TestLib)
 
     CXXTEST_ADD_TEST(tests-numericconstant test-numericconstant-runner.cpp ${TESTS_DIR}/numericconstant.h)
     target_link_libraries(tests-numericconstant TestLib)

@@ -1,4 +1,4 @@
-#include "commandengine.h"
+#include "calculator.h"
 #include "linenoise.h"
 #include <iostream>
 
@@ -17,7 +17,7 @@
 #endif
 
 int main() {
-	CommandEngine engine;
+	Calculator calculator;
 	std::string homeDir = "";
 
 	#ifdef __unix__
@@ -35,13 +35,13 @@ int main() {
 	CoTaskMemFree(path);
 	#endif
 
-	engine.loadFile(homeDir + "/default.termcalc", false);
+	calculator.loadFile(homeDir + "/default.termcalc", false);
 
 	#if __unix__
 		char* line;
 		while((line = linenoise("> ")) != nullptr) {
 			linenoiseHistoryAdd(line);
-			if (engine.execute(line)) {
+			if (calculator.execute(line)) {
 				break;
 			}
 			free(line);
@@ -51,7 +51,7 @@ int main() {
 		while (std::cin) {
 			std::cout << "> ";
 			std::getline(std::cin, line);
-			if (engine.execute(line)) {
+			if (calculator.execute(line)) {
 				break;
 			}
 		}

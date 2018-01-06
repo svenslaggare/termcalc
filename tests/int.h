@@ -1,7 +1,7 @@
 #include <string>
 #include <vector>
 #include <cxxtest/TestSuite.h>
-#include "../src/commandengine.h"
+#include "../src/calculator.h"
 #include "../src/calculation/calcengine.h"
 #include "../src/calculation/environment.h"
 #include "../src/parser/parser.h"

@@ -7,8 +7,10 @@
 
 using Args = std::vector<std::string>;
 
-//Represents a command engine
-class CommandEngine {
+/**
+ * Represents the calculator
+ */
+class Calculator {
 private:
 	std::ostream& mOutStream;
 	CalculationEngine mEngine;
@@ -18,7 +20,7 @@ private:
 	std::unordered_map<std::string, std::function<bool(Args)>> mCommands;
 public:
 	//Creates a new command engine
-	CommandEngine(std::ostream& os = std::cout);
+	Calculator(std::ostream& os = std::cout);
 
 	//Sets the print num base
 	void setPrintNumBase(int base);
