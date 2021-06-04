@@ -51,7 +51,7 @@ ResultValue CalculationVisitor::evaluateUserFunction(UserFunction* userFunction,
 	//Evaluate the function body
 	userFunction->body()->accept(*this, nullptr);
 
-	if (mEvaluationStack.size() != 1) {
+	if (mEvaluationStack.empty()) {
 		throw std::runtime_error("Expected result.");
 	}
 

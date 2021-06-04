@@ -33,3 +33,5 @@
 clion-cmake
 Windows
 Build
+.vscode
+cmake-build-*

@@ -9,4 +9,4 @@ fi
 mkdir -p Build/$BUILD_TYPE
 cd Build/$BUILD_TYPE
 cmake ../../ -DCMAKE_BUILD_TYPE=$BUILD_TYPE
-make && make check
+make -j4 && make check

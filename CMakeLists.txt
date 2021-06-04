@@ -5,7 +5,7 @@ project(termcalc)
 #    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 #endif()
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED on)
 
 set(CMAKE_CXX_FLAGS_RELEASE "-Wall -O2 -std=c++11")
