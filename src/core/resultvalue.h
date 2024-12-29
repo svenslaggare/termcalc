@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include <cstdint>
 #include "../termcalc.h"
 
 //The type of the result value

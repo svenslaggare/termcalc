@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <cstdint>
 
 //Contains helper methods for numbers
 namespace NumberHelpers {
